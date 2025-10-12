@@ -1,2 +1,10 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+:root {
+  --font-noir: 'Noir et Blanc', serif;
+}
+
+body {
+  font-family: var(--font-noir);
+}
