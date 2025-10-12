@@ -2,9 +2,14 @@
 @plugin "daisyui";
 
 :root {
-  --font-noir: 'Noir et Blanc', serif;
+  --font-noir: "Noir et Blanc", sans-serif;
+  --font-lato: "Lato", sans-serif;
 }
 
 body {
+  font-family: var(--font-lato); 
+}
+
+h1, h2, h3, .heading {
   font-family: var(--font-noir);
 }
