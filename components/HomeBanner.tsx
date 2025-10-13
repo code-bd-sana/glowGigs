@@ -3,7 +3,7 @@ import React from "react";
 const HomeBanner = () => {
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center px-4"
+      className="min-h-screen flex flex-col items-center pt-20 px-4"
       style={{
         background: "linear-gradient(135deg, #f0efca, #83a7dc)",
         backgroundSize: "cover",
@@ -17,19 +17,19 @@ const HomeBanner = () => {
           Your pathway to glowing career opportunities
         </h1>
         </div>
-        <p className="text-lg text-[#262868] font-extrabold mb-16">
+        <p className="text-[16px] text-[#262868] font-extrabold mb-16">
           Join our platform to find top job opportunities in health and beauty.
         </p>
         <button className="text-white px-12 mb-6 py-3 text-lg font-medium rounded-full  border border-white">
           Get Started
         </button>
 
-         <h1 className="text-[56px] leading-[73px] max-w-5xl font-extrabold text-white my-4">
+         <h1 className="text-[56px] leading-[73px] max-w-5xl font-extrabold text-white mt-4">
           Employers, find your next star
         </h1>
       </div>
 
-      <div className="mt-16 grid grid-cols-1 text-[#363972] sm:grid-cols-3 gap-3 text-center">
+      <div className="mt-10 grid grid-cols-1 text-[#363972] sm:grid-cols-3 gap-3 text-center">
         <div className="bg-[#ccd9e0] p-12 ">
           <p className="text-xl font-semibold mb-4">
             Find Specialists
