@@ -3,7 +3,6 @@ import Image from "next/image";
 import React from "react";
 import hand from "../../public/Home/hand.avif";
 import inject from "../../public/Home/inject.avif";
-import Button from "../shared/Button";
 import SectionHeader from "../shared/SectionHeader/SectionHeader";
 
 const OurMission = () => {
