@@ -3,10 +3,12 @@ import Button from "@/components/shared/Button";
 import SectionHeader from "@/components/shared/SectionHeader/SectionHeader";
 import FindYourPerfect from "@/components/FindYourPerfect/FindYourPerfect";
 import OurMission from "@/components/OurMission/OurMission";
+import NavBar from "@/components/NavBar";
 
 export default function Page() {
   return (
     <div>
+      <NavBar></NavBar>
       <HomeBanner></HomeBanner>
       <h1 className="heading text-4xl">Welcome to Glow Gigs</h1>
       <p className="text-lg">This paragraph uses Lato font by default.</p>
