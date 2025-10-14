@@ -3,7 +3,7 @@ import React from "react";
 const HomeBanner = () => {
   return (
     <div
-      className="min-h-screen flex flex-col items-center pt-20 px-4"
+      className="min-h-screen flex flex-col pt-20"
       style={{
         background: "linear-gradient(135deg, #f0efca, #83a7dc)",
         backgroundSize: "cover",
@@ -11,6 +11,7 @@ const HomeBanner = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
+        <div className="">
       <div className="text-center">
         <div className="flex justify-center">
             <h1 className="text-[56px] leading-[73px] max-w-xl font-extrabold text-white mb-16">
@@ -24,12 +25,12 @@ const HomeBanner = () => {
           Get Started
         </button>
 
-         <h1 className="text-[56px] leading-[73px] max-w-5xl font-extrabold text-white mt-4">
+         <h1 className="text-[56px] text-center mx-auto leading-[73px] max-w-5xl font-extrabold text-white mt-4">
           Employers, find your next star
         </h1>
       </div>
 
-      <div className="mt-10 grid grid-cols-1 text-[#363972] sm:grid-cols-3 gap-3 text-center">
+      <div className="mt-10 max-w-7xl mx-auto px-2 lg:px-0 grid grid-cols-1 text-[#363972] mb-16 md:grid-cols-3 gap-3 text-center">
         <div className="bg-[#ccd9e0] p-12 ">
           <p className="text-xl font-semibold mb-4">
             Find Specialists
@@ -51,6 +52,10 @@ const HomeBanner = () => {
           <p className="">Join our growing network today.</p>
         </div>
       </div>
+
+</div>
+
+
     </div>
   );
 };
