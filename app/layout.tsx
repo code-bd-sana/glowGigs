@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import NavBar from "@/components/NavBar";
 
 // Noir font
 const noir = localFont({
@@ -30,7 +31,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${noir.variable} ${lato.variable}`}>
-      <body>{children}</body>
+      <body>
+        <NavBar></NavBar>
+        {children}
+        </body>
     </html>
   );
 }
