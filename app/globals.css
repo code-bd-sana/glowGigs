@@ -4,6 +4,8 @@
 
 body {
   font-family: var(--font-lato); 
+  background-color: white;
+  color: black;
 }
 
 h1, h2, h3, .heading {
