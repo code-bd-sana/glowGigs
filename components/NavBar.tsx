@@ -32,8 +32,8 @@ const NavBar = () => {
           <Link href="/plans-pricing">
             <div className={getLinkClassName('/plans-pricing')}>Plans & Pricing</div>
           </Link>
-          <Link href="/list-business">
-            <div className={getLinkClassName('/list-business')}>List Your Business</div>
+          <Link href="/business">
+            <div className={getLinkClassName('/business')}>List Your Business</div>
           </Link>
           <Link href="/professionals">
             <div className={getLinkClassName('/professionals')}>Professionals</div>
