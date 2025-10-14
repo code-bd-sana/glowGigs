@@ -14,10 +14,10 @@ export default function Page() {
       <HomeBanner></HomeBanner>
       <FindYourPerfect />
       <OurMission />
-      <Testimonials/>
-      <Footer/>
       <ConnectingProfessionals/>
       <Community/>
+      <Testimonials/>
+      <Footer/>
     </div>
   );
 }
