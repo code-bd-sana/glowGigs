@@ -14,8 +14,8 @@ const NavBar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-10 py-[28px] px-8 bg-white">
-      <div className='max-w-6xl mx-auto flex justify-between items-center'>
+    <nav className="sticky top-0 z-10 py-[28px] px-8 bg-white shadow-lg">
+      <div className='max-w-7xl mx-auto flex justify-between items-center'>
         <div>
           <Link href="/">
             <div className="text-2xl font-medium text-gray-800 cursor-pointer">GlowGigs</div>
