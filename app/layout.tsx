@@ -32,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${noir.variable} ${lato.variable}`}>
       <body>
-        <NavBar></NavBar>
+        <NavBar/>
         {children}
         </body>
     </html>
