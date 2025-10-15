@@ -51,7 +51,7 @@ export default function Gallary() {
       <section>
 
         <div className="text-center mx-auto flex justify-center mt-16 ">
-            <Image   src={banner} alt="banner" className="rounded-2xl w-[95.5%]"/>
+            <Image   src={banner} alt="banner" className="rounded-2xl w-full"/>
         </div>
 
 
@@ -60,12 +60,12 @@ export default function Gallary() {
 
       {/* image */}
 
-      <section className="grid grid-cols-1 justify-center mx-auto lg:grid-cols-5 mt-8">
+      <section className="grid grid-cols-1 justify-center mx-auto gap-3 lg:grid-cols-5 mt-4">
 
 {
   images?.map((img, idx)=>(
    
-<Image key={idx} src={img.image} alt="image" className="rounded-2xl justify-center my-4 lg:my-0 text-center mx-auto"/>
+<Image key={idx} src={img.image} alt="image" className="rounded-2xl justify-center my-4 lg:my-0 text-center mx-auto w-full"/>
    
   ))
 }
