@@ -24,7 +24,7 @@ export default function Inquiry() {
 
 </section>
 
-          <section className=" flex-1 bg-[#ffe5d9] px-8 lg:w-1/2 z-10 lg:ml-16 mx-8 sm:mx-36  lg:absolute py-4 rounded-2xl">
+          <section className=" flex-1 bg-[#ffe5d9] px-8 lg:w-1/2 z-5 lg:ml-16 mx-8 sm:mx-36  lg:absolute py-4 rounded-2xl">
 
             {/* title */}
           
