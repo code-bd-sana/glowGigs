@@ -23,7 +23,7 @@ const feedbacks = [
 
 export default function UserFeedback() {
   return (
-    <div className="mt-24 max-w-7xl  mx-auto">
+    <div className="my-44 max-w-7xl  mx-auto">
       {/* Header */}
       <section>
         <SectionHeader title="User Feedback" description="" align="center" />
