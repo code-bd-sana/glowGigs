@@ -13,7 +13,7 @@ const InquiryForm: React.FC<InquiryFormProps> = ({hidden}) => {
   };
 
   return (
-    <div className="pt-16">
+    <div className="pt-12">
     <div className={`${hidden ? 'hidden' : 'block'}`}>
         <SectionHeader
         title="Contact Us"
