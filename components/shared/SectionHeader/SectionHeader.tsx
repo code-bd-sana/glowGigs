@@ -6,6 +6,8 @@ type SectionProps = {
   description?: string;
   align?: "center" | "left" | "right"; // text alignment
   className?: string; // extra classes
+  titleClassName?: string;
+  subTitleClassName?: string;
 };
 
 const SectionHeader: React.FC<SectionProps> = ({
@@ -14,6 +16,8 @@ const SectionHeader: React.FC<SectionProps> = ({
   description,
   align = "center",
   className = "",
+  titleClassName = "",
+  subTitleClassName = "",
 }) => {
   // Determine Tailwind text alignment class
   const alignmentClass =
@@ -25,11 +29,19 @@ const SectionHeader: React.FC<SectionProps> = ({
 
   return (
     <div className={`${alignmentClass} ${className}`}>
-      <h2 className="text-2xl text-black md:text-4xl font-medium lg:text-5xl mb-2">
+      <h2
+        className={`text-2xl md:text-4xl lg:text-5xl font-medium mb-2 ${
+          titleClassName || "text-black"
+        }`}
+      >
         {title}
       </h2>
       {subtitle && (
-        <p className="text-base text-gray-600 md:text-lg lg:text-xl text-center  font-medium my-6">
+        <p
+          className={`text-base  md:text-lg lg:text-xl  font-medium my-6 ${
+            subTitleClassName || "text-gray-600"
+          } `}
+        >
           {subtitle}
         </p>
       )}

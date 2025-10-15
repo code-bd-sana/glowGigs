@@ -74,7 +74,7 @@ export default function Pricing() {
   ];
 
   return (
-    <div className="mt-16 min-h-screen max-w-7xl mx-auto ">
+    <div className="mt-16 max-w-7xl mx-auto ">
       <SectionHeader
         title="It's your time to shine"
         description=""
