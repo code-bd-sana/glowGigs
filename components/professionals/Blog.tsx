@@ -33,7 +33,7 @@ discover exceptional talent.`,
        
     ]
   return (
-    <div>
+    <div className='max-w-7xl mx-auto'>
       <section className='lg:flex  mt-28 gap-12'>
         {
             blogs?.map((blog, idx)=>(

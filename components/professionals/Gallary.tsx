@@ -36,7 +36,7 @@ export default function Gallary() {
   ]
 
   return (
-    <div>
+    <div className="max-w-7xl mx-auto">
    
       <section>
         <SectionHeader title="Professionals" description="" align="center" />
