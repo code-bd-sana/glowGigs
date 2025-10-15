@@ -2,7 +2,11 @@
 import React, { FormEvent } from "react";
 import SectionHeader from "../shared/SectionHeader/SectionHeader";
 
-const InquiryForm: React.FC = () => {
+interface InquiryFormProps {
+  hidden?: boolean; 
+}
+const InquiryForm: React.FC<InquiryFormProps> = ({hidden}) => {
+  
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted");
@@ -10,13 +14,15 @@ const InquiryForm: React.FC = () => {
 
   return (
     <div className="pt-16">
-      <SectionHeader
+    <div className={`${hidden ? 'hidden' : 'block'}`}>
+        <SectionHeader
         title="Contact Us"
         subtitle="Get in touch for pricing and partnership inquiries."
         align="center"
         titleClassName="text-white"
         subTitleClassName="text-white"
       />
+    </div>
       <section className="flex justify-center items-center py-16 bg-[url('/your-bg.jpg')] bg-cover bg-center">
         <div className="bg-white rounded-2xl shadow-lg p-8 w-[90%] md:w-2xl">
           <form onSubmit={handleSubmit} className="space-y-5">
