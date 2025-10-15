@@ -1,50 +1,75 @@
-'use client';  
+'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';  
+import { usePathname } from 'next/navigation';
 import { MdOutlineShoppingBag } from 'react-icons/md';
+import { RxHamburgerMenu, RxCross2 } from 'react-icons/rx';
+import Image from 'next/image';
+
 
 const NavBar = () => {
-  const pathname = usePathname(); 
+  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const getLinkClassName = (path: string) => {
-    return pathname === path
-      ? 'text-sm font-medium text-black text-[16px] cursor-pointer border-b' 
-      : 'text-sm font-medium text-black text-[16px] cursor-pointer hover:border-b';
+    const base =
+      'text-[16px] font-medium text-black relative w-fit after:absolute after:left-0 after:bottom-0 after:h-[1.5px] after:bg-black after:transition-all after:duration-300';
+    const active = pathname === path ? 'after:w-full' : 'after:w-0 hover:after:w-full';
+    return `${base} ${active}`;
   };
 
   return (
-    <nav className="sticky top-0 z-10 py-[28px] px-8 bg-white shadow-lg">
-      <div className='max-w-7xl mx-auto flex justify-between items-center'>
-        <div>
-          <Link href="/">
-            <div className="text-2xl font-medium text-gray-800 cursor-pointer">GlowGigs</div>
+    <nav className="sticky top-0 z-50 bg-white shadow-lg py-[8px] px-12">
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        {/* Logo */}
+         <Link href="/" className="flex items-center">
+          <Image
+            src="/logo.png"        
+            alt="GlowGigs Logo"
+            width={70}             
+            height={40}
+            priority
+          />
+        </Link>
+
+        {/* Desktop Menu */}
+        <div className="hidden lg:flex gap-8 items-center">
+          <Link href="/" className={getLinkClassName('/')}>Home</Link>
+          <Link href="/jobs" className={getLinkClassName('/jobs')}>Jobs</Link>
+          <Link href="/plans-pricing" className={getLinkClassName('/plans-pricing')}>Plans & Pricing</Link>
+          <Link href="/business" className={getLinkClassName('/business')}>List Your Business</Link>
+          <Link href="/professionals" className={getLinkClassName('/professionals')}>Professionals</Link>
+          <Link href="#marina">
+           <div className='text-black'>
+             <MdOutlineShoppingBag size={24} />
+           </div>
           </Link>
         </div>
 
-        <div className='flex gap-8'>
-          <Link href="/">
-            <div className={getLinkClassName('/')}>Home</div>
+        {/* Mobile Icons */}
+        <div className="flex items-center gap-4 lg:hidden">
+          <Link href="#marina">
+             <div className='text-black'>
+             <MdOutlineShoppingBag size={24} />
+           </div>
           </Link>
-          <Link href="/jobs">
-            <div className={getLinkClassName('/jobs')}>Jobs</div>
-          </Link>
-          <Link href="/plans-pricing">
-            <div className={getLinkClassName('/plans-pricing')}>Plans & Pricing</div>
-          </Link>
-          <Link href="/business">
-            <div className={getLinkClassName('/business')}>List Your Business</div>
-          </Link>
-          <Link href="/professionals">
-            <div className={getLinkClassName('/professionals')}>Professionals</div>
-          </Link>
-          <Link href="/cart">
-            <div className={getLinkClassName('/cart')}>
-            <MdOutlineShoppingBag size={24} />
-            </div>
-          </Link>
+          <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
+            {menuOpen ? <div className='text-black'><RxCross2 size={24} /></div> : <div className='text-black'><RxHamburgerMenu size={24} /></div> }
+          </button>
         </div>
       </div>
+
+      {/* Mobile Dropdown */}
+      {menuOpen && (
+        <div className="lg:hidden flex flex-col gap-4 mt-6 items-end text-right">
+          <Link href="/" onClick={() => setMenuOpen(false)} className={getLinkClassName('/')}>Home</Link>
+          <Link href="/jobs" onClick={() => setMenuOpen(false)} className={getLinkClassName('/jobs')}>Jobs</Link>
+          <Link href="/plans-pricing" onClick={() => setMenuOpen(false)} className={getLinkClassName('/plans-pricing')}>Plans & Pricing</Link>
+          <Link href="/business" onClick={() => setMenuOpen(false)} className={getLinkClassName('/business')}>List Your Business</Link>
+          <Link href="/professionals" onClick={() => setMenuOpen(false)} className={getLinkClassName('/professionals')}>Professionals</Link>
+        </div>
+      )}
     </nav>
   );
 };

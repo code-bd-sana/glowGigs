@@ -56,8 +56,8 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-white py-12">
-      <div className="max-w-7xl mx-auto flex items-start justify-between gap-12">
+    <footer className="bg-black text-white px-6 py-12">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start justify-between gap-6 md:gap-12">
         {/* Connect Section */}
         <div>
           <p className="text-2xl font-semibold mb-3">Connect</p>
@@ -73,7 +73,7 @@ export default function Footer() {
           <p className="text-sm mt-20">© 2025. All rights reserved.</p>
         </div>
 
-        <div className="flex gap-16">
+        <div className="flex flex-col md:flex-row gap-6 md:gap-16">
           {/* Contact Section */}
           <div>
             <p className="font-semibold mb-3">CONTACT</p>
@@ -87,9 +87,9 @@ export default function Footer() {
             <input
               type="text"
               placeholder="Enter your full name"
-              className="w-full p-4 rounded-xl text-black bg-white mb-3"
+              className="w-full p-2 md:p-4 rounded  md:rounded-xl text-black bg-white mb-3"
             />
-            <button className="bg-[rgb(65,107,215)]  hover:bg-[#686df3] text-white px-7 py-3 rounded-full">
+            <button className="bg-[rgb(65,107,215)]  hover:bg-[#686df3] text-white px-5 py-2 md:px-7 md:py-3 rounded-full text-sm md:text-base">
               Submit Application
             </button>
           </div>
@@ -98,3 +98,4 @@ export default function Footer() {
     </footer>
   );
 }
+

@@ -10,9 +10,12 @@ import Image from "next/image";
 export default function Page() {
   return (
     <div>
-      <HomeBanner/>
-      <FindYourPerfect />
-      <OurMission />
+      <HomeBanner />
+      <div className="px-4">
+        <FindYourPerfect />
+        <OurMission />
+      </div>
+
       <ConnectingProfessionals />
       <Community />
       <Testimonials backgroundImage="/Home/testi2.webp">
@@ -56,7 +59,6 @@ export default function Page() {
           </div>
         </div>
       </Testimonials>
-      <Footer />
     </div>
   );
 }
