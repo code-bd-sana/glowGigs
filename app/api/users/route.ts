@@ -1,14 +1,15 @@
 import { dbConnect } from "@/lib/dbConnect"
 import { NextRequest, NextResponse } from "next/server"
+import bcrypt  from "bcryptjs";
 import User from "./user.model";
+import { getAllUser, saveUser } from "./user.controller";
 
 export const GET = async(req:NextRequest)=>{
 
     try {
 
 
-   await dbConnect();
-   const user = await User.find();
+ const user =await getAllUser()
    return NextResponse.json({
     message:"Success",
     data:user
@@ -30,8 +31,17 @@ export const POST = async (req: NextRequest) => {
     await dbConnect();
 
     const data = await req.json(); 
-    const newUser = new User(data);
-    const saved = await newUser.save();
+
+
+    const existEmail = await User.findOne({email:data?.email});
+    if(existEmail){
+      return NextResponse.json({
+        messae:"User already exist"
+      })
+    }
+    
+    
+    const saved = await saveUser(data)
 
     return NextResponse.json(
       { message: "Success", data: saved },
