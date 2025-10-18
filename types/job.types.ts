@@ -15,6 +15,4 @@ export interface JobType extends Document {
   postedBy: mongoose.Types.ObjectId;
   status: "Open" | "Closed";
   thumbnail?: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
