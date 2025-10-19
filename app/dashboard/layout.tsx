@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import "../globals.css";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 
 // Noir font
 
@@ -16,8 +17,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+
+        <DashboardLayout>
+
+                  {children}
+
+        </DashboardLayout>
  
-        {children}
+
+  
       
         </body>
     </html>
