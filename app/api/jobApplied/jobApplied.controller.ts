@@ -1,7 +1,7 @@
 import { dbConnect } from "@/lib/dbConnect";
 import User from "../users/user.model";
 import JobApplied from "./jobApplied.model";
-import Job from "../jobs/Job.model";
+import Job from "../jobs/job.model";
 
 /**
  * Create a new job application
