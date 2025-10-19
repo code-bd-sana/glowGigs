@@ -47,6 +47,7 @@
 
 // components/Footer.tsx
 "use client";
+import { usePathname } from "next/navigation";
 import {
   FaFacebookF,
   FaInstagram,
@@ -55,6 +56,12 @@ import {
 } from "react-icons/fa6";
 
 export default function Footer() {
+  const pathname = usePathname();
+  
+  if(pathname.includes('/dashboard')){
+    return null;
+  }
+
   return (
     <footer className="bg-black text-white px-6 py-12">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start justify-between gap-6 md:gap-12">
