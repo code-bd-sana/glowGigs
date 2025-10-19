@@ -3,8 +3,6 @@ import { JobType } from "@/types/job.types";
 import Job from "./job.model";
 
 
-// import JobModel from "./Job.model";
-
 // 🟢 Create a new job
 export const createJob = async (data: JobType) => {
   await dbConnect();
