@@ -12,6 +12,12 @@ const NavBar = () => {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
+
+  if(pathname.includes('/dashboard')){
+    return null;
+  }
+
+
   const getLinkClassName = (path: string) => {
     const base =
       'text-[16px] font-medium text-black relative w-fit after:absolute after:left-0 after:bottom-0 after:h-[1.5px] after:bg-black after:transition-all after:duration-300';
