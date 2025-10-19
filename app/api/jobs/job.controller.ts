@@ -15,6 +15,7 @@ export const getAllJobs = async () => {
   await dbConnect();
   const jobs = await JobModel.find();
   return jobs;
+  console.log('hey man');
 };
 
 // 🟢 Get job by ID
