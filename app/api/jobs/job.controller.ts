@@ -1,7 +1,7 @@
 import { dbConnect } from "@/lib/dbConnect";
 
-import { JobType } from "@/types/job.types.ts";
-import JobModel from "./Job.model.ts";
+import { JobType } from "@/types/job.types";
+import JobModel from "./job.model";
 
 // 🟢 Create a new job
 export const createJob = async (data: JobType) => {
