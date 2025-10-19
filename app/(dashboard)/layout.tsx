@@ -1,7 +1,7 @@
-export default function AdminDashboardLayout({children}: {children: React.ReactNode}) {
-    return (
-        <section>
-            {children}
-        </section>
-    );
+import React from 'react'
+
+export default function layout() {
+  return (
+    <div>layout</div>
+  )
 }

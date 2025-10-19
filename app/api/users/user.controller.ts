@@ -1,6 +1,7 @@
 import { dbConnect } from "@/lib/dbConnect";
 import User from "./user.model";
 import bcrypt from "bcryptjs";
+import { IUser } from "@/types/user.types";
 
 export const getAllUser = async()=>{
     await dbConnect();
@@ -8,7 +9,7 @@ export const getAllUser = async()=>{
    return users
 }
 
-export const saveUser = async(data:any)=>{
+export const saveUser = async(data:IUser)=>{
 
 await dbConnect();
        const password = data?.password;
