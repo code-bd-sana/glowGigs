@@ -31,8 +31,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       
       {/* Sidebar */}
       <div className={`
-        fixed lg:static inset-y-0 left-0 z-50
-        transform transition-transform duration-300 ease-in-out
+        fixed lg:sticky top-0 left-0 z-50 bg-white
+          h-screen  transition-transform duration-300 ease-in-out
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         <Sidebar onClose={closeSidebar} />
@@ -41,7 +41,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Main Content */}
       <main className="flex-1 lg:ml-0 min-w-0">
         <DashboardNavbar onMenuClick={toggleSidebar} />
-        <div className="p-4 lg:p-6">{children}</div>
+        <div className="p-4 mt-8 lg:p-6">{children}</div>
       </main>
     </div>
   );
