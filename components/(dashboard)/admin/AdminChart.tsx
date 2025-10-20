@@ -24,6 +24,7 @@ export default function AdminChart() {
       },
     ],
   };
+  // dekha jak ki hoi
 
   const options = {
     responsive: true,
