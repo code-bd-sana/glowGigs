@@ -7,7 +7,8 @@ import AdminPieChart from './admin/AdminPieChart'
 export default function AdminDashboard() {
   return (
     <div>
-     <AdminCard/>  
+     <AdminCard/> 
+      {/*joy bangla  */}
 
 <div className='lg:flex mt-8 gap-8 overflow-hidden'>
 <div className='lg:w-[40%]'>
