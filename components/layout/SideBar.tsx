@@ -9,13 +9,15 @@ import {
   FiFileText,
   FiGift,
   FiDollarSign,
+  FiUser,
+  FiX,
   FiPlusCircle,
-} from "react-icons/fi";
+} from "react-icons/fi"
 import { MdOutlineWorkspacePremium } from "react-icons/md";
 import { RiHandbagLine } from "react-icons/ri";
 
 const sidebarItems = [
-  { name: "Dashboard", icon: <FiHome />, href: "dashboard/" },
+  { name: "Dashboard", icon: <FiHome />, href: "/dashboard" },
   { name: "Job Posters", icon: <FiUsers />, href: "/dashboard/job-posters" },
   {
     name: "Job Applicants",
@@ -34,32 +36,59 @@ const sidebarItems = [
   },
 ];
 
-export default function Sidebar() {
-  const pathname = usePathname();
+interface SidebarProps {
+  onClose?: () => void;
+}
+
+export default function Sidebar({ onClose }: SidebarProps) {
+  const pathname = usePathname()
+
+  const handleLinkClick = () => {
+    // Close sidebar on mobile when a link is clicked
+    if (onClose && window.innerWidth < 1024) {
+      onClose();
+    }
+  };
 
   return (
-    <aside className="w-[260px] bg-white border-r px-6 py-4">
-      <h1 className="text-2xl text-center font-bold mb-6">GlowGigs</h1>
-      <div className="space-y-2">
-        {sidebarItems.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`flex items-center gap-3 px-4 py-2 rounded-md text-sm font-medium transition-colors
-              ${
-                isActive
-                  ? "bg-blue-100 text-blue-600"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-            >
-              <span className="text-lg">{item.icon}</span>
-              {item.name}
-            </Link>
-          );
-        })}
+    <aside className="w-[260px] h-screen bg-white flex flex-col">
+      {/* Header with close button for mobile */}
+      <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 lg:border-none">
+        <h6 className="text-[22px] font-bold text-black">GlowGigs</h6>
+        {/* Close button - only visible on mobile */}
+        <button 
+          onClick={onClose}
+          className="lg:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
+        >
+          <FiX className="text-lg text-gray-600" />
+        </button>
+      </div>
+
+      {/* Navigation Items */}
+      <div className="flex-1 px-6 py-5 overflow-y-auto">
+        <nav className="space-y-1">
+          {sidebarItems.map((item) => {
+            const isActive = pathname === item.href
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                onClick={handleLinkClick}
+                className={`flex items-center px-4 py-3 my-3 rounded-md text-lg font-medium
+                  transition-all border-l-4
+                  ${
+                    isActive
+                      ? "bg-blue-50 text-blue-600 border-blue-500"
+                      : "text-gray-700 bg-[#F8FAFC] border-transparent hover:bg-gray-50 hover:text-gray-900"
+                  }`}
+              >
+                <span className="text-lg mr-3">{item.icon}</span>
+                {item.name}
+              </Link>
+            )
+          })}
+        </nav>
       </div>
     </aside>
-  );
+  )
 }
