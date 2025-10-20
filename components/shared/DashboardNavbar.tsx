@@ -9,7 +9,7 @@ interface DashboardNavbarProps {
   onMenuClick: () => void;
 }
 
-const DashboardNavbar: React.FC<DashboardNavbarProps> = ({ onMenuClick }) => {
+export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -55,7 +55,8 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({ onMenuClick }) => {
         {/* Mobile menu button */}
         <button
           onClick={onMenuClick}
-          className="lg:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
+          className="lgonMenuClick:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
+
         >
           <FiMenu className="text-xl text-gray-600" />
         </button>
@@ -251,5 +252,3 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({ onMenuClick }) => {
     </div>
   );
 };
-
-export default DashboardNavbar;
