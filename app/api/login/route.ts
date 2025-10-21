@@ -21,7 +21,7 @@ export const POST = async (req: NextRequest) => {
     if (!compare) {
       return NextResponse.json({
         message: "Wrong Password!",
-      });
+      }, {status:401});
     }
 
     const userDetails = await getUser(email);
