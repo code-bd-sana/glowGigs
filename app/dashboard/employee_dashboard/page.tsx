@@ -51,7 +51,7 @@ const jobsData = [
 
 export default function Dashboard() {
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card title="Total Jobs Posted" value={24} icon={<FaBriefcase />} />
         <Card title="Active Jobs" value={18} icon={<IoBagCheckOutline />} />
@@ -60,7 +60,7 @@ export default function Dashboard() {
           title="Membership Status"
           value="Premium"
           icon={<MdWorkspacePremium />}
-        /> c
+        />
       </div>
       <div className="flex flex-col lg:flex-row gap-6">
         <LatestApplications applicants={applicants} />
