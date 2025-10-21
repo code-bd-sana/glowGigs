@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer/Footer";
+import ReduxProvider from "./provider/ReduxProvider";
 
 // Noir font
 const noir = localFont({
@@ -33,10 +34,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${noir.variable} ${lato.variable}`}>
       <body>
-        <NavBar/>
-        {children}
-        <Footer/>
-        </body>
+        <ReduxProvider>
+          <NavBar />
+          {children}
+          <Footer />
+        </ReduxProvider>
+      </body>
     </html>
   );
 }
