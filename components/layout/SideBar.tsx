@@ -22,9 +22,9 @@ const sidebarItems = [
   {
     name: "Job Applicants",
     icon: <FiFileText />,
-    href: "/admin/job-applicants",
+    href: "/dashboard/job-applicants",
   },
-  { name: "Manage Jobs", icon: <FiGift />, href: "/admin/manage-jobs" },
+  { name: "Manage Jobs", icon: <FiGift />, href: "/dashboard/manage-jobs" },
   { name: "Payments", icon: <FiDollarSign />, href: "/admin/payments" },
   { name: "Create Job Post", icon: <FiPlusCircle />, href: "/admin/profile" },
   { name: "My Jobs", icon: <RiHandbagLine />, href: "/admin/profile" },
@@ -51,10 +51,10 @@ export default function Sidebar({ onClose }: SidebarProps) {
   };
 
   return (
-    <aside className="w-[260px] h-screen bg-white flex flex-col">
+    <aside className="w-[260px]  h-dvh bg-white flex flex-col">
       {/* Header with close button for mobile */}
       <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 lg:border-none">
-        <h6 className="text-[22px] font-bold text-black">GlowGigs</h6>
+        <h6 className="text-[22px] text-center flex justify-center ml-10 font-bold text-black">GlowGigs</h6>
         {/* Close button - only visible on mobile */}
         <button 
           onClick={onClose}
