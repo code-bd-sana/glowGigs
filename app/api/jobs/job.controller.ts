@@ -1,13 +1,19 @@
 import { dbConnect } from "@/lib/dbConnect";
 import { JobType } from "@/types/job.types";
 import Job from "./job.model";
+import { NextRequest, NextResponse } from "next/server";
 
-
-// 🟢 Create a new job
 export const createJob = async (data: JobType) => {
-  await dbConnect();
-  const job = await Job.create(data);
-  return job;
+  try {
+    await dbConnect();
+    const newJob = await Job.create(data);
+    return NextResponse.json({ success: true, data: newJob }, { status: 201 });
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : "An unknown error occurred";
+
+    return NextResponse.json({ success: false, message }, { status: 500 });
+  }
 };
 
 // 🟢 Get all jobs
@@ -15,7 +21,7 @@ export const getAllJobs = async () => {
   await dbConnect();
   const jobs = await Job.find();
   return jobs;
-  console.log('hey man');
+  console.log("hey man");
 };
 
 // 🟢 Get job by ID

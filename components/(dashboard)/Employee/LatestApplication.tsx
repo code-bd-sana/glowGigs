@@ -30,7 +30,7 @@ const LatestApplications: React.FC<LatestApplicationsProps> = ({ applicants }) =
         {applicants.map((applicant, index) => (
           <li key={index} className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-[#E5E7EB] flex items-center justify-center">
                 {applicant.name[0]}
               </div>
               <div>
@@ -38,8 +38,8 @@ const LatestApplications: React.FC<LatestApplicationsProps> = ({ applicants }) =
                 <p className="text-gray-500 text-sm">{applicant.role}</p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <span className={`px-2 py-1 rounded-xl text-xs ${statusColors[applicant.status]}`}>
+            <div className="flex gap-2 items-center space-x-2">
+              <span className={`px-3 py-1 rounded-xl text-xs ${statusColors[applicant.status]}`}>
                 {applicant.status}
               </span>
               <span className="text-gray-400 text-xs">{applicant.time}</span>

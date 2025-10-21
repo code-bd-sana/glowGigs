@@ -1,18 +1,17 @@
-import mongoose, { Document } from "mongoose";
+import  { Document, Types } from "mongoose";
 
 export interface JobType extends Document {
   title: string;
   description: string;
   company: string;
   location: string;
-  employmentType: "Full-time" | "Part-time" | "Internship" | "Remote";
-  salaryRange?: {
-    min: number;
-    max: number;
-  };
-  skillsRequired: string[];
+  jobType: "Full-time" | "Part-time" | "Internship" | "Remote";
+  minSalary?: number;
+  maxSalary?: number;
+  skillsRequired?: string[];
   experienceLevel: "Entry" | "Mid" | "Senior";
-  postedBy: mongoose.Types.ObjectId;
-  status: "Open" | "Closed";
+  postedBy: Types.ObjectId;
   thumbnail?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
