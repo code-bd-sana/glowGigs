@@ -1,17 +1,14 @@
 "use client";
-import React from "react";
+
 import OverviewCard from "../JobSeeker/OverviewCard";
 import RecentApplications from "../JobSeeker/RecentApplications";
 import { ApplicationChart } from "../JobSeeker/ApplicationChart";
-//rakib bhai sexy
+
 
 import AdminCard from './admin/AdminCard'
 import AdminChart from './admin/AdminChart'
 import AdminPieChart from './admin/AdminPieChart'
 import React from 'react'
-import AdminCard from './admin/AdminCard'
-import AdminChart from './admin/AdminChart'
-import AdminPieChart from './admin/AdminPieChart'
 
 
 export default function AdminDashboard() {
