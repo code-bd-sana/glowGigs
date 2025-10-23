@@ -26,7 +26,7 @@ const sidebarItems = [
   },
   { name: "Manage Jobs", icon: <FiGift />, href: "/dashboard/manage-jobs" },
   { name: "Payments", icon: <FiDollarSign />, href: "/admin/payments" },
-  { name: "Create Job Post", icon: <FiPlusCircle />, href: "/admin/profile" },
+  { name: "Create Job Post", icon: <FiPlusCircle />, href: "/dashboard/create-job-post" },
   { name: "My Jobs", icon: <RiHandbagLine />, href: "/admin/profile" },
   { name: "Profile", icon: <FaRegUser />, href: "/admin/profile" },
   {
