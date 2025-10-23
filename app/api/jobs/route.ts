@@ -13,11 +13,14 @@ export async function GET() {
   }
 }
 
+// POST create job
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await request.json(); // JSON expected
     return createJob(body);
-  } catch (error) {
-    console.log(error);
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : "Something went wrong";
+    return NextResponse.json({ success: false, message }, { status: 500 });
   }
 }
