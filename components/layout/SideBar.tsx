@@ -10,7 +10,6 @@ import {
   FiFileText,
   FiGift,
   FiDollarSign,
-  FiUser,
   FiX,
   FiPlusCircle,
 } from "react-icons/fi"

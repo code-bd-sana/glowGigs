@@ -1,7 +1,7 @@
 import { dbConnect } from "@/lib/dbConnect";
 import { JobType } from "@/types/job.types";
 import Job from "./job.model";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export const createJob = async (data: JobType) => {
   try {
