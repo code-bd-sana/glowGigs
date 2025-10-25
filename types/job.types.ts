@@ -11,4 +11,5 @@ export interface JobType extends Document {
   // maxSalary?: number;
   description: string;
   thumbnail?: string;
+  perks?: string[];
 }
