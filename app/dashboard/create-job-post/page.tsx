@@ -31,8 +31,8 @@ export default function CreateJobPost() {
     companyName: "",
     companyLocation: "",
     jobType: "",
-    minSalary: "",
-    maxSalary: "",
+    // minSalary: "",
+    // maxSalary: "",
     description: "",
   });
 
