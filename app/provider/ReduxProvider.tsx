@@ -3,6 +3,7 @@
 import React, { ReactNode } from 'react'
 import { Provider } from 'react-redux'
 import { store } from '@/store/store'
+import { SessionProvider } from 'next-auth/react'
 
 interface ReduxProviderProps {
   children: ReactNode
@@ -11,7 +12,9 @@ interface ReduxProviderProps {
 const ReduxProvider: React.FC<ReduxProviderProps> = ({ children }) => {
   return (
     <Provider store={store}>
-      <div>{children}</div>
+ <SessionProvider>
+       <div>{children}</div>
+ </SessionProvider>
     </Provider>
   )
 }

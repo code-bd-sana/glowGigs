@@ -27,6 +27,7 @@ export const GET = async(req:NextRequest)=>{
 
 
 export const POST = async (req: NextRequest) => {
+  console.log("HIT")
   try {
     await dbConnect();
 
@@ -36,8 +37,8 @@ export const POST = async (req: NextRequest) => {
     const existEmail = await User.findOne({email:data?.email});
     if(existEmail){
       return NextResponse.json({
-        messae:"User already exist"
-      })
+        message:"User already exist"
+      }, {status:401})
     }
     
     
@@ -48,6 +49,8 @@ export const POST = async (req: NextRequest) => {
       { status: 200 }
     );
   } catch (error) {
+
+    console.log(error)
     return NextResponse.json(
       { message: "Something went wrong!", error },
       { status: 500 }

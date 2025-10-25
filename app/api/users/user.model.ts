@@ -8,7 +8,10 @@ const userSchema = new Schema<IUser>(
     password: { type: String, required: true },
     phoneNumber: { type: String },
     address: { type: String },
+    img:{type:String},
     role: { type: String, enum: ["JOB_SEEKER", "EMPLOYER"], required: true },
+
+ 
 
  
     dob: { type: String },

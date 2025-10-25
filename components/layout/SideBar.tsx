@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaRegUser } from "react-icons/fa6";
@@ -15,7 +16,33 @@ import {
 import { MdOutlineWorkspacePremium } from "react-icons/md";
 import { RiHandbagLine } from "react-icons/ri";
 
-const sidebarItems = [
+
+ interface SidebarProps {
+  onClose?: () => void;
+}
+
+
+export default function Sidebar({ onClose }: SidebarProps) {
+  const pathname = usePathname()
+
+   const data = useSession();
+
+const role = data?.data?.user?.role
+
+console.log(role, "I am your role")
+
+const EmployeeItems = [
+  { name: "Dashboard", icon: <FiHome />, href: "/dashboard" },
+    { name: "Create Job Post", icon: <FiPlusCircle />, href: "/admin/profile" },
+      { name: "My Jobs", icon: <RiHandbagLine />, href: "/admin/profile" },
+  {
+    name: "Applicants",
+    icon: <FiFileText />,
+    href: "/dashboard/job-applicants",
+  },
+  
+];
+const adminItems = [
   { name: "Dashboard", icon: <FiHome />, href: "/dashboard" },
   { name: "Job Posters", icon: <FiUsers />, href: "/dashboard/job-posters" },
   {
@@ -25,22 +52,24 @@ const sidebarItems = [
   },
   { name: "Manage Jobs", icon: <FiGift />, href: "/dashboard/manage-jobs" },
   { name: "Payments", icon: <FiDollarSign />, href: "/admin/payments" },
-  { name: "Create Job Post", icon: <FiPlusCircle />, href: "/dashboard/create-job-post" },
-  { name: "My Jobs", icon: <RiHandbagLine />, href: "/admin/profile" },
   { name: "Profile", icon: <FaRegUser />, href: "/admin/profile" },
+
+];
+const jobSeekerItems = [
+  { name: "Dashboard", icon: <FiHome />, href: "/dashboard" },
+  { name: "Job Posters", icon: <FiUsers />, href: "/dashboard/my-application" },
   {
-    name: "Subscription",
-    icon: <MdOutlineWorkspacePremium />,
-    href: "/admin/profile",
+    name: "Profile & Resume",
+    icon: <FiFileText />,
+    href: "/dashboard/profile",
   },
+
+
 ];
 
-interface SidebarProps {
-  onClose?: () => void;
-}
 
-export default function Sidebar({ onClose }: SidebarProps) {
-  const pathname = usePathname()
+const sidebarItems = role === "ADMIN" ? adminItems : role == "JOB_SEEKER" ? jobSeekerItems : adminItems
+
 
   const handleLinkClick = () => {
     // Close sidebar on mobile when a link is clicked
@@ -53,7 +82,8 @@ export default function Sidebar({ onClose }: SidebarProps) {
     <aside className="w-[260px]  h-dvh bg-white flex flex-col">
       {/* Header with close button for mobile */}
       <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 lg:border-none">
-        <h6 className="text-[22px] text-center flex justify-center ml-10 font-bold text-black">GlowGigs</h6>
+        <Link href={'/'}>
+        <h6 className="text-[22px] cursor-pointer text-center flex justify-center ml-10 font-bold text-black">GlowGigs</h6></Link>
         {/* Close button - only visible on mobile */}
         <button 
           onClick={onClose}
