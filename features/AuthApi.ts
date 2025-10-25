@@ -22,13 +22,18 @@ export const authApi = createApi({
     method: "POST",
     body: data,
   }),
+  
 
 
     }),
+   getSingleUser: builder.query<any, string>({
+  query: (email) => `/users/${email}`,
+}),
+
 
     
   }),
 });
 
 // Correct hook export for mutation
-export const { useRegisterMutation, useLoginMutation } = authApi;
+export const { useRegisterMutation, useLoginMutation, useGetSingleUserQuery } = authApi;

@@ -39,6 +39,10 @@ export default function RegisterPage() {
     const resp = await register(formData as IUser).unwrap();
     console.log(resp, "kire vai")
     toast.success('Registration Success')
+window.location.href = "/login";
+
+
+
  
       
     } catch (error:any) {

@@ -1,6 +1,7 @@
 "use client";
 import { useLoginMutation } from "@/features/AuthApi";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -130,9 +131,9 @@ console.log(res, "this is res")
         <div className="text-center mt-8">
           <p className="text-gray-600">
             Don't have an account?{" "}
-            <a href="#" className="text-black font-medium hover:underline">
+            <Link href="/register" className="text-black font-medium hover:underline">
               Sign up
-            </a>
+            </Link>
           </p>
         </div>
 

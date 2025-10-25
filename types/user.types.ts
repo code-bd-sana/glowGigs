@@ -4,6 +4,7 @@ interface IuserBase {
   password: string;
   phoneNumber: string;
   address: string;
+  img?:string
 }
 
 interface IJobSeekerFields {
