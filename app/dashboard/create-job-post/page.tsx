@@ -3,10 +3,9 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useCreateJobMutation } from "@/features/JobSlice";
 import { FiUpload } from "react-icons/fi";
-import { JobType } from "@/types/job.types";
 
 export default function CreateJobPost() {
-  const [formData, setFormData] = useState<JobType>({
+  const [formData, setFormData] = useState<JobFormType>({
     title: "",
     department: "",
     companyName: "",
@@ -130,10 +129,10 @@ export default function CreateJobPost() {
             required
           >
             <option value="">Select Department</option>
-            <option value="engineering">Engineering</option>
-            <option value="marketing">Marketing</option>
-            <option value="hr">Human Resources</option>
-            <option value="others">Others</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Human Resources">Human Resources</option>
+            <option value="Others">Others</option>
           </select>
         </div>
       </div>
@@ -183,7 +182,6 @@ export default function CreateJobPost() {
             className="w-full border border-gray-200 rounded-md px-4 py-[13px] text-gray-600"
             required
           >
-            <option value="">Select Job Type</option>
             <option value="Full-time">Full-Time</option>
             <option value="Part-time">Part-Time</option>
             <option value="Remote">Remote</option>
@@ -214,29 +212,29 @@ export default function CreateJobPost() {
             <label
               key={perk}
               className={`flex items-center border rounded-lg px-3 py-2 cursor-pointer transition ${
-                formData.perks?.includes(perk)
+                formData.companyPerks?.includes(perk)
                   ? "border-blue-500 bg-blue-50"
                   : "border-gray-300 hover:bg-gray-50"
               }`}
             >
               <input
                 type="checkbox"
-                name="perks"
-                checked={formData.perks?.includes(perk) || false}
+                className="checkbox checkbox-neutral rounded mr-2" // add a color class
+                checked={formData.companyPerks?.includes(perk) || false}
                 onChange={(e) => {
                   const checked = e.target.checked;
                   setFormData((prev) => {
-                    const perks = prev.perks || [];
+                    const companyPerks = prev.companyPerks || [];
                     return {
                       ...prev,
-                      perks: checked
-                        ? [...perks, perk]
-                        : perks.filter((p) => p !== perk),
+                      companyPerks: checked
+                        ? [...companyPerks, perk]
+                        : companyPerks.filter((p) => p !== perk),
                     };
                   });
                 }}
-                className="mr-2 accent-blue-500"
               />
+
               {perk}
             </label>
           ))}
@@ -281,7 +279,7 @@ export default function CreateJobPost() {
           className="px-5 py-2 border rounded-lg text-gray-600 hover:bg-gray-50"
         >
           Save as Draft
-        </button>
+        </button> */}
         <button
           type="submit"
           disabled={isLoading}
