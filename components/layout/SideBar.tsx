@@ -68,7 +68,7 @@ const jobSeekerItems = [
 ];
 
 
-const sidebarItems = role === "ADMIN" ? adminItems : role == "JOB_SEEKER" ? jobSeekerItems : adminItems
+const sidebarItems = role === "ADMIN" ? adminItems : role == "JOB_SEEKER" ? jobSeekerItems : EmployeeItems
 
 
   const handleLinkClick = () => {
