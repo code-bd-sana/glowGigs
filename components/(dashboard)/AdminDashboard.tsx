@@ -3,16 +3,12 @@
 import OverviewCard from "../JobSeeker/OverviewCard";
 import RecentApplications from "../JobSeeker/RecentApplications";
 import { ApplicationChart } from "../JobSeeker/ApplicationChart";
-
-
-import AdminCard from './admin/AdminCard'
-import AdminChart from './admin/AdminChart'
-import AdminPieChart from './admin/AdminPieChart'
-import React from 'react'
-
+import AdminCard from "./admin/AdminCard";
+import AdminChart from "./admin/AdminChart";
+import AdminPieChart from "./admin/AdminPieChart";
+import React from "react";
 
 export default function AdminDashboard() {
-
   return (
     <div>
      

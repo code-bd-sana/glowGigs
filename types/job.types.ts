@@ -1,17 +1,15 @@
-import  { Document, Types } from "mongoose";
+import { Document } from "mongoose";
 
 export interface JobType extends Document {
   title: string;
+  department: string;
+  companyName: string;
+  companyLocation: string;
+  jobType: string;
+  payType: string;
+  // minSalary?: number;
+  // maxSalary?: number;
   description: string;
-  company: string;
-  location: string;
-  jobType: "Full-time" | "Part-time" | "Internship" | "Remote";
-  minSalary?: number;
-  maxSalary?: number;
-  skillsRequired?: string[];
-  experienceLevel: "Entry" | "Mid" | "Senior";
-  postedBy: Types.ObjectId;
   thumbnail?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  perks?: string[];
 }
