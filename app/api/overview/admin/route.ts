@@ -8,6 +8,7 @@ export const GET = async(req:NextRequest)=>{
 
         return NextResponse.json({
             message:"Success",
+            data:res
             
 
         })

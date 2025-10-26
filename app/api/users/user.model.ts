@@ -33,6 +33,23 @@ const userSchema = new Schema<IUser>(
       type: String,
       enum: ["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"],
     },
+    status:{
+      type: String,
+      default:"active"
+    },
+      postedJob:{
+        type:Number,
+        default:0
+      },
+  totalApplicants: {
+    type:Number,
+    default:0
+  },
+   applications:{
+    type:Number,
+    default:0
+
+   },
    
     isVerified: { type: Boolean, default: false },
   },
