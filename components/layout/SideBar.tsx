@@ -33,8 +33,8 @@ console.log(role, "I am your role")
 
 const EmployeeItems = [
   { name: "Dashboard", icon: <FiHome />, href: "/dashboard" },
-    { name: "Create Job Post", icon: <FiPlusCircle />, href: "/admin/profile" },
-      { name: "My Jobs", icon: <RiHandbagLine />, href: "/admin/profile" },
+    { name: "Create Job Post", icon: <FiPlusCircle />, href: "/dashboard/create-job-post" },
+      { name: "My Jobs", icon: <RiHandbagLine />, href: "/dashboard/my-jobs" },
   {
     name: "Applicants",
     icon: <FiFileText />,
