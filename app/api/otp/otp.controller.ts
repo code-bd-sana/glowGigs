@@ -3,9 +3,17 @@ import Otp from "./otp.model";
 import { dbConnect } from "@/lib/dbConnect";
 
 export const sendOtp = async(email:string)=>{
-
+    
+    
     await dbConnect();
+
+    const deleteExistOtp = await Otp.deleteMany({email:email});
+    
+
+
       const otp = (await otpGenaretor()).toString();
+
+      console.log(otp, "otp generate holo")
              const newOtp = new Otp({email:email, otp:otp});
         await newOtp.save();
            const htmlTemplate = `

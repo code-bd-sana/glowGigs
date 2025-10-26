@@ -46,7 +46,7 @@ const NavBar = () => {
           <Link href="/plans-pricing" className={getLinkClassName('/plans-pricing')}>Plans & Pricing</Link>
           <Link href="/business" className={getLinkClassName('/business')}>List Your Business</Link>
           <Link href="/professionals" className={getLinkClassName('/professionals')}>Professionals</Link>
-          <Link href="#marina">
+          <Link href="/dashboard">
            <div className='text-black'>
              <MdOutlineShoppingBag size={24} />
            </div>
@@ -55,7 +55,7 @@ const NavBar = () => {
 
         {/* Mobile Icons */}
         <div className="flex items-center gap-4 lg:hidden">
-          <Link href="#marina">
+          <Link href="/dashboard">
              <div className='text-black'>
              <MdOutlineShoppingBag size={24} />
            </div>

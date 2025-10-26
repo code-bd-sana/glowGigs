@@ -1,9 +1,12 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
-import profileImg from '@/app/(public)/dashboard/profile.png';
-import Image from 'next/image';
-import { FiMenu } from 'react-icons/fi';
+import React, { useState, useRef, useEffect } from "react";
+import profileImg from "@/app/(public)/dashboard/profile.png";
+import Image from "next/image";
+import { FiMenu } from "react-icons/fi";
+import { signOut, useSession } from "next-auth/react";
+import { useGetSingleUserQuery } from "@/features/AuthApi";
+import { ImUser } from "react-icons/im";
 
 interface DashboardNavbarProps {
   onMenuClick: () => void;
@@ -11,62 +14,81 @@ interface DashboardNavbarProps {
 
 export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
   const [open, setOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const data = useSession();
+
+  const user = data?.data?.user;
+  const email = user?.email;
+
+  const { data: singleUser, isLoading } = useGetSingleUserQuery(email!, {
+    skip: !email,
+  });
 
   // Close dropdown if clicked outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     // Implement search functionality
-    console.log('Searching for:', searchQuery);
+    console.log("Searching for:", searchQuery);
     // You can add your search logic here
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // Implement logout logic
-    alert('Logging out...');
+
+    await signOut();
+    
     setOpen(false);
   };
 
   const handleProfile = () => {
-    alert('Navigating to profile...');
+    alert("Navigating to profile...");
     setOpen(false);
   };
 
   const handleSettings = () => {
-    alert('Navigating to settings...');
+    alert("Navigating to settings...");
     setOpen(false);
   };
 
   return (
-    <div className="w-full fixed lg:sticky top-0 left-0 z-50 bg-white
-    shadow-sm px-4 py-3 flex items-center justify-between">
+    <div
+      className="w-full fixed lg:sticky top-0 left-0 z-50 bg-white
+    shadow-sm px-4 py-3 flex items-center justify-between"
+    >
       {/* Left - Mobile Menu Button & Title */}
       <div className="flex items-center gap-4">
         {/* Mobile menu button */}
         <button
           onClick={onMenuClick}
           className="lgonMenuClick:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
-
         >
           <FiMenu className="text-xl text-gray-600" />
         </button>
-        
-        <h4 className="text-base font-semibold text-gray-900">Admin Dashboard</h4>
+
+        <h4 className="text-base font-semibold text-gray-900">
+          Admin Dashboard
+        </h4>
       </div>
 
       {/* Center - Search Bar */}
-      <form onSubmit={handleSearch} className="relative max-w-[400px] lg:max-w-[500px] xl:max-w-[600px] bg-[#F8FAFC] mx-4 flex-1 hidden md:block">
+      <form
+        onSubmit={handleSearch}
+        className="relative max-w-[400px] lg:max-w-[500px] xl:max-w-[600px] bg-[#F8FAFC] mx-4 flex-1 hidden md:block"
+      >
         <input
           type="text"
           value={searchQuery}
@@ -138,22 +160,26 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
             onClick={() => setOpen(!open)}
             className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 rounded-lg px-2 py-1 transition-colors"
           >
-            <Image
-              src={profileImg}
-              alt="Profile"
-              width={32}
-              height={32}
-              className="w-8 h-8 rounded-full object-cover"
-            />
+            {singleUser?.data?.img ? (
+              <Image
+                src={singleUser?.data?.img}
+                alt="Profile"
+                width={32}
+                height={32}
+                className="w-8 h-8 rounded-full object-cover"
+              />
+            ) : (
+              <ImUser className="text-3xl" />
+            )}
             <div className="hidden sm:block leading-tight">
               <p className="text-sm font-medium whitespace-nowrap text-gray-900">
-                Alamin Khan
+                {singleUser?.data?.fullName}
               </p>
-              <p className="text-xs text-gray-500">Admin</p>
+              <p className="text-xs text-gray-500">{singleUser?.data?.role}</p>
             </div>
             <svg
               className={`w-4 h-4 text-gray-500 transition-transform ${
-                open ? 'rotate-180' : ''
+                open ? "rotate-180" : ""
               }`}
               fill="none"
               stroke="currentColor"
@@ -173,7 +199,7 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
           {open && (
             <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50 py-1">
               {/* Profile Option */}
-              <button 
+              <button
                 onClick={handleProfile}
                 className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
               >
@@ -195,15 +221,14 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
               </button>
 
               {/* Settings Option */}
-        
 
               {/* Divider */}
               <div className="my-1 border-t border-gray-200"></div>
-              
+
               {/* Logout Option */}
-              <button 
+              <button
                 onClick={handleLogout}
-                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center gap-2 transition-colors"
+                className="w-full cursor-pointer text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center gap-2 transition-colors"
               >
                 <svg
                   className="w-4 h-4"
@@ -227,4 +252,4 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
       </div>
     </div>
   );
-};
+}
