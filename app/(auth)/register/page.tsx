@@ -1,6 +1,8 @@
 "use client";
 import { useRegisterMutation } from '@/features/AuthApi';
 import { IUser } from '@/types/user.types';
+import { SerializedError } from '@reduxjs/toolkit';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import React, { useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 
@@ -15,7 +17,7 @@ export default function RegisterPage() {
     role: 'JOB_SEEKER'
   });
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value:string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -45,11 +47,19 @@ window.location.href = "/login";
 
  
       
-    } catch (error:any) {
+    } catch (error) {
+  const err = error as FetchBaseQueryError | SerializedError;
 
-      console.log(error,"hey young man")
-      toast.error(error?.data?.message)
-    }
+  // RTK query error হলে
+  if ("data" in err && err.data && typeof err.data === "object") {
+    const apiError = err.data as { message?: string };
+    toast.error(apiError.message ?? "Something went wrong!");
+    return;
+  }
+
+
+
+}
     // Handle form submission here
   };
 

@@ -7,7 +7,11 @@ export const POST = async(req:NextRequest)=>{
     try {
 
         const {email} =await req.json();
+
+        console.log(email, "ami email")
         await sendOtp(email);
+
+    
       
 
     return NextResponse.json({
@@ -17,6 +21,8 @@ export const POST = async(req:NextRequest)=>{
 
         
     } catch (error) {
+
+        console.log(error, "kiser errro")
         return NextResponse.json({
             message:"Something went wrong",
             error

@@ -21,7 +21,7 @@ await dbConnect();
         return saved;
 }
 
-export const getSingleUser = async (email:String) =>{
+export const getSingleUser = async (email:string) =>{
     const user = await User.findOne({email:email});
     return user;
 }

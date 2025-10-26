@@ -1,5 +1,7 @@
+import { data } from "@/components/JobSeeker/ApplicationChart";
 import { IUser } from "@/types/user.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"; 
+import { strict } from "assert";
 
 export const authApi = createApi({
   reducerPath: "authApi",
@@ -16,7 +18,7 @@ export const authApi = createApi({
         body: data,
       }),
     }),
-  login: builder.mutation<{data:any,}, {email:string; password:string}>({
+  login: builder.mutation({
   query: (data) => ({
     url: "/login",
     method: "POST",
@@ -29,6 +31,22 @@ export const authApi = createApi({
    getSingleUser: builder.query<any, string>({
   query: (email) => `/users/${email}`,
 }),
+sendOtp:builder.mutation({
+  query:(email:string)=>({
+    url:"/otp",
+    method:"POST",
+    body:{email}
+  })
+}),
+
+changePasswordWithOtp: builder.mutation({
+  query:(data)=>({
+    url:'/forgotPassword',
+    method:"POST",
+    body:data
+  })
+})
+
 
 
     
@@ -36,4 +54,4 @@ export const authApi = createApi({
 });
 
 // Correct hook export for mutation
-export const { useRegisterMutation, useLoginMutation, useGetSingleUserQuery } = authApi;
+export const { useRegisterMutation, useLoginMutation, useGetSingleUserQuery, useSendOtpMutation, useChangePasswordWithOtpMutation } = authApi;
