@@ -279,7 +279,7 @@ export default function CreateJobPost() {
           className="px-5 py-2 border rounded-lg text-gray-600 hover:bg-gray-50"
         >
           Save as Draft
-        </button> */}
+        </button> 
         <button
           type="submit"
           disabled={isLoading}
