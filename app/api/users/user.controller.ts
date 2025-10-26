@@ -20,3 +20,21 @@ await dbConnect();
         const saved = await newUser.save();
         return saved;
 }
+
+export const getSingleUser = async (email:string) =>{
+    const user = await User.findOne({email:email});
+    return user;
+}
+
+
+export const isExistUser = async(email:string)=>{
+
+    const user = await User.findOne({email:email});
+    if(user){
+        return true
+    }
+    else{
+        return false
+    }
+
+}

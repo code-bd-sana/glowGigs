@@ -4,10 +4,11 @@ interface IuserBase {
   password: string;
   phoneNumber: string;
   address: string;
+  img?:string
 }
 
 interface IJobSeekerFields {
-  role: "jobSeeker";
+  role: "JOB_SEEKER";
   dob: string;
   isAdult: boolean;
   isAuthorizedToWorkInUS: boolean;
@@ -20,7 +21,7 @@ interface IJobSeekerFields {
 }
 
 interface IEmpoloyerFields {
-  role: "employer";
+  role: "EMPLOYER";
   companyName: string;
   companyWebsite?: string;
   companyDescription?: string;
@@ -32,3 +33,4 @@ interface IEmpoloyerFields {
 
 
 export type IUser = (IuserBase & IJobSeekerFields ) | (IuserBase & IEmpoloyerFields )
+
