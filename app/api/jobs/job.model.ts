@@ -14,13 +14,23 @@ const JobSchema = new Schema<JobType>(
     },
     payType: {
       type: String,
-      enum: ["Competitive", "Performance Bonus", "Tips(for service-based roles)","Employee Discount on products/services","Referral bonus program","Paid training or certification"],
+      enum: [
+        "Competitive",
+        "Performance Bonus",
+        "Tips(for service-based roles)",
+        "Employee Discount on products/services",
+        "Referral bonus program",
+        "Paid training or certification",
+      ],
       required: true,
     },
-    // minSalary: { type: Number },
-    // maxSalary: { type: Number },
+
     description: { type: String, required: true },
     thumbnail: { type: String, default: "" },
+    companyPerks: {
+      type: [String],
+      default: [],
+    },
   },
   { timestamps: true }
 );
