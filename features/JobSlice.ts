@@ -1,13 +1,22 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
 // Payload type sent to backend
 export interface JobPayload {
   title: string;
   department: string;
-  jobType: string;
-  minSalary: number;
-  maxSalary: number;
+  companyName: string;
+  companyLocation: string;
+  jobType: "Full-time" | "Part-time" | "Remote";
+  payType:
+    | "Competitive"
+    | "Performance Bonus"
+    | "Tips(for service-based roles)"
+    | "Employee Discount on products/services"
+    | "Referral bonus program"
+    | "Paid training or certification";
   description: string;
-  thumbnail: string;
+  companyPerks?: string[];
+  thumbnail?: string;
 }
 
 // Response type from backend
@@ -15,6 +24,7 @@ export interface JobResponse {
   success: boolean;
   data: JobPayload & { _id: string; createdAt: string; updatedAt: string };
 }
+
 export const jobApi = createApi({
   reducerPath: "jobApi",
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
@@ -26,7 +36,7 @@ export const jobApi = createApi({
         body: jobPayload,
       }),
     }),
-    getJobs: builder.query({
+    getJobs: builder.query<JobResponse[], void>({
       query: () => "/jobs",
     }),
   }),

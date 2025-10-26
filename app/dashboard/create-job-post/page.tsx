@@ -3,41 +3,39 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useCreateJobMutation } from "@/features/JobSlice";
 import { FiUpload } from "react-icons/fi";
-import { JobType } from "@/types/job.types";
 
-// Type for form fields
-// interface JobForm {
-//   title: string;
-//   department: string;
-//   companyName: string;
-//   companyLocation: string;
-//   jobType: "Full-time" | "Part-time" | "Remote";
-//   payType:
-//     | "Competitive"
-//     | "Performance Bonus"
-//     | "Tips(for service-based roles)"
-//     | "Employee Discount on products/services"
-//     | "Referral bonus program"
-//     | "Paid training or certification";
-//   minSalary: string;
-//   maxSalary: string;
-//   description: string;
-// }
+// ✅ Updated interface with strict unions
+export interface JobFormType {
+  title: string;
+  department: string;
+  companyName: string;
+  companyLocation: string;
+  jobType: "Full-time" | "Part-time" | "Remote";
+  payType:
+    | "Competitive"
+    | "Performance Bonus"
+    | "Tips(for service-based roles)"
+    | "Employee Discount on products/services"
+    | "Referral bonus program"
+    | "Paid training or certification";
+  description: string;
+  companyPerks: string[];
+  thumbnail?: string;
+}
 
 export default function CreateJobPost() {
-  const [formData, setFormData] = useState<JobType>({
+  const [formData, setFormData] = useState<JobFormType>({
     title: "",
     department: "",
     companyName: "",
     companyLocation: "",
-    jobType: "",
-    minSalary: "",
-    maxSalary: "",
+    jobType: "Full-time", // default valid value
+    payType: "Competitive", // default valid value
     description: "",
+    companyPerks: [],
   });
 
   const [thumbnail, setThumbnail] = useState<File | null>(null);
-
   const [createJob, { isLoading }] = useCreateJobMutation();
 
   // Handle input/select/textarea changes
@@ -50,9 +48,7 @@ export default function CreateJobPost() {
 
   // Handle file selection
   const handleThumbnailChange = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target);
     const file = e.target.files?.[0];
-    console.log(e.target.files);
     if (file) setThumbnail(file);
   };
 
@@ -82,28 +78,19 @@ export default function CreateJobPost() {
         thumbnailUrl = await uploadThumbnail(thumbnail);
       }
 
-      const jobPayload = {
-        ...formData,
-        // minSalary: Number(formData.minSalary),
-        // maxSalary: Number(formData.maxSalary),
-        thumbnail: thumbnailUrl,
-      };
-
-      console.log("Submitting job JSON:", jobPayload);
-      // 👇 Log all form values before sending
-      console.log("📝 Form Data before submission:", formData);
-      console.log("🖼️ Selected Thumbnail:", thumbnail);
-      console.log("📦 Final Job Payload (to backend):", jobPayload);
-      await createJob(jobPayload).unwrap(); // RTK Query mutation
+      const jobPayload = { ...formData, thumbnail: thumbnailUrl };
+      await createJob(jobPayload).unwrap();
 
       alert("Job created successfully!");
       setFormData({
         title: "",
         department: "",
-        jobType: "",
-        // minSalary: "",
-        // maxSalary: "",
+        companyName: "",
+        companyLocation: "",
+        jobType: "Full-time",
+        payType: "Competitive",
         description: "",
+        companyPerks: [],
       });
       setThumbnail(null);
     } catch (error) {
@@ -147,23 +134,24 @@ export default function CreateJobPost() {
             required
           >
             <option value="">Select Department</option>
-            <option value="engineering">Engineering</option>
-            <option value="marketing">Marketing</option>
-            <option value="hr">Human Resources</option>
-            <option value="others">Others</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Human Resources">Human Resources</option>
+            <option value="Others">Others</option>
           </select>
         </div>
       </div>
-      {/* Company & Location */}
+
+      {/* Company Name & Location */}
       <div className="grid md:grid-cols-2 gap-6 mb-4">
         <div>
           <label className="block text-sm font-medium text-gray-600 mb-1">
             Company Name
           </label>
           <input
-            name="title"
+            name="companyName"
             type="text"
-            value={formData.title}
+            value={formData.companyName}
             onChange={handleChange}
             placeholder="Your Company Name"
             className="w-full border border-gray-200 rounded-md px-4 py-3 focus:ring focus:ring-blue-100 outline-none"
@@ -175,18 +163,18 @@ export default function CreateJobPost() {
             Company Location
           </label>
           <input
-            name="title"
+            name="companyLocation"
             type="text"
-            value={formData.title}
+            value={formData.companyLocation}
             onChange={handleChange}
-            placeholder="Your Company Name"
+            placeholder="Your Company Location"
             className="w-full border border-gray-200 rounded-md px-4 py-3 focus:ring focus:ring-blue-100 outline-none"
             required
           />
         </div>
       </div>
 
-      {/* Job Type & Company perks */}
+      {/* Job Type & Pay Type */}
       <div className="grid md:grid-cols-2 gap-6 mb-4">
         <div>
           <label className="block text-sm font-medium text-gray-600 mb-1">
@@ -199,7 +187,6 @@ export default function CreateJobPost() {
             className="w-full border border-gray-200 rounded-md px-4 py-[13px] text-gray-600"
             required
           >
-            <option value="">Select Job Type</option>
             <option value="Full-time">Full-Time</option>
             <option value="Part-time">Part-Time</option>
             <option value="Remote">Remote</option>
@@ -210,18 +197,25 @@ export default function CreateJobPost() {
             Pay Type
           </label>
           <select
-            name="department"
-            value={formData.department}
+            name="payType"
+            value={formData.payType}
             onChange={handleChange}
             className="w-full border border-gray-200 rounded-md px-4 py-[13px] text-gray-600"
             required
           >
-            <option value="">Select</option>
-            <option value="engineering">Competitive</option>
-            <option value="marketing">Performance Bonus</option>
-            <option value="hr">Tips(for service-based roles)</option>
-            <option value="others">
+            <option value="Competitive">Competitive</option>
+            <option value="Performance Bonus">Performance Bonus</option>
+            <option value="Tips(for service-based roles)">
+              Tips(for service-based roles)
+            </option>
+            <option value="Employee Discount on products/services">
               Employee Discount on products/services
+            </option>
+            <option value="Referral bonus program">
+              Referral bonus program
+            </option>
+            <option value="Paid training or certification">
+              Paid training or certification
             </option>
           </select>
         </div>
@@ -241,6 +235,7 @@ export default function CreateJobPost() {
           required
         />
       </div>
+
       {/* Company Perks */}
       <div className="mb-6">
         <label className="block text-sm font-medium mb-3">Company Perks</label>
@@ -259,29 +254,29 @@ export default function CreateJobPost() {
             <label
               key={perk}
               className={`flex items-center border rounded-lg px-3 py-2 cursor-pointer transition ${
-                formData.perks?.includes(perk)
+                formData.companyPerks?.includes(perk)
                   ? "border-blue-500 bg-blue-50"
                   : "border-gray-300 hover:bg-gray-50"
               }`}
             >
               <input
                 type="checkbox"
-                name="perks"
-                checked={formData.perks?.includes(perk) || false}
+                className="checkbox checkbox-neutral rounded mr-2" // add a color class
+                checked={formData.companyPerks?.includes(perk) || false}
                 onChange={(e) => {
                   const checked = e.target.checked;
                   setFormData((prev) => {
-                    const perks = prev.perks || [];
+                    const companyPerks = prev.companyPerks || [];
                     return {
                       ...prev,
-                      perks: checked
-                        ? [...perks, perk]
-                        : perks.filter((p) => p !== perk),
+                      companyPerks: checked
+                        ? [...companyPerks, perk]
+                        : companyPerks.filter((p) => p !== perk),
                     };
                   });
                 }}
-                className="mr-2 accent-blue-500"
               />
+
               {perk}
             </label>
           ))}
@@ -320,13 +315,13 @@ export default function CreateJobPost() {
 
       {/* Buttons */}
       <div className="flex justify-end gap-4">
-        <button
+        {/* <button
           type="submit"
           disabled={isLoading}
           className="px-5 py-2 border rounded-lg text-gray-600 hover:bg-gray-50"
         >
           Save as Draft
-        </button>
+        </button> */}
         <button
           type="submit"
           disabled={isLoading}
