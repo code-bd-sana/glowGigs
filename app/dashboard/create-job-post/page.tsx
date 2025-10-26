@@ -4,35 +4,15 @@ import { useState, ChangeEvent, FormEvent } from "react";
 import { useCreateJobMutation } from "@/features/JobSlice";
 import { FiUpload } from "react-icons/fi";
 
-// ✅ Updated interface with strict unions
-export interface JobFormType {
-  title: string;
-  department: string;
-  companyName: string;
-  companyLocation: string;
-  jobType: "Full-time" | "Part-time" | "Remote";
-  payType:
-    | "Competitive"
-    | "Performance Bonus"
-    | "Tips(for service-based roles)"
-    | "Employee Discount on products/services"
-    | "Referral bonus program"
-    | "Paid training or certification";
-  description: string;
-  companyPerks: string[];
-  thumbnail?: string;
-}
-
 export default function CreateJobPost() {
   const [formData, setFormData] = useState<JobFormType>({
     title: "",
     department: "",
     companyName: "",
     companyLocation: "",
-    jobType: "Full-time", // default valid value
-    payType: "Competitive", // default valid value
+    jobType: "",
     description: "",
-    companyPerks: [],
+    perks: [],
   });
 
   const [thumbnail, setThumbnail] = useState<File | null>(null);
@@ -54,16 +34,16 @@ export default function CreateJobPost() {
 
   // Upload thumbnail to imgbb
   const uploadThumbnail = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append("image", file);
+    const uploadForm = new FormData();
+    uploadForm.append("image", file);
 
     const res = await fetch(
-      `https://api.imgbb.com/1/upload?key=08dd2c25fadca9984c9fe58a66d619e7`,
-      { method: "POST", body: formData }
+      "https://api.imgbb.com/1/upload?key=08dd2c25fadca9984c9fe58a66d619e7",
+      { method: "POST", body: uploadForm }
     );
 
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error.message || "Image upload failed");
+    if (!res.ok) throw new Error(data.error?.message || "Image upload failed");
 
     return data.data.url;
   };
@@ -78,7 +58,11 @@ export default function CreateJobPost() {
         thumbnailUrl = await uploadThumbnail(thumbnail);
       }
 
-      const jobPayload = { ...formData, thumbnail: thumbnailUrl };
+      const jobPayload = {
+        ...formData,
+        thumbnail: thumbnailUrl,
+      };
+
       await createJob(jobPayload).unwrap();
 
       alert("Job created successfully!");
@@ -87,10 +71,9 @@ export default function CreateJobPost() {
         department: "",
         companyName: "",
         companyLocation: "",
-        jobType: "Full-time",
-        payType: "Competitive",
+        jobType: "",
         description: "",
-        companyPerks: [],
+        perks: [],
       });
       setThumbnail(null);
     } catch (error) {
@@ -98,6 +81,18 @@ export default function CreateJobPost() {
       alert("Failed to create job!");
     }
   };
+
+  const perkOptions = [
+    "Wellness services",
+    "Access to wellness facilities",
+    "Employee wellness programs",
+    "Flexible scheduling",
+    "Schedule & Flexibility",
+    "Flexibility hours or scheduling",
+    "Part-time or full-time availability",
+    "Remote or hybrid options",
+    "Ability to set your own schedule",
+  ];
 
   return (
     <form
@@ -142,7 +137,7 @@ export default function CreateJobPost() {
         </div>
       </div>
 
-      {/* Company Name & Location */}
+      {/* Company & Location */}
       <div className="grid md:grid-cols-2 gap-6 mb-4">
         <div>
           <label className="block text-sm font-medium text-gray-600 mb-1">
@@ -167,14 +162,14 @@ export default function CreateJobPost() {
             type="text"
             value={formData.companyLocation}
             onChange={handleChange}
-            placeholder="Your Company Location"
+            placeholder="e.g. Dhaka, Bangladesh"
             className="w-full border border-gray-200 rounded-md px-4 py-3 focus:ring focus:ring-blue-100 outline-none"
             required
           />
         </div>
       </div>
 
-      {/* Job Type & Pay Type */}
+      {/* Job Type */}
       <div className="grid md:grid-cols-2 gap-6 mb-4">
         <div>
           <label className="block text-sm font-medium text-gray-600 mb-1">
@@ -190,33 +185,6 @@ export default function CreateJobPost() {
             <option value="Full-time">Full-Time</option>
             <option value="Part-time">Part-Time</option>
             <option value="Remote">Remote</option>
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">
-            Pay Type
-          </label>
-          <select
-            name="payType"
-            value={formData.payType}
-            onChange={handleChange}
-            className="w-full border border-gray-200 rounded-md px-4 py-[13px] text-gray-600"
-            required
-          >
-            <option value="Competitive">Competitive</option>
-            <option value="Performance Bonus">Performance Bonus</option>
-            <option value="Tips(for service-based roles)">
-              Tips(for service-based roles)
-            </option>
-            <option value="Employee Discount on products/services">
-              Employee Discount on products/services
-            </option>
-            <option value="Referral bonus program">
-              Referral bonus program
-            </option>
-            <option value="Paid training or certification">
-              Paid training or certification
-            </option>
           </select>
         </div>
       </div>
@@ -240,17 +208,7 @@ export default function CreateJobPost() {
       <div className="mb-6">
         <label className="block text-sm font-medium mb-3">Company Perks</label>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          {[
-            "Wellness services",
-            "Access to wellness facilities",
-            "Employee wellness programs",
-            "Flexible scheduling",
-            "Schedule & Flexibility",
-            "Flexibility hours or scheduling",
-            "Part-time or full-time availability",
-            "Remote or hybrid options",
-            "Ability to set your own schedule",
-          ].map((perk) => (
+          {perkOptions.map((perk) => (
             <label
               key={perk}
               className={`flex items-center border rounded-lg px-3 py-2 cursor-pointer transition ${
@@ -315,8 +273,8 @@ export default function CreateJobPost() {
 
       {/* Buttons */}
       <div className="flex justify-end gap-4">
-        {/* <button
-          type="submit"
+        <button
+          type="button"
           disabled={isLoading}
           className="px-5 py-2 border rounded-lg text-gray-600 hover:bg-gray-50"
         >

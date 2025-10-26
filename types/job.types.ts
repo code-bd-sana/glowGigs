@@ -16,4 +16,5 @@ export interface JobType extends Document {
   description: string;
   companyPerks?: string[];
   thumbnail?: string;
+  perks?: string[];
 }
