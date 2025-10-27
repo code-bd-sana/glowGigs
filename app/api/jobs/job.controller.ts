@@ -35,6 +35,11 @@ export const getJobById = async (id: string) => {
 export const updateJob = async (id: string, data: Partial<JobType>) => {
   await dbConnect();
   const updated = await Job.findByIdAndUpdate(id, data, { new: true });
+
+  if (!updated) {
+    throw new Error("Job not found");
+  }
+
   return updated;
 };
 
