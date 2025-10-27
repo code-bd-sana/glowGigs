@@ -4,7 +4,7 @@ import "./globals.css";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer/Footer";
 import ReduxProvider from "./provider/ReduxProvider";
-
+import { Toaster } from "react-hot-toast";
 // Noir font
 const noir = localFont({
   src: "../public/NOIRetBLANC-Regular.woff2",
@@ -39,6 +39,7 @@ export default function RootLayout({
           {children}
           <Footer />
         </ReduxProvider>
+        <Toaster />
       </body>
     </html>
   );
