@@ -57,9 +57,25 @@ export const jobApi = createApi({
       }),
       invalidatesTags: ["Jobs"],
     }),
+
+    // ✅ Update job (PATCH)
+    updateJob: builder.mutation<void, { id: string; data: Partial<JobPayload> }>(
+      {
+        query: ({ id, data }) => ({
+          url: `/jobs/${id}`,
+          method: "PATCH",
+          body: data,
+        }),
+        invalidatesTags: ["Jobs"],
+      }
+    ),
   }),
 });
 
 // Export hooks for components
-export const { useCreateJobMutation, useGetJobsQuery, useDeleteJobMutation } =
-  jobApi;
+export const {
+  useCreateJobMutation,
+  useGetJobsQuery,
+  useDeleteJobMutation,
+  useUpdateJobMutation,
+} = jobApi;
