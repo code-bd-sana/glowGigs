@@ -5,9 +5,21 @@ import toast from "react-hot-toast";
 import { FiEdit2, FiEye, FiTrash2 } from "react-icons/fi";
 
 const MyJobs = () => {
+  interface Job {
+    _id: string;
+    title: string;
+    department: string;
+    companyName: string;
+    companyLocation: string;
+    jobType: string;
+    payType: string;
+    description: string;
+    companyPerks?: string[];
+    createdAt: string;
+  }
   const { data: jobs, isLoading, error } = useGetJobsQuery();
   const [deleteJob] = useDeleteJobMutation();
-  const [selectedJob, setSelectedJob] = useState<any>(null);
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   if (isLoading)
     return (
       <div className="flex justify-center items-center h-40">
@@ -28,7 +40,7 @@ const MyJobs = () => {
     console.log(id);
   };
 
-  const openModal = (job: any) => {
+  const openModal = (job: Job) => {
     setSelectedJob(job);
     const modal = document.getElementById("job_modal") as HTMLDialogElement;
     modal.showModal();
