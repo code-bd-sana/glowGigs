@@ -4,6 +4,7 @@ import "./globals.css";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer/Footer";
 import ReduxProvider from "./provider/ReduxProvider";
+import SupportChat from "@/components/SupportChat/SupportChat";
 
 // Noir font
 const noir = localFont({
@@ -37,6 +38,7 @@ export default function RootLayout({
         <ReduxProvider>
           <NavBar />
           {children}
+          <SupportChat />
           <Footer />
         </ReduxProvider>
       </body>
