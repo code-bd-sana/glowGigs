@@ -3,6 +3,7 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useCreateJobMutation } from "@/features/JobSlice";
 import { FiUpload } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 // ✅ Updated interface with strict unions
 export interface JobFormType {
@@ -81,7 +82,7 @@ export default function CreateJobPost() {
       const jobPayload = { ...formData, thumbnail: thumbnailUrl };
       await createJob(jobPayload).unwrap();
 
-      alert("Job created successfully!");
+      toast.success("Job created successfully!");
       setFormData({
         title: "",
         department: "",

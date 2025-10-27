@@ -6,6 +6,7 @@ import Footer from "@/components/Footer/Footer";
 import ReduxProvider from "./provider/ReduxProvider";
 import SupportChat from "@/components/SupportChat/SupportChat";
 
+import { Toaster } from "react-hot-toast";
 // Noir font
 const noir = localFont({
   src: "../public/NOIRetBLANC-Regular.woff2",
@@ -41,6 +42,7 @@ export default function RootLayout({
           <SupportChat />
           <Footer />
         </ReduxProvider>
+        <Toaster />
       </body>
     </html>
   );
