@@ -1,5 +1,6 @@
 "use client";
 import {
+  JobPayload,
   useDeleteJobMutation,
   useGetJobsQuery,
   useUpdateJobMutation,
@@ -52,7 +53,11 @@ const MyJobs = () => {
     if (!editJob) return;
 
     try {
-      await updateJob({ id: editJob._id, data: editJob }).unwrap();
+      await updateJob({
+        id: editJob._id,
+        data: editJob as Partial<JobPayload>,
+      }).unwrap();
+
       toast.success("Job updated successfully!");
       (document.getElementById("edit_modal") as HTMLDialogElement).close();
     } catch (error) {
