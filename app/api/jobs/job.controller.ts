@@ -19,7 +19,7 @@ export const createJob = async (data: JobType) => {
 // 🟢 Get all jobs
 export const getAllJobs = async () => {
   await dbConnect();
-  const jobs = await Job.find();
+  const jobs = await Job.find().sort({ createdAt: -1 });
   return jobs;
   console.log("hey man");
 };
