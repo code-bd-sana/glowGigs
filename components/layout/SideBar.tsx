@@ -38,7 +38,7 @@ const EmployeeItems = [
   {
     name: "Applicants",
     icon: <FiFileText />,
-    href: "/dashboard/job-applicants",
+    href: "/dashboard/applicants",
   },
   
 ];
@@ -57,7 +57,7 @@ const adminItems = [
 ];
 const jobSeekerItems = [
   { name: "Dashboard", icon: <FiHome />, href: "/dashboard" },
-  { name: "Job Posters", icon: <FiUsers />, href: "/dashboard/my-application" },
+  { name: "My Applications", icon: <FiUsers />, href: "/dashboard/my-application" },
   {
     name: "Profile & Resume",
     icon: <FiFileText />,
