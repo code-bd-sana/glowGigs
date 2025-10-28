@@ -1,8 +1,9 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import { CiCalendar, CiClock2, CiMail } from "react-icons/ci";
 import { LuDownload, LuEye } from "react-icons/lu";
+import { useSession } from "next-auth/react";
 
 interface Applicant {
   name: string;
@@ -72,12 +73,21 @@ const StatusBadge = ({ status }: { status: string }) => {
 };
 
 const ApplicantsPage: React.FC = () => {
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.id) {
+      console.log("Logged-in User ID:", session.user.id);
+      console.log("Role:", session.user.role);
+      console.log("Email:", session.user.email);
+    }
+  }, [session, status]);
+
   return (
     <div className="bg-white rounded-3xl p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-semibold text-gray-800">Applicants</h1>
-       
       </div>
 
       {/* Applicants Grid */}
@@ -113,10 +123,12 @@ const ApplicantsPage: React.FC = () => {
                 <CiMail className="text-black" size={14} /> {applicant.email}
               </div>
               <div className="flex items-center gap-2">
-                <CiClock2 className="text-black" size={14} /> {applicant.experience}
+                <CiClock2 className="text-black" size={14} />{" "}
+                {applicant.experience}
               </div>
               <div className="flex items-center gap-2">
-                <CiCalendar className="text-black" size={14} /> Applied: {applicant.applied}
+                <CiCalendar className="text-black" size={14} /> Applied:{" "}
+                {applicant.applied}
               </div>
             </div>
 
