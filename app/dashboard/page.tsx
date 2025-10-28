@@ -1,6 +1,7 @@
 "use client";
 
 import AdminDashboard from "@/components/(dashboard)/AdminDashboard";
+import EmployeeDashboard from "@/components/(dashboard)/EmployeeDashboard";
 import JoobSeekerDashboard from "@/components/(dashboard)/JoobSeekerDashboard";
 import { useSession } from "next-auth/react";
 
@@ -20,7 +21,8 @@ export default function Page() {
 
         {/* ---- Charts section ---- */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
-          <div className="h-80 bg-gray-200 rounded-lg" /> {/* Pie chart skeleton */}
+          <div className="h-80 bg-gray-200 rounded-lg" />{" "}
+          {/* Pie chart skeleton */}
           <div className="h-80 bg-gray-200 rounded-lg" /> {/* Graph skeleton */}
         </div>
       </div>
@@ -33,6 +35,8 @@ export default function Page() {
         <AdminDashboard />
       ) : role === "JOB_SEEKER" ? (
         <JoobSeekerDashboard />
+      ) : role === "EMPLOYER" ? (
+        <EmployeeDashboard />
       ) : (
         <p>Coming soon!</p>
       )}

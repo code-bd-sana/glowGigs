@@ -1,5 +1,10 @@
 "use client";
-import { useDeleteJobMutation, useGetJobsQuery } from "@/features/JobSlice";
+import {
+  JobPayload,
+  useDeleteJobMutation,
+  useGetJobsQuery,
+  useUpdateJobMutation,
+} from "@/features/JobSlice";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { FiEdit2, FiEye, FiTrash2 } from "react-icons/fi";
@@ -18,15 +23,21 @@ const MyJobs = () => {
     createdAt: string;
   }
   const { data: jobs, isLoading, error } = useGetJobsQuery();
+  const [updateJob] = useUpdateJobMutation();
   const [deleteJob] = useDeleteJobMutation();
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [editJob, setEditJob] = useState<Job | null>(null);
   if (isLoading)
     return (
       <div className="flex justify-center items-center h-40">
         <span className="loading loading-infinity loading-lg"></span>
       </div>
     );
-
+  // Open Edit Modal
+  const handleUpdate = (job: Job) => {
+    setEditJob(job);
+    (document.getElementById("edit_modal") as HTMLDialogElement).showModal();
+  };
   const handleDelete = async (id: string) => {
     try {
       await deleteJob(id).unwrap();
@@ -36,8 +47,22 @@ const MyJobs = () => {
       toast.error("Failed to delete job");
     }
   };
-  const handleUpdate = (id: string) => {
-    console.log(id);
+  // Submit Edit
+  const handleUpdateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!editJob) return;
+
+    try {
+      await updateJob({
+        id: editJob._id,
+        data: editJob as Partial<JobPayload>,
+      }).unwrap();
+
+      toast.success("Job updated successfully!");
+      (document.getElementById("edit_modal") as HTMLDialogElement).close();
+    } catch (error) {
+      toast.error("Failed to update job");
+    }
   };
 
   const openModal = (job: Job) => {
@@ -103,7 +128,7 @@ const MyJobs = () => {
                     className="text-blue-500 cursor-pointer hover:scale-110 transition"
                   />
                   <FiEdit2
-                    onClick={() => handleUpdate(job?._id)}
+                    onClick={() => handleUpdate(job)}
                     className="text-green-500 cursor-pointer hover:scale-110 transition"
                   />
                   <FiTrash2
@@ -158,6 +183,146 @@ const MyJobs = () => {
               <button className="btn">Close</button>
             </form>
           </div>
+        </div>
+      </dialog>
+      {/* 🟢 Edit Modal */}
+      <dialog id="edit_modal" className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box bg-white text-black rounded-2xl shadow-xl border border-gray-200">
+          <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center">
+            ✏️ Edit Job Details
+          </h3>
+
+          {editJob && (
+            <form onSubmit={handleUpdateSubmit} className="space-y-4">
+              {/* Job Title */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Job Title
+                </label>
+                <input
+                  type="text"
+                  value={editJob.title}
+                  onChange={(e) =>
+                    setEditJob({ ...editJob, title: e.target.value })
+                  }
+                  placeholder="Enter job title"
+                  className="input input-bordered w-full bg-white text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-black/70"
+                />
+              </div>
+
+              {/* Department */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Department
+                </label>
+                <input
+                  type="text"
+                  value={editJob.department}
+                  onChange={(e) =>
+                    setEditJob({ ...editJob, department: e.target.value })
+                  }
+                  placeholder="Enter department"
+                  className="input input-bordered w-full bg-white text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-black/70"
+                />
+              </div>
+
+              {/* Company Name */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Company Name
+                </label>
+                <input
+                  type="text"
+                  value={editJob.companyName}
+                  onChange={(e) =>
+                    setEditJob({ ...editJob, companyName: e.target.value })
+                  }
+                  placeholder="Enter company name"
+                  className="input input-bordered w-full bg-white text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-black/70"
+                />
+              </div>
+
+              {/* Location */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  value={editJob.companyLocation}
+                  onChange={(e) =>
+                    setEditJob({ ...editJob, companyLocation: e.target.value })
+                  }
+                  placeholder="Enter company location"
+                  className="input input-bordered w-full bg-white text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-black/70"
+                />
+              </div>
+
+              {/* Job Type */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Job Type
+                </label>
+                <select
+                  value={editJob.jobType}
+                  onChange={(e) =>
+                    setEditJob({ ...editJob, jobType: e.target.value })
+                  }
+                  className="select select-bordered w-full bg-white text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-black/70"
+                >
+                  <option value="Full-time">Full-time</option>
+                  <option value="Part-time">Part-time</option>
+                  <option value="Remote">Remote</option>
+                </select>
+              </div>
+
+              {/* Pay Type */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Pay Type
+                </label>
+                <input
+                  type="text"
+                  value={editJob.payType}
+                  onChange={(e) =>
+                    setEditJob({ ...editJob, payType: e.target.value })
+                  }
+                  placeholder="Enter pay type"
+                  className="input input-bordered w-full bg-white text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-black/70"
+                />
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Description
+                </label>
+                <textarea
+                  value={editJob.description}
+                  onChange={(e) =>
+                    setEditJob({ ...editJob, description: e.target.value })
+                  }
+                  placeholder="Enter job description"
+                  className="textarea textarea-bordered w-full bg-white text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-black/70 min-h-[100px]"
+                />
+              </div>
+
+              {/* Buttons */}
+              <div className="modal-action flex justify-end gap-3 pt-4">
+                <button
+                  type="submit"
+                  className="btn bg-black text-white hover:bg-gray-800 transition-all"
+                >
+                  💾 Save Changes
+                </button>
+                <form method="dialog">
+                  <button className="btn border-gray-300 text-gray-700 hover:bg-gray-100 transition-all">
+                    Cancel
+                  </button>
+                </form>
+              </div>
+            </form>
+          )}
         </div>
       </dialog>
     </div>
