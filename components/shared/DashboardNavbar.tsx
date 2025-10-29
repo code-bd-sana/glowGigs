@@ -85,7 +85,7 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
       </div>
 
       {/* Center - Search Bar */}
-      <form
+      {/* <form
         onSubmit={handleSearch}
         className="relative max-w-[400px] lg:max-w-[500px] xl:max-w-[600px] bg-[#F8FAFC] mx-4 flex-1 hidden md:block"
       >
@@ -110,7 +110,7 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
             d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"
           />
         </svg>
-      </form>
+      </form> */}
 
       {/* Right - Notifications & Profile */}
       <div className="flex items-center gap-4">

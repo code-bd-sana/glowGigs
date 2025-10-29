@@ -59,9 +59,9 @@ export default function JobPoster() {
     <div className="p-6 bg-white rounded-md shadow-md">
       <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-3">
         <h6 className="text-lg font-semibold">Manage Job Posters</h6>
-        <button className="bg-[#2199E8] cursor-pointer text-white text-sm px-4 py-2 rounded">
+        <Link href="/dashboard/create-job-post" className="bg-[#2199E8] cursor-pointer text-white text-sm px-4 py-2 rounded">
           + Add New Poster
-        </button>
+        </Link>
       </div>
 
       {/* Filter and Search */}
