@@ -15,7 +15,7 @@ export default function JobList() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-24">
+      <div className="flex justify-center min-h-screen items-center py-24">
         <div className="animate-spin h-8 w-8 border-2 border-gray-300 border-t-blue-500 rounded-full" />
       </div>
     );
