@@ -34,6 +34,7 @@ const posterId = session?.user?.id;
 const { data: jobs, isLoading, error } = useGetJobsByPosterQuery(posterId ?? "", {
   skip: !posterId,
 });
+console.log(jobs?.total)
 
   console.log(jobs?.data);
   const [updateJob] = useUpdateJobMutation();

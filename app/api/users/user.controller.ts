@@ -38,3 +38,23 @@ export const isExistUser = async(email:string)=>{
     }
 
 }
+
+export const getUserRoleCounts = async () => {
+  await dbConnect();
+
+  // 🧮 Count per role
+  const employerCount = await User.countDocuments({ role: "EMPLOYER" });
+  const adminCount = await User.countDocuments({ role: "ADMIN" });
+  const seekerCount = await User.countDocuments({ role: "SEEKER" });
+
+  // 🧩 Return structured summary
+  return {
+    success: true,
+    roles: {
+      EMPLOYER: employerCount,
+      ADMIN: adminCount,
+      SEEKER: seekerCount,
+    },
+    total: employerCount + adminCount + seekerCount,
+  };
+};
