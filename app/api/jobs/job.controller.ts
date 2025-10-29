@@ -2,6 +2,7 @@ import { dbConnect } from "@/lib/dbConnect";
 import { JobType } from "@/types/job.types";
 import Job from "./job.model";
 import { NextResponse } from "next/server";
+import { Types } from "mongoose";
 
 export const createJob = async (data: JobType) => {
   try {
@@ -22,6 +23,21 @@ export const getAllJobs = async () => {
   const jobs = await Job.find().sort({ createdAt: -1 });
   return jobs;
   console.log("hey man");
+};
+
+// ✅ Get jobs by jobPoster ID
+export const getJobsByPoster = async (jobPosterId: string) => {
+  await dbConnect();
+
+  if (!Types.ObjectId.isValid(jobPosterId)) {
+    return NextResponse.json(
+      { success: false, message: "Invalid jobPoster ID" },
+      { status: 400 }
+    );
+  }
+
+  const jobs = await Job.find({ jobPoster: jobPosterId }).sort({ createdAt: -1 });
+  return NextResponse.json({ success: true, data: jobs }, { status: 200 });
 };
 
 // 🟢 Get job by ID

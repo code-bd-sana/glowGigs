@@ -18,5 +18,6 @@ export interface JobType extends Document {
   companyPerks?: string[];
   thumbnail?: string;
   perks?: string[];
-  // jobPoster: mongoose.Schema.Types.ObjectId; // new field
+  jobPoster: mongoose.Types.ObjectId; // new field
+  applicants?: mongoose.Types.ObjectId[]; // array of applicant IDs
 }
