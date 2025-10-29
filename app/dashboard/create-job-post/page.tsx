@@ -6,6 +6,7 @@ import { FiUpload } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { useGetCategoriesQuery } from "@/features/categorySlice";
 import { useSession } from "next-auth/react";
+import { LiaTelegramPlane } from "react-icons/lia";
 
 // ✅ Updated interface with strict unions
 export interface JobFormType {
@@ -27,15 +28,15 @@ export interface JobFormType {
 }
 
 export default function CreateJobPost() {
-   const { data: session, status } = useSession();
-    
-      useEffect(() => {
-        if (status === "authenticated" && session?.user?.id) {
-          console.log("Logged-in User ID:", session.user.id);
-          console.log("Role:", session.user.role);
-          console.log("Email:", session.user.email);
-        }
-      }, [session, status]);
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.id) {
+      console.log("Logged-in User ID:", session.user.id);
+      console.log("Role:", session.user.role);
+      console.log("Email:", session.user.email);
+    }
+  }, [session, status]);
   const [formData, setFormData] = useState<JobFormType>({
     title: "",
     department: "",
@@ -49,9 +50,9 @@ export default function CreateJobPost() {
 
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [createJob, { isLoading }] = useCreateJobMutation();
-  const { data: categories = [], isLoading: isCategoryLoading } = useGetCategoriesQuery();
+  const { data: categories = [], isLoading: isCategoryLoading } =
+    useGetCategoriesQuery();
   console.log(categories);
-
 
   // Handle input/select/textarea changes
   const handleChange = (
@@ -93,19 +94,19 @@ export default function CreateJobPost() {
         thumbnailUrl = await uploadThumbnail(thumbnail);
       }
 
-          // Static IDs for testing
-    const staticJobPosterId = session?.user?.id; // replace with a valid user ID from your DB
-    const staticApplicantsIds = [
-      "650c1234567890abcdef5678",
-      "650c1234567890abcdef9012"
-    ]; // array of applicant IDs for testing
+      // Static IDs for testing
+      const staticJobPosterId = session?.user?.id; // replace with a valid user ID from your DB
+      const staticApplicantsIds = [
+        "650c1234567890abcdef5678",
+        "650c1234567890abcdef9012",
+      ]; // array of applicant IDs for testing
 
-       const jobPayload = {
-      ...formData,
-      thumbnail: thumbnailUrl,
-      jobPoster: staticJobPosterId,
-      applicants: staticApplicantsIds,
-    };
+      const jobPayload = {
+        ...formData,
+        thumbnail: thumbnailUrl,
+        jobPoster: staticJobPosterId,
+        applicants: staticApplicantsIds,
+      };
       await createJob(jobPayload).unwrap();
 
       toast.success("Job created successfully!");
@@ -160,16 +161,16 @@ export default function CreateJobPost() {
             className="w-full border border-gray-200 rounded-md px-4 py-[13px] text-gray-600"
             required
           >
-           <option value="">Select Category</option>
-    {isCategoryLoading ? (
-      <option disabled>Loading categories...</option>
-    ) : (
-      categories.map((cat) => (
-        <option key={cat._id} value={cat._id}>
-          {cat.name}
-        </option>
-      ))
-    )}
+            <option value="">Select Category</option>
+            {isCategoryLoading ? (
+              <option disabled>Loading categories...</option>
+            ) : (
+              categories.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))
+            )}
           </select>
         </div>
       </div>
@@ -347,13 +348,12 @@ export default function CreateJobPost() {
 
       {/* Buttons */}
       <div className="flex justify-end gap-4">
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
-        >
-          {isLoading ? "Publishing..." : "Publish Job"}
-        </button>
+        <div className="px-6 py-3 cursor-pointer border hover:border bg-black text-white rounded-xl hover:bg-white hover:text-black  flex items-center gap-2 transition-all duration-300">
+          <LiaTelegramPlane className="text-2xl" />
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Publishing..." : "Publish Job"}
+          </button>
+        </div>
       </div>
     </form>
   );

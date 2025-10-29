@@ -31,6 +31,7 @@ export type Job = JobPayload & {
 export interface JobsResponse {
   success: boolean;
   data: Job[];
+  total: number;
 }
 
 // API slice
@@ -49,8 +50,8 @@ export const jobApi = createApi({
       invalidatesTags: ["Jobs"],
     }),
 
-    // ✅ Get all jobs
-    getJobs: builder.query<Job[], void>({
+    // Get all jobs
+    getJobs: builder.query<JobsResponse, void>({
       query: () => "/jobs",
       providesTags: ["Jobs"],
     }),
@@ -71,16 +72,17 @@ export const jobApi = createApi({
     }),
 
     // ✅ Update job (PATCH)
-    updateJob: builder.mutation<void, { id: string; data: Partial<JobPayload> }>(
-      {
-        query: ({ id, data }) => ({
-          url: `/jobs/${id}`,
-          method: "PATCH",
-          body: data,
-        }),
-        invalidatesTags: ["Jobs"],
-      }
-    ),
+    updateJob: builder.mutation<
+      void,
+      { id: string; data: Partial<JobPayload> }
+    >({
+      query: ({ id, data }) => ({
+        url: `/jobs/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Jobs"],
+    }),
   }),
 });
 

@@ -7,6 +7,13 @@ import { Applicant } from "@/types/applicationTypes";
 import { HiOutlineUsers } from "react-icons/hi";
 import { MdWorkspacePremium } from "react-icons/md";
 import { IoBagCheckOutline } from "react-icons/io5";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
+import { useGetJobsByPosterQuery, useGetJobsQuery } from "@/features/JobSlice";
+import {
+  useGetAllUsersQuery,
+  useGetUserRoleCountQuery,
+} from "@/features/UserApi";
 
 const applicants: Applicant[] = [
   {
@@ -50,12 +57,49 @@ const jobsData = [
 ];
 
 export default function EmployeeDashboard() {
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.id) {
+      console.log("Logged-in User ID:", session.user.id);
+      console.log("Role:", session.user.role);
+      console.log("Email:", session.user.email);
+    }
+  }, [session, status]);
+
+  const posterId = session?.user?.id;
+  const {
+    data: jobs,
+    isLoading,
+    error,
+  } = useGetJobsByPosterQuery(posterId ?? "", {
+    skip: !posterId,
+  });
+  console.log(jobs?.total);
+
+  const { data: allJobs } = useGetJobsQuery();
+  console.log(allJobs?.total);
+
+  const { data: userByRole } = useGetUserRoleCountQuery();
+  console.log(userByRole?.roles?.SEEKER);
   return (
     <div className="p-6 space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card title="Total Jobs Posted" value={24} icon={<FaBriefcase />} />
-        <Card title="Active Jobs" value={18} icon={<IoBagCheckOutline />} />
-        <Card title="Total Applicants" value={156} icon={<HiOutlineUsers />} />
+        <Card
+          title="Total Jobs Posted"
+          value={jobs?.total || 0}
+          icon={<FaBriefcase />}
+        />
+        <Card
+          title="Active Jobs"
+          value={allJobs?.total || 0}
+          icon={<IoBagCheckOutline />}
+        />
+        <Card
+          title="Total Applicants"
+          value={userByRole?.roles?.SEEKER || 0}
+          icon={<HiOutlineUsers />}
+        />
         <Card
           title="Membership Status"
           value="Premium"

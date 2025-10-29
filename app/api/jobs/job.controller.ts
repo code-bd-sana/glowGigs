@@ -21,8 +21,16 @@ export const createJob = async (data: JobType) => {
 export const getAllJobs = async () => {
   await dbConnect();
   const jobs = await Job.find().sort({ createdAt: -1 });
-  return jobs;
-  console.log("hey man");
+
+  // Count total jobs
+  const total = await Job.countDocuments();
+  
+  // Return structured response
+  return {
+    success: true,
+    data: jobs,
+    total, // ✅ total count
+  };
 };
 
 // ✅ Get jobs by jobPoster ID
@@ -36,8 +44,14 @@ export const getJobsByPoster = async (jobPosterId: string) => {
     );
   }
 
-  const jobs = await Job.find({ jobPoster: jobPosterId }).sort({ createdAt: -1 });
-  return NextResponse.json({ success: true, data: jobs }, { status: 200 });
+  const jobs = await Job.find({ jobPoster: jobPosterId }).sort({
+    createdAt: -1,
+  });
+  const total = await Job.countDocuments({ jobPoster: jobPosterId }); // ✅ total count for this poster
+  return NextResponse.json(
+    { success: true, data: jobs, total },
+    { status: 200 }
+  );
 };
 
 // 🟢 Get job by ID
