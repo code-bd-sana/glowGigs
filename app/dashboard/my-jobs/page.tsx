@@ -1,11 +1,8 @@
 "use client";
-import {
-  JobPayload,
-  useDeleteJobMutation,
-  useGetJobsQuery,
-  useUpdateJobMutation,
-} from "@/features/JobSlice";
-import React, { useState } from "react";
+import { updateJob } from "@/app/api/jobs/job.controller";
+import { JobPayload, useDeleteJobMutation, useGetJobsByPosterQuery, useGetJobsQuery, useUpdateJobMutation } from "@/features/JobSlice";
+import { useSession } from "next-auth/react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FiEdit2, FiEye, FiTrash2 } from "react-icons/fi";
 
@@ -22,22 +19,34 @@ const MyJobs = () => {
     companyPerks?: string[];
     createdAt: string;
   }
-  const { data: jobs, isLoading, error } = useGetJobsQuery();
+const [editJob, setEditJob] = useState<Job | null>(null);
+   const { data: session, status } = useSession();
+  
+    useEffect(() => {
+      if (status === "authenticated" && session?.user?.id) {
+        console.log("Logged-in User ID:", session.user.id);
+        console.log("Role:", session.user.role);
+        console.log("Email:", session.user.email);
+      }
+    }, [session, status]);
+
+const posterId = session?.user?.id;
+const { data: jobs, isLoading, error } = useGetJobsByPosterQuery(posterId ?? "", {
+  skip: !posterId,
+});
+
+  console.log(jobs?.data);
   const [updateJob] = useUpdateJobMutation();
   const [deleteJob] = useDeleteJobMutation();
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  const [editJob, setEditJob] = useState<Job | null>(null);
+  
   if (isLoading)
     return (
       <div className="flex justify-center items-center h-40">
         <span className="loading loading-infinity loading-lg"></span>
       </div>
     );
-  // Open Edit Modal
-  const handleUpdate = (job: Job) => {
-    setEditJob(job);
-    (document.getElementById("edit_modal") as HTMLDialogElement).showModal();
-  };
+
   const handleDelete = async (id: string) => {
     try {
       await deleteJob(id).unwrap();
@@ -47,17 +56,20 @@ const MyJobs = () => {
       toast.error("Failed to delete job");
     }
   };
-  // Submit Edit
+
+   // Open Edit Modal
+  const handleUpdate = (job: Job) => {
+    setEditJob(job);
+    (document.getElementById("edit_modal") as HTMLDialogElement).showModal();
+  };
+
+    // Submit Edit
   const handleUpdateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!editJob) return;
 
     try {
-      await updateJob({
-        id: editJob._id,
-        data: editJob as Partial<JobPayload>,
-      }).unwrap();
-
+await updateJob({ id: editJob._id, data: editJob as Partial<JobPayload> }).unwrap();
       toast.success("Job updated successfully!");
       (document.getElementById("edit_modal") as HTMLDialogElement).close();
     } catch (error) {
@@ -97,7 +109,7 @@ const MyJobs = () => {
             </tr>
           </thead>
           <tbody>
-            {jobs?.map((job, index) => (
+            {jobs?.data?.map((job, index) => (
               <tr
                 key={job?._id}
                 className="border-b border-gray-300 hover:bg-gray-100 transition-all"
@@ -185,7 +197,8 @@ const MyJobs = () => {
           </div>
         </div>
       </dialog>
-      {/* 🟢 Edit Modal */}
+
+          {/* 🟢 Edit Modal */}
       <dialog id="edit_modal" className="modal modal-bottom sm:modal-middle">
         <div className="modal-box bg-white text-black rounded-2xl shadow-xl border border-gray-200">
           <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center">

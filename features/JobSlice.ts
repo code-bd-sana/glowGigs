@@ -1,4 +1,3 @@
-// features/JobSlice.ts
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 // Payload type sent to backend
@@ -18,14 +17,21 @@ export interface JobPayload {
   description: string;
   companyPerks?: string[];
   thumbnail?: string;
+  jobPoster?: string; // ✅ added to send poster id
 }
 
-// Single Job type returned by API (with _id, createdAt, updatedAt)
+// Single Job type returned by API
 export type Job = JobPayload & {
   _id: string;
   createdAt: string;
   updatedAt: string;
 };
+
+// ✅ Add this at the top
+export interface JobsResponse {
+  success: boolean;
+  data: Job[];
+}
 
 // API slice
 export const jobApi = createApi({
@@ -33,7 +39,7 @@ export const jobApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
   tagTypes: ["Jobs"],
   endpoints: (builder) => ({
-    // Create a new job
+    // ✅ Create a new job
     createJob: builder.mutation<Job, JobPayload>({
       query: (jobPayload) => ({
         url: "/jobs",
@@ -43,13 +49,19 @@ export const jobApi = createApi({
       invalidatesTags: ["Jobs"],
     }),
 
-    // Get all jobs
+    // ✅ Get all jobs
     getJobs: builder.query<Job[], void>({
       query: () => "/jobs",
       providesTags: ["Jobs"],
     }),
 
-    // Optional: delete a job
+    // ✅ Get jobs by poster ID (NEW)
+    getJobsByPoster: builder.query<JobsResponse, string>({
+      query: (posterId) => `/jobs?jobPoster=${posterId}`,
+      providesTags: ["Jobs"],
+    }),
+
+    // ✅ Delete job
     deleteJob: builder.mutation<{ success: boolean; id: string }, string>({
       query: (id) => ({
         url: `/jobs/${id}`,
@@ -72,10 +84,11 @@ export const jobApi = createApi({
   }),
 });
 
-// Export hooks for components
+// ✅ Export hooks for components
 export const {
   useCreateJobMutation,
   useGetJobsQuery,
+  useGetJobsByPosterQuery, // ✅ new hook
   useDeleteJobMutation,
   useUpdateJobMutation,
 } = jobApi;
