@@ -1,8 +1,9 @@
-import { Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 export interface JobType extends Document {
   title: string;
-  department: string;
+  // department: string;
+  department: mongoose.Types.ObjectId;
   companyName: string;
   companyLocation: string;
   jobType: "Full-time" | "Part-time" | "Remote";
@@ -17,4 +18,6 @@ export interface JobType extends Document {
   companyPerks?: string[];
   thumbnail?: string;
   perks?: string[];
+  jobPoster: mongoose.Types.ObjectId; // new field
+  applicants?: mongoose.Types.ObjectId[]; // array of applicant IDs
 }

@@ -4,7 +4,12 @@ import mongoose, { Schema } from "mongoose";
 const JobSchema = new Schema<JobType>(
   {
     title: { type: String, required: true },
-    department: { type: String, required: true },
+    // department: { type: String, required: true },
+    department: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
     companyName: { type: String, required: true },
     companyLocation: { type: String, required: true },
     jobType: {
@@ -31,6 +36,18 @@ const JobSchema = new Schema<JobType>(
       type: [String],
       default: [],
     },
+    jobPoster: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    applicants: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: [],
+      },
+    ],
   },
   { timestamps: true }
 );

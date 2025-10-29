@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useCreateJobMutation } from "@/features/JobSlice";
 import { FiUpload } from "react-icons/fi";
 import toast from "react-hot-toast";
+import { useGetCategoriesQuery } from "@/features/categorySlice";
+import { useSession } from "next-auth/react";
 
 // ✅ Updated interface with strict unions
 export interface JobFormType {
@@ -25,6 +27,15 @@ export interface JobFormType {
 }
 
 export default function CreateJobPost() {
+   const { data: session, status } = useSession();
+    
+      useEffect(() => {
+        if (status === "authenticated" && session?.user?.id) {
+          console.log("Logged-in User ID:", session.user.id);
+          console.log("Role:", session.user.role);
+          console.log("Email:", session.user.email);
+        }
+      }, [session, status]);
   const [formData, setFormData] = useState<JobFormType>({
     title: "",
     department: "",
@@ -38,6 +49,9 @@ export default function CreateJobPost() {
 
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [createJob, { isLoading }] = useCreateJobMutation();
+  const { data: categories = [], isLoading: isCategoryLoading } = useGetCategoriesQuery();
+  console.log(categories);
+
 
   // Handle input/select/textarea changes
   const handleChange = (
@@ -79,7 +93,19 @@ export default function CreateJobPost() {
         thumbnailUrl = await uploadThumbnail(thumbnail);
       }
 
-      const jobPayload = { ...formData, thumbnail: thumbnailUrl };
+          // Static IDs for testing
+    const staticJobPosterId = session?.user?.id; // replace with a valid user ID from your DB
+    const staticApplicantsIds = [
+      "650c1234567890abcdef5678",
+      "650c1234567890abcdef9012"
+    ]; // array of applicant IDs for testing
+
+       const jobPayload = {
+      ...formData,
+      thumbnail: thumbnailUrl,
+      jobPoster: staticJobPosterId,
+      applicants: staticApplicantsIds,
+    };
       await createJob(jobPayload).unwrap();
 
       toast.success("Job created successfully!");
@@ -134,11 +160,16 @@ export default function CreateJobPost() {
             className="w-full border border-gray-200 rounded-md px-4 py-[13px] text-gray-600"
             required
           >
-            <option value="">Select Department</option>
-            <option value="Engineering">Engineering</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Human Resources">Human Resources</option>
-            <option value="Others">Others</option>
+           <option value="">Select Category</option>
+    {isCategoryLoading ? (
+      <option disabled>Loading categories...</option>
+    ) : (
+      categories.map((cat) => (
+        <option key={cat._id} value={cat._id}>
+          {cat.name}
+        </option>
+      ))
+    )}
           </select>
         </div>
       </div>
