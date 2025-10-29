@@ -1,13 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import Image from "next/image";
-import { useGetJobsQuery } from "@/features/JobSlice";
+import { useGetJobsByPosterQuery, useGetJobsQuery } from "@/features/JobSlice";
 import { useState } from "react";
 import { format } from "date-fns";
 import { BiCalendarAlt } from "react-icons/bi";
 
 export default function JobList() {
-  const { data: jobs = [], isLoading } = useGetJobsQuery();
+    interface Job {
+    _id: string;
+    title: string;
+    department: string;
+    companyName: string;
+    companyLocation: string;
+    jobType: string;
+    payType: string;
+    description: string;
+    companyPerks?: string[];
+    createdAt: string;
+  }
+
+  interface JobsResponse {
+  success: boolean;
+  data: Job[];
+}
+ const { data: jobsResponse, isLoading, error } = useGetJobsByPosterQuery("");
+const jobs = jobsResponse?.data || [];
+
+  console.log(jobsResponse);
   const [typeFilter, setTypeFilter] = useState("All Type");
   const [deptFilter, setDeptFilter] = useState("All Department");
   const [locationFilter, setLocationFilter] = useState("All Location");
@@ -21,7 +41,7 @@ export default function JobList() {
     );
   }
 
-  const filteredJobs = jobs.filter((job) => {
+  const filteredJobs = jobs?.filter((job) => {
     return (
       (typeFilter === "All Type" || job.jobType === typeFilter) &&
       (deptFilter === "All Department" ||

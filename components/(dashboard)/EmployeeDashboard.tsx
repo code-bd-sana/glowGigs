@@ -76,6 +76,7 @@ export default function EmployeeDashboard() {
     skip: !posterId,
   });
   console.log(jobs?.total);
+  console.log(jobs?.total);
 
   const { data: allJobs } = useGetJobsQuery();
   console.log(allJobs?.total);
