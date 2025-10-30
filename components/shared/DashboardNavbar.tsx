@@ -25,6 +25,7 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
   const { data: singleUser, isLoading } = useGetSingleUserQuery(email!, {
     skip: !email,
   });
+  console.log(singleUser)
 
   // Close dropdown if clicked outside
   useEffect(() => {
@@ -57,7 +58,7 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
 
   return (
     <div
-      className="w-full fixed lg:sticky top-0 left-0 z-50 bg-white
+    className="w-full fixed lg:sticky top-0 left-0 z-50 bg-white
     shadow-sm px-4 py-3 flex items-center justify-between"
     >
       {/* Left - Mobile Menu Button & Title */}
