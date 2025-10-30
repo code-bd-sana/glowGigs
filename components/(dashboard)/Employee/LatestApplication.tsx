@@ -1,50 +1,98 @@
-// components/LatestApplications.tsx
-import React from "react";
+"use client";
 
-interface Applicant {
+import { useGetJobsByPosterQuery } from "@/features/JobSlice";
+import { useSession } from "next-auth/react";
+import React, { useEffect } from "react";
+import { FaCircle } from "react-icons/fa6";
+
+// ✅ Define Department type
+interface Department {
+  _id: string;
   name: string;
-  role: string;
-  status: "New" | "Reviewed" | "Shortlisted";
-  time: string;
 }
 
-interface LatestApplicationsProps {
-  applicants: Applicant[];
+// ✅ Define Job type
+interface Job {
+  _id: string;
+  title: string;
+  department: Department | string; // department can be object or string
+  jobType: string;
 }
 
-const statusColors: Record<string, string> = {
-  New: "bg-blue-100 text-blue-800",
-  Reviewed: "bg-yellow-100 text-yellow-800",
-  Shortlisted: "bg-green-100 text-green-800",
-};
+// ✅ Type guard to safely check if department is object
+function isDepartmentObject(
+  department: string | Department
+): department is Department {
+  return typeof department === "object" && department !== null && "name" in department;
+}
 
-const LatestApplications: React.FC<LatestApplicationsProps> = ({ applicants }) => {
+const LatestApplications = () => {
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.id) {
+      console.log("Logged-in User ID:", session.user.id);
+      console.log("Role:", session.user.role);
+      console.log("Email:", session.user.email);
+    }
+  }, [session, status]);
+
+  const posterId = session?.user?.id;
+  const {
+    data: jobs,
+    isLoading,
+    error,
+  } = useGetJobsByPosterQuery(posterId ?? "", {
+    skip: !posterId,
+  });
+
+  if (isLoading)
+    return (
+      <div className="flex justify-center py-10 w-full">
+        <span className="loading loading-infinity loading-lg"></span>
+      </div>
+    );
+
   return (
     <div className="bg-white p-4 rounded-lg shadow w-full">
       <div className="flex justify-between items-center my-4">
-        <p className="font-bold">Latest Applications</p>
-        <a href="#" className="text-blue-600">View All</a>
+        <p className="font-bold">Latest Posted Jobs</p>
+        <a href="#" className="text-blue-600">
+          View All
+        </a>
       </div>
-      <ul className="space-y-9 mt-10">
 
-        {applicants.map((applicant, index) => (
-          <li key={index} className="flex justify-between items-center">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 rounded-full bg-[#E5E7EB] flex items-center justify-center">
-                {applicant.name[0]}
-              </div>
-              <div>
-                <p className="font-medium">{applicant.name}</p>
-                <p className="text-gray-500 text-sm">{applicant.role}</p>
-              </div>
+      <ul className="space-y-9 mt-10">
+        {jobs?.data?.map((job: Job, index: number) => (
+          <div
+            key={index}
+            className="flex items-center justify-between py-4 border-b border-gray-200 last:border-none"
+          >
+            <div>
+              <p className="font-semibold text-gray-800">{job?.title}</p>
+              <p className="text-sm text-gray-500">
+                Expires: <span className="ml-1">2024-02-15</span>
+              </p>
             </div>
-            <div className="flex gap-2 items-center space-x-2">
-              <span className={`px-3 py-1 rounded-xl text-xs ${statusColors[applicant.status]}`}>
-                {applicant.status}
+
+            <div className="flex items-center gap-6 text-sm">
+              {/* ✅ Safe department name rendering */}
+              <span className="text-gray-700">
+                {isDepartmentObject(job.department)
+                  ? job.department.name
+                  : job.department}
               </span>
-              <span className="text-gray-400 text-xs">{applicant.time}</span>
+
+              <span
+                className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700`}
+              >
+                <FaCircle className="text-xs" />
+                Active
+              </span>
+
+              <span className="text-gray-700">{job?.jobType}</span>
             </div>
-          </li>
+          </div>
         ))}
       </ul>
     </div>
