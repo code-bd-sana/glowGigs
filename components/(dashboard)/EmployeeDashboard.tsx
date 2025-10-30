@@ -3,7 +3,7 @@ import Card from "@/components/(dashboard)/Employee/Card";
 import LatestApplications from "@/components/(dashboard)/Employee/LatestApplication";
 import JobsPostedByWeek from "@/components/(dashboard)/Employee/JobsPostedByWeek";
 import { FaUser, FaBriefcase } from "react-icons/fa";
-import { Applicant } from "@/types/applicationTypes";
+
 import { HiOutlineUsers } from "react-icons/hi";
 import { MdWorkspacePremium } from "react-icons/md";
 import { IoBagCheckOutline } from "react-icons/io5";
@@ -15,38 +15,6 @@ import {
   useGetUserRoleCountQuery,
 } from "@/features/UserApi";
 
-const applicants: Applicant[] = [
-  {
-    name: "Sarah Johnson",
-    role: "Frontend Developer",
-    status: "New",
-    time: "2 hours ago",
-  },
-  {
-    name: "Michael Chen",
-    role: "UX Designer",
-    status: "Reviewed",
-    time: "4 hours ago",
-  },
-  {
-    name: "Emily Davis",
-    role: "Product Manager",
-    status: "Shortlisted",
-    time: "6 hours ago",
-  },
-  {
-    name: "David Wilson",
-    role: "Backend Developer",
-    status: "New",
-    time: "1 day ago",
-  },
-  {
-    name: "Lisa Anderson",
-    role: "Marketing Specialist",
-    status: "Reviewed",
-    time: "2 days ago",
-  },
-];
 
 const jobsData = [
   { week: "Week 1", jobs: 3 },
@@ -108,7 +76,7 @@ export default function EmployeeDashboard() {
         />
       </div>
       <div className="flex flex-col lg:flex-row gap-6">
-        <LatestApplications applicants={applicants} />
+        <LatestApplications />
         <JobsPostedByWeek data={jobsData} />
       </div>
     </div>

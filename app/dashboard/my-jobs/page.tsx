@@ -1,46 +1,66 @@
 "use client";
-import { updateJob } from "@/app/api/jobs/job.controller";
-import { JobPayload, useDeleteJobMutation, useGetJobsByPosterQuery, useGetJobsQuery, useUpdateJobMutation } from "@/features/JobSlice";
+
+import {
+  JobPayload,
+  useDeleteJobMutation,
+  useGetJobsByPosterQuery,
+  useUpdateJobMutation,
+} from "@/features/JobSlice";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FiEdit2, FiEye, FiTrash2 } from "react-icons/fi";
 
+
+// ✅ 1️⃣ Define the Department interface
+interface Department {
+  _id: string;
+  name: string;
+}
+
+// ✅ 2️⃣ Define Job interface (department can be string or Department object)
+interface Job {
+  _id: string;
+  title: string;
+  department: Department | string; // Important: union type to handle both cases
+  companyName: string;
+  companyLocation: string;
+  jobType: string;
+  payType: string;
+  description: string;
+  companyPerks?: string[];
+  createdAt: string;
+}
+
+// ✅ 3️⃣ Type guard function to check if department is an object
+function isDepartmentObject(
+  department: string | Department
+): department is Department {
+  return typeof department === "object" && department !== null && "name" in department;
+}
+
 const MyJobs = () => {
-  interface Job {
-    _id: string;
-    title: string;
-    department: string;
-    companyName: string;
-    companyLocation: string;
-    jobType: string;
-    payType: string;
-    description: string;
-    companyPerks?: string[];
-    createdAt: string;
-  }
-const [editJob, setEditJob] = useState<Job | null>(null);
-   const { data: session, status } = useSession();
-  
-    useEffect(() => {
-      if (status === "authenticated" && session?.user?.id) {
-        console.log("Logged-in User ID:", session.user.id);
-        console.log("Role:", session.user.role);
-        console.log("Email:", session.user.email);
-      }
-    }, [session, status]);
+  const [editJob, setEditJob] = useState<Job | null>(null);
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
 
-const posterId = session?.user?.id;
-const { data: jobs, isLoading, error } = useGetJobsByPosterQuery(posterId ?? "", {
-  skip: !posterId,
-});
-console.log(jobs?.total)
+  const { data: session, status } = useSession();
+  const posterId = session?.user?.id;
 
-  console.log(jobs?.data);
+  const { data: jobs, isLoading } = useGetJobsByPosterQuery(posterId ?? "", {
+    skip: !posterId,
+  });
+
   const [updateJob] = useUpdateJobMutation();
   const [deleteJob] = useDeleteJobMutation();
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.id) {
+      console.log("Logged-in User ID:", session.user.id);
+      console.log("Role:", session.user.role);
+      console.log("Email:", session.user.email);
+    }
+  }, [session, status]);
+
   if (isLoading)
     return (
       <div className="flex justify-center items-center h-40">
@@ -48,6 +68,7 @@ console.log(jobs?.total)
       </div>
     );
 
+  // ✅ Delete job
   const handleDelete = async (id: string) => {
     try {
       await deleteJob(id).unwrap();
@@ -58,26 +79,38 @@ console.log(jobs?.total)
     }
   };
 
-   // Open Edit Modal
+  // ✅ Open edit modal
   const handleUpdate = (job: Job) => {
     setEditJob(job);
     (document.getElementById("edit_modal") as HTMLDialogElement).showModal();
   };
 
-    // Submit Edit
+  // ✅ Handle job update submission
   const handleUpdateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!editJob) return;
 
     try {
-await updateJob({ id: editJob._id, data: editJob as Partial<JobPayload> }).unwrap();
+      await updateJob({
+        id: editJob._id,
+        data: {
+          ...editJob,
+          // ✅ If department is an object, send its _id instead of name
+          department: isDepartmentObject(editJob.department)
+            ? editJob.department._id
+            : editJob.department,
+        } as Partial<JobPayload>,
+      }).unwrap();
+
       toast.success("Job updated successfully!");
       (document.getElementById("edit_modal") as HTMLDialogElement).close();
     } catch (error) {
+      console.error(error);
       toast.error("Failed to update job");
     }
   };
 
+  // ✅ Open view modal
   const openModal = (job: Job) => {
     setSelectedJob(job);
     const modal = document.getElementById("job_modal") as HTMLDialogElement;
@@ -112,7 +145,7 @@ await updateJob({ id: editJob._id, data: editJob as Partial<JobPayload> }).unwra
           <tbody>
             {jobs?.data?.map((job, index) => (
               <tr
-                key={job?._id}
+                key={job._id}
                 className="border-b border-gray-300 hover:bg-gray-100 transition-all"
               >
                 <td className="py-4 px-4">{index + 1}</td>
@@ -125,12 +158,20 @@ await updateJob({ id: editJob._id, data: editJob as Partial<JobPayload> }).unwra
                     </p>
                   </div>
                 </td>
-                <td className="py-4 px-4">{job.department}</td>
+
+                {/* ✅ Type-safe Department display */}
+                <td className="py-4 px-4">
+                  {isDepartmentObject(job.department)
+                    ? job.department.name
+                    : job.department}
+                </td>
+
                 <td className="py-4 px-4">
                   <span className="bg-green-100 text-green-700 text-xs font-semibold px-2 py-1 rounded-full">
                     Active
                   </span>
                 </td>
+
                 <td className="py-4 px-4">23</td>
                 <td className="py-4 px-4">
                   {new Date(job.createdAt).toISOString().slice(0, 10)}
@@ -145,7 +186,7 @@ await updateJob({ id: editJob._id, data: editJob as Partial<JobPayload> }).unwra
                     className="text-green-500 cursor-pointer hover:scale-110 transition"
                   />
                   <FiTrash2
-                    onClick={() => handleDelete(job?._id)}
+                    onClick={() => handleDelete(job._id)}
                     className="text-red-500 cursor-pointer hover:scale-110 transition"
                   />
                 </td>
@@ -155,36 +196,25 @@ await updateJob({ id: editJob._id, data: editJob as Partial<JobPayload> }).unwra
         </table>
       </div>
 
-      {/* Modal */}
+      {/* ✅ View Modal */}
       <dialog id="job_modal" className="modal modal-bottom sm:modal-middle">
         <div className="modal-box bg-white">
           <h3 className="font-bold text-lg">Job Details</h3>
           {selectedJob && (
             <div className="mt-4 space-y-2">
+              <p><strong>Title:</strong> {selectedJob.title}</p>
               <p>
-                <strong>Title:</strong> {selectedJob.title}
+                <strong>Department:</strong>{" "}
+                {isDepartmentObject(selectedJob.department)
+                  ? selectedJob.department.name
+                  : selectedJob.department}
               </p>
-              <p>
-                <strong>Department:</strong> {selectedJob.department}
-              </p>
-              <p>
-                <strong>Company:</strong> {selectedJob.companyName}
-              </p>
-              <p>
-                <strong>Location:</strong> {selectedJob.companyLocation}
-              </p>
-              <p>
-                <strong>Job Type:</strong> {selectedJob.jobType}
-              </p>
-              <p>
-                <strong>Pay Type:</strong> {selectedJob.payType}
-              </p>
-              <p>
-                <strong>Description:</strong> {selectedJob.description}
-              </p>
-              <p>
-                <strong>Perks:</strong> {selectedJob.companyPerks?.join(", ")}
-              </p>
+              <p><strong>Company:</strong> {selectedJob.companyName}</p>
+              <p><strong>Location:</strong> {selectedJob.companyLocation}</p>
+              <p><strong>Job Type:</strong> {selectedJob.jobType}</p>
+              <p><strong>Pay Type:</strong> {selectedJob.payType}</p>
+              <p><strong>Description:</strong> {selectedJob.description}</p>
+              <p><strong>Perks:</strong> {selectedJob.companyPerks?.join(", ")}</p>
               <p>
                 <strong>Posted On:</strong>{" "}
                 {new Date(selectedJob.createdAt).toISOString().slice(0, 10)}
@@ -199,7 +229,7 @@ await updateJob({ id: editJob._id, data: editJob as Partial<JobPayload> }).unwra
         </div>
       </dialog>
 
-          {/* 🟢 Edit Modal */}
+      {/* ✅ Edit Modal */}
       <dialog id="edit_modal" className="modal modal-bottom sm:modal-middle">
         <div className="modal-box bg-white text-black rounded-2xl shadow-xl border border-gray-200">
           <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center">
@@ -231,9 +261,18 @@ await updateJob({ id: editJob._id, data: editJob as Partial<JobPayload> }).unwra
                 </label>
                 <input
                   type="text"
-                  value={editJob.department}
+                  value={
+                    isDepartmentObject(editJob.department)
+                      ? editJob.department.name
+                      : editJob.department
+                  }
                   onChange={(e) =>
-                    setEditJob({ ...editJob, department: e.target.value })
+                    setEditJob({
+                      ...editJob,
+                      department: isDepartmentObject(editJob.department)
+                        ? { ...editJob.department, name: e.target.value }
+                        : e.target.value,
+                    })
                   }
                   placeholder="Enter department"
                   className="input input-bordered w-full bg-white text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-black/70"

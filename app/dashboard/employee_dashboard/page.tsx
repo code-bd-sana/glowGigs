@@ -63,7 +63,7 @@ export default function Dashboard() {
         />
       </div>
       <div className="flex flex-col lg:flex-row gap-6">
-        <LatestApplications applicants={applicants} />
+        {/* <LatestApplications  /> */}
         <JobsPostedByWeek data={jobsData} />
       </div>
     </div>

@@ -3,6 +3,8 @@ import { JobType } from "@/types/job.types";
 import Job from "./job.model";
 import { NextResponse } from "next/server";
 import { Types } from "mongoose";
+import "../../api/category/category.model" // ✅ Ensure Category model is registered
+
 
 export const createJob = async (data: JobType) => {
   try {
@@ -44,7 +46,7 @@ export const getJobsByPoster = async (jobPosterId: string) => {
     );
   }
 
-  const jobs = await Job.find({ jobPoster: jobPosterId }).sort({
+  const jobs = await Job.find({ jobPoster: jobPosterId }).populate("department", "name").sort({
     createdAt: -1,
   });
   const total = await Job.countDocuments({ jobPoster: jobPosterId }); // ✅ total count for this poster
