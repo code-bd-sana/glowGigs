@@ -2,6 +2,9 @@ import { dbConnect } from "@/lib/dbConnect";
 import { JobType } from "@/types/job.types";
 import Job from "./job.model";
 import { NextResponse } from "next/server";
+import { Types } from "mongoose";
+import "../../api/category/category.model" // ✅ Ensure Category model is registered
+
 
 export const createJob = async (data: JobType) => {
   try {
@@ -19,9 +22,38 @@ export const createJob = async (data: JobType) => {
 // 🟢 Get all jobs
 export const getAllJobs = async () => {
   await dbConnect();
-  const jobs = await Job.find();
-  return jobs;
-  console.log("hey man");
+  const jobs = await Job.find().sort({ createdAt: -1 });
+
+  // Count total jobs
+  const total = await Job.countDocuments();
+  
+  // Return structured response
+  return {
+    success: true,
+    data: jobs,
+    total, // ✅ total count
+  };
+};
+
+// ✅ Get jobs by jobPoster ID
+export const getJobsByPoster = async (jobPosterId: string) => {
+  await dbConnect();
+
+  if (!Types.ObjectId.isValid(jobPosterId)) {
+    return NextResponse.json(
+      { success: false, message: "Invalid jobPoster ID" },
+      { status: 400 }
+    );
+  }
+
+  const jobs = await Job.find({ jobPoster: jobPosterId }).populate("department", "name").sort({
+    createdAt: -1,
+  });
+  const total = await Job.countDocuments({ jobPoster: jobPosterId }); // ✅ total count for this poster
+  return NextResponse.json(
+    { success: true, data: jobs, total },
+    { status: 200 }
+  );
 };
 
 // 🟢 Get job by ID
@@ -35,6 +67,11 @@ export const getJobById = async (id: string) => {
 export const updateJob = async (id: string, data: Partial<JobType>) => {
   await dbConnect();
   const updated = await Job.findByIdAndUpdate(id, data, { new: true });
+
+  if (!updated) {
+    throw new Error("Job not found");
+  }
+
   return updated;
 };
 

@@ -1,3 +1,4 @@
+
 import { IUser } from "@/types/user.types";
 import mongoose, { Schema } from "mongoose";
 
@@ -8,12 +9,15 @@ const userSchema = new Schema<IUser>(
     password: { type: String, required: true },
     phoneNumber: { type: String },
     address: { type: String },
-    img:{type:String},
+    img: { type: String },
+
     role: { type: String, enum: ["JOB_SEEKER", "EMPLOYER"], required: true },
 
- 
+    professionalTitle: { type: String },
+    bio: { type: String }, 
+    resume: { type: String }, 
+    certificates: [{ type: String }],
 
- 
     dob: { type: String },
     isAdult: { type: Boolean },
     isAuthorizedToWorkInUS: { type: Boolean },
@@ -24,11 +28,9 @@ const userSchema = new Schema<IUser>(
     },
     certificationAcknowledged: { type: Boolean },
 
-
     companyName: { type: String },
     companyWebsite: { type: String },
     companyDescription: { type: String },
-
     companySize: {
       type: String,
       enum: ["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"],
@@ -56,8 +58,8 @@ const userSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
+
 const User =
-  (mongoose.models.User as mongoose.Model<IUser>) ||
-  mongoose.model<IUser>("User", userSchema);
+  mongoose.models.User || mongoose.model<IUser>("User", userSchema);
 
 export default User;

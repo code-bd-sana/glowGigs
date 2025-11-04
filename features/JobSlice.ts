@@ -17,29 +17,80 @@ export interface JobPayload {
   description: string;
   companyPerks?: string[];
   thumbnail?: string;
+  jobPoster?: string; // ✅ added to send poster id
 }
 
-// Response type from backend
-export interface JobResponse {
+// Single Job type returned by API
+export type Job = JobPayload & {
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+// ✅ Add this at the top
+export interface JobsResponse {
   success: boolean;
-  data: JobPayload & { _id: string; createdAt: string; updatedAt: string };
+  data: Job[];
+  total: number;
 }
 
+// API slice
 export const jobApi = createApi({
   reducerPath: "jobApi",
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
+  tagTypes: ["Jobs"],
   endpoints: (builder) => ({
-    createJob: builder.mutation<JobResponse, JobPayload>({
+    // ✅ Create a new job
+    createJob: builder.mutation<Job, JobPayload>({
       query: (jobPayload) => ({
         url: "/jobs",
         method: "POST",
         body: jobPayload,
       }),
+      invalidatesTags: ["Jobs"],
     }),
-    getJobs: builder.query<JobResponse[], void>({
+
+    // Get all jobs
+    getJobs: builder.query<JobsResponse, void>({
       query: () => "/jobs",
+      providesTags: ["Jobs"],
+    }),
+
+    // ✅ Get jobs by poster ID (NEW)
+    getJobsByPoster: builder.query<JobsResponse, string>({
+      query: (posterId) => `/jobs?jobPoster=${posterId}`,
+      providesTags: ["Jobs"],
+    }),
+
+    // ✅ Delete job
+    deleteJob: builder.mutation<{ success: boolean; id: string }, string>({
+      query: (id) => ({
+        url: `/jobs/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Jobs"],
+    }),
+
+    // ✅ Update job (PATCH)
+    updateJob: builder.mutation<
+      void,
+      { id: string; data: Partial<JobPayload> }
+    >({
+      query: ({ id, data }) => ({
+        url: `/jobs/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Jobs"],
     }),
   }),
 });
 
-export const { useCreateJobMutation, useGetJobsQuery } = jobApi;
+// ✅ Export hooks for components
+export const {
+  useCreateJobMutation,
+  useGetJobsQuery,
+  useGetJobsByPosterQuery, // ✅ new hook
+  useDeleteJobMutation,
+  useUpdateJobMutation,
+} = jobApi;

@@ -7,6 +7,7 @@ import { FiMenu } from "react-icons/fi";
 import { signOut, useSession } from "next-auth/react";
 import { useGetSingleUserQuery } from "@/features/AuthApi";
 import { ImUser } from "react-icons/im";
+import Link from "next/link";
 
 interface DashboardNavbarProps {
   onMenuClick: () => void;
@@ -24,6 +25,7 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
   const { data: singleUser, isLoading } = useGetSingleUserQuery(email!, {
     skip: !email,
   });
+  console.log(singleUser)
 
   // Close dropdown if clicked outside
   useEffect(() => {
@@ -50,23 +52,13 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
     // Implement logout logic
 
     await signOut();
-    
-    setOpen(false);
-  };
 
-  const handleProfile = () => {
-    alert("Navigating to profile...");
-    setOpen(false);
-  };
-
-  const handleSettings = () => {
-    alert("Navigating to settings...");
     setOpen(false);
   };
 
   return (
     <div
-      className="w-full fixed lg:sticky top-0 left-0 z-50 bg-white
+    className="w-full fixed lg:sticky top-0 left-0 z-50 bg-white
     shadow-sm px-4 py-3 flex items-center justify-between"
     >
       {/* Left - Mobile Menu Button & Title */}
@@ -85,7 +77,7 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
       </div>
 
       {/* Center - Search Bar */}
-      <form
+      {/* <form
         onSubmit={handleSearch}
         className="relative max-w-[400px] lg:max-w-[500px] xl:max-w-[600px] bg-[#F8FAFC] mx-4 flex-1 hidden md:block"
       >
@@ -110,7 +102,7 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
             d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"
           />
         </svg>
-      </form>
+      </form> */}
 
       {/* Right - Notifications & Profile */}
       <div className="flex items-center gap-4">
@@ -199,26 +191,25 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
           {open && (
             <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50 py-1">
               {/* Profile Option */}
-              <button
-                onClick={handleProfile}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                Profile
-              </button>
+              <Link href="/dashboard/profile">
+                <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors">
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                  Profile
+                </button>
+              </Link>
 
               {/* Settings Option */}
 

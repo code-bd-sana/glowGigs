@@ -13,6 +13,10 @@ interface IuserBase {
 interface IJobSeekerFields {
   role: "JOB_SEEKER";
   dob: string;
+  professionalTitle: string;
+  bio?: string;
+  resume?: string;
+  certificates?: string[];
   isAdult: boolean;
   isAuthorizedToWorkInUS: boolean;
   requiresVisaSponsorship: boolean;
@@ -34,7 +38,6 @@ interface IEmpoloyerFields {
   isVerified?: boolean;
 }
 
-
-
-export type IUser = (IuserBase & IJobSeekerFields ) | (IuserBase & IEmpoloyerFields )
-
+export type IUser =
+  | (IuserBase & IJobSeekerFields)
+  | (IuserBase & IEmpoloyerFields);

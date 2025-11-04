@@ -33,12 +33,12 @@ console.log(role, "I am your role")
 
 const EmployeeItems = [
   { name: "Dashboard", icon: <FiHome />, href: "/dashboard" },
-    { name: "Create Job Post", icon: <FiPlusCircle />, href: "/admin/profile" },
-      { name: "My Jobs", icon: <RiHandbagLine />, href: "/admin/profile" },
+    { name: "Create Job Post", icon: <FiPlusCircle />, href: "/dashboard/create-job-post" },
+      { name: "My Jobs", icon: <RiHandbagLine />, href: "/dashboard/my-jobs" },
   {
     name: "Applicants",
     icon: <FiFileText />,
-    href: "/dashboard/job-applicants",
+    href: "/dashboard/applicants",
   },
   
 ];
@@ -52,12 +52,12 @@ const adminItems = [
   },
   { name: "Manage Jobs", icon: <FiGift />, href: "/dashboard/manage-jobs" },
   { name: "Payments", icon: <FiDollarSign />, href: "/admin/payments" },
-  { name: "Profile", icon: <FaRegUser />, href: "/admin/profile" },
+  // { name: "Profile", icon: <FaRegUser />, href: "/admin/profile" },
 
 ];
 const jobSeekerItems = [
   { name: "Dashboard", icon: <FiHome />, href: "/dashboard" },
-  { name: "Job Posters", icon: <FiUsers />, href: "/dashboard/my-application" },
+  { name: "My Applications", icon: <FiUsers />, href: "/dashboard/my-application" },
   {
     name: "Profile & Resume",
     icon: <FiFileText />,

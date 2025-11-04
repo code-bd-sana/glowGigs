@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { MdOutlineShoppingBag } from 'react-icons/md';
 import { RxHamburgerMenu, RxCross2 } from 'react-icons/rx';
 import Image from 'next/image';
+import { FaUserCircle } from 'react-icons/fa';
 
 
 const NavBar = () => {
@@ -48,7 +49,7 @@ const NavBar = () => {
           <Link href="/professionals" className={getLinkClassName('/professionals')}>Professionals</Link>
           <Link href="/dashboard">
            <div className='text-black'>
-             <MdOutlineShoppingBag size={24} />
+             <FaUserCircle size={24} />
            </div>
           </Link>
         </div>
@@ -57,7 +58,7 @@ const NavBar = () => {
         <div className="flex items-center gap-4 lg:hidden">
           <Link href="/dashboard">
              <div className='text-black'>
-             <MdOutlineShoppingBag size={24} />
+             <FaUserCircle size={24} />
            </div>
           </Link>
           <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
