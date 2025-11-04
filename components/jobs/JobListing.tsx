@@ -8,6 +8,7 @@ import image4 from "../../public/jobs/job4.jpg";
 import { StaticImageData } from "next/image";
 import Button from "../shared/Button";
 import SecondaryButton from "../shared/SecondaryButton";
+import Link from "next/link";
 
 const JobListing = () => {
   interface Job {
@@ -77,7 +78,9 @@ const JobListing = () => {
     
       </section>
        <div className="mx-auto flex justify-center mt-6">
-           <SecondaryButton type="button" text="Explore Jobs Here"/>
+           <Link href="/all-jobs">
+            <SecondaryButton type="button" text="Explore Jobs Here"/>
+           </Link>
      </div>
     </div>
   );
