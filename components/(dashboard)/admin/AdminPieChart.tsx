@@ -7,15 +7,19 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { useChartOverviewQuery } from '@/features/OverViewApi';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function AdminPieChart() {
+  const {data:chartData, isLoading,error} = useChartOverviewQuery();
+
+  console.log(chartData, "I Am CHart data")
   const data = {
-    labels: ['Technology', 'Healthcare', 'Finance', 'Education', 'Marketing', 'Sales', 'Design', 'Others'],
+    labels: chartData?.departments,
     datasets: [
       {
-        data: [23, 18, 15, 12, 9, 8, 8, 9],
+        data: chartData?.counts,
         backgroundColor: [
           '#6366F1', // Technology (Indigo-500)
           '#10B981', // Healthcare (Green-500)
@@ -36,6 +40,7 @@ export default function AdminPieChart() {
     plugins: {
       legend: {
         position: 'right' as const,
+        
         labels: {
           boxWidth: 12,
           padding: 15,
