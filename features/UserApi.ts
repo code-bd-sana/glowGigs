@@ -1,3 +1,19 @@
+// import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
+// export const userApi = createApi({
+//   reducerPath: "userApi",
+//   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
+//   endpoints: (builder) => ({
+//     allEmployeer: builder.query<any, void>({
+//       query: () => `/allEmployee`,
+//     }),
+//   }),
+// });
+
+// // hook export
+// export const { useAllEmployeerQuery } = userApi;
+
+
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 interface UserRoleCountResponse {
   success: boolean;
@@ -15,7 +31,7 @@ export const userApi = createApi({
   tagTypes: ["Users"],
   endpoints: (builder) => ({
     // ✅ Get all users
-    getAllUsers: builder.query<unknown, void>({
+    getAllUsers: builder.query<unknown, void>({   
       query: () =>  "/users/roles",
       providesTags: ["Users"],
     }),

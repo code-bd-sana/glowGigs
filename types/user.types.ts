@@ -4,7 +4,10 @@ interface IuserBase {
   password: string;
   phoneNumber: string;
   address: string;
-  img?: string;
+  img?:string;
+  status?:string,
+  postedJob?:Number,
+  totalApplicants?: Number
 }
 
 interface IJobSeekerFields {
@@ -17,6 +20,7 @@ interface IJobSeekerFields {
   isAdult: boolean;
   isAuthorizedToWorkInUS: boolean;
   requiresVisaSponsorship: boolean;
+  applications?:number;
   employmentEligibility:
     | "US_CITIZEN"
     | "PERMANENT_RESIDENT"
