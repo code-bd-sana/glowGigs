@@ -1,84 +1,69 @@
+// ApplicantsPage.tsx
 'use client';
 
 import { useAllApplicantsQuery, useUpdateApplicantStatusMutation } from '@/features/UserApi';
 import Link from 'next/link';
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
 
-// 🧩 Applicant টাইপ ডেফিনিশন
-interface Applicant {
-  _id: string;
-  fullName: string;
-  email: string;
-  phoneNumber?: string;
-  applications?: number;
-  createdAt: string;
-  status: 'active' | 'banned';
-}
-
-interface PaginationInfo {
-  total: number;
-  page: number;
-  totalPages: number;
-}
-
 export default function ApplicantsPage() {
-  const [page, setPage] = useState<number>(1);
-  const [search, setSearch] = useState<string>('');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [debouncedSearch, setDebouncedSearch] = useState<string>('');
-  const [showBanModal, setShowBanModal] = useState<boolean>(false);
-  const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(null);
-
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [sortOrder, setSortOrder] = useState('desc');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [showBanModal, setShowBanModal] = useState(false);
+  const [selectedApplicant, setSelectedApplicant] = useState(null);
+  
   const limit = 5;
 
-  const { data, isLoading, refetch } = useAllApplicantsQuery({
-    page,
-    limit,
+  const { data, isLoading, refetch } = useAllApplicantsQuery({ 
+    page, 
+    limit, 
     search: debouncedSearch,
-    sortOrder,
+    sortOrder 
   });
 
   const [updateApplicantStatus] = useUpdateApplicantStatusMutation();
 
-  // ⏳ Debounce search
+  // Debounce search implementation
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
-      setPage(1);
+      setPage(1); // Reset to first page when search changes
     }, 500);
+
     return () => clearTimeout(timer);
   }, [search]);
 
-  const applicants: Applicant[] = data?.data ?? [];
-  const pagination: PaginationInfo | undefined = data?.pagination;
+  const applicants = data?.data || [];
+  const pagination = data?.pagination;
 
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };
 
-  const handleSortChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setSortOrder(e.target.value as 'asc' | 'desc');
-    setPage(1);
+  const handleSortChange = (e) => {
+    setSortOrder(e.target.value);
+    setPage(1); // Reset to first page when sort changes
   };
 
-  const handleBanClick = (applicant: Applicant) => {
+  const handleBanClick = (applicant) => {
     setSelectedApplicant(applicant);
     setShowBanModal(true);
   };
 
   const handleConfirmBan = async () => {
     if (!selectedApplicant) return;
-    try {
-      const newStatus: 'active' | 'banned' =
-        selectedApplicant.status === 'active' ? 'banned' : 'active';
 
-      await updateApplicantStatus({
+    try {
+      const newStatus = selectedApplicant.status === 'active' ? 'banned' : 'active';
+      const result = await updateApplicantStatus({
         id: selectedApplicant._id,
-        status: newStatus,
+        status: newStatus
       }).unwrap();
 
-      refetch();
+      console.log('Status update result:', result);
+      refetch(); // Refresh the data
       setShowBanModal(false);
       setSelectedApplicant(null);
     } catch (error) {
@@ -108,7 +93,7 @@ export default function ApplicantsPage() {
           <p className="text-sm text-gray-500">Manage and review job applications</p>
         </div>
         <div className="text-sm text-right text-blue-600 font-semibold">
-          Total Applicants: <span>{pagination?.total ?? 0}</span>
+          Total Applicants: <span>{pagination?.total}</span>
         </div>
       </div>
 
@@ -126,7 +111,7 @@ export default function ApplicantsPage() {
         </div>
 
         <div className="w-full md:w-1/4">
-          <select
+          <select 
             value={sortOrder}
             onChange={handleSortChange}
             className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
@@ -153,7 +138,7 @@ export default function ApplicantsPage() {
           <tbody className="text-gray-700">
             {applicants.map((applicant, idx) => (
               <tr
-                key={applicant._id ?? idx}
+                key={applicant._id || idx}
                 className="border-t border-gray-200 hover:bg-gray-50 transition"
               >
                 <td className="py-4 px-4">
@@ -162,11 +147,11 @@ export default function ApplicantsPage() {
                 </td>
                 <td className="py-4 px-4">
                   <div>{applicant.email}</div>
-                  <div className="text-xs text-gray-500">{applicant.phoneNumber ?? 'N/A'}</div>
+                  <div className="text-xs text-gray-500">{applicant.phoneNumber}</div>
                 </td>
                 <td className="py-4 px-4">
                   <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-600 font-medium text-xs">
-                    {applicant.applications ?? 0} applications
+                    {applicant.applications || 0} applications
                   </span>
                 </td>
                 <td className="py-4 px-4 text-sm">
@@ -189,16 +174,21 @@ export default function ApplicantsPage() {
                       View Profile
                     </button>
                   </Link>
-                  <button
-                    onClick={() => handleBanClick(applicant)}
-                    className={`px-3 py-1 text-xs rounded-md transition ${
-                      applicant.status === 'active'
-                        ? 'bg-red-100 hover:bg-red-200 text-red-500'
-                        : 'bg-green-100 hover:bg-green-200 text-green-600'
-                    }`}
-                  >
-                    {applicant.status === 'active' ? 'Ban' : 'Unban'}
-                  </button>
+                  {applicant.status === 'active' ? (
+                    <button 
+                      onClick={() => handleBanClick(applicant)}
+                      className="bg-red-100 hover:bg-red-200 text-red-500 px-3 py-1 text-xs rounded-md transition"
+                    >
+                      Ban
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={() => handleBanClick(applicant)}
+                      className="bg-green-100 hover:bg-green-200 text-green-600 px-3 py-1 text-xs rounded-md transition"
+                    >
+                      Unban
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -206,7 +196,9 @@ export default function ApplicantsPage() {
         </table>
 
         {applicants.length === 0 && (
-          <div className="text-center py-8 text-gray-500">No applicants found</div>
+          <div className="text-center py-8 text-gray-500">
+            No applicants found
+          </div>
         )}
       </div>
 
@@ -214,7 +206,7 @@ export default function ApplicantsPage() {
       <div className="flex justify-between items-center mt-6">
         <button
           disabled={page === 1}
-          onClick={() => setPage((p) => p - 1)}
+          onClick={() => setPage(page - 1)}
           className={`px-4 py-2 rounded-md ${
             page === 1
               ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
@@ -225,12 +217,12 @@ export default function ApplicantsPage() {
         </button>
 
         <p className="text-gray-600 text-sm">
-          Page {pagination?.page ?? 1} of {pagination?.totalPages ?? 1}
+          Page {pagination?.page || 1} of {pagination?.totalPages || 1}
         </p>
 
         <button
           disabled={page === pagination?.totalPages}
-          onClick={() => setPage((p) => p + 1)}
+          onClick={() => setPage(page + 1)}
           className={`px-4 py-2 rounded-md ${
             page === pagination?.totalPages
               ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
@@ -243,14 +235,13 @@ export default function ApplicantsPage() {
 
       {/* Ban/Unban Confirmation Modal */}
       {showBanModal && selectedApplicant && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="fixed inset-0 backdrop-blur-xs bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
               Confirm {selectedApplicant.status === 'active' ? 'Ban' : 'Unban'}
             </h3>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to{' '}
-              {selectedApplicant.status === 'active' ? 'ban' : 'unban'}{' '}
+              Are you sure you want to {selectedApplicant.status === 'active' ? 'ban' : 'unban'} {' '}
               <strong>{selectedApplicant.fullName}</strong> ({selectedApplicant.email})?
             </p>
             <div className="flex justify-end space-x-3">
@@ -263,8 +254,8 @@ export default function ApplicantsPage() {
               <button
                 onClick={handleConfirmBan}
                 className={`px-4 py-2 rounded-md text-white ${
-                  selectedApplicant.status === 'active'
-                    ? 'bg-red-600 hover:bg-red-700'
+                  selectedApplicant.status === 'active' 
+                    ? 'bg-red-600 hover:bg-red-700' 
                     : 'bg-green-600 hover:bg-green-700'
                 } transition`}
               >

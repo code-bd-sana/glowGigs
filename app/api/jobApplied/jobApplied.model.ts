@@ -18,5 +18,7 @@ const JobAppliedSchema = new Schema<JobAppliedType>(
   { timestamps: true }
 );
 
+JobAppliedSchema.index({ job: 1, applicant: 1 }, { unique: true });
+
 export default mongoose.models.JobApplied ||
   mongoose.model<JobAppliedType>("JobApplied", JobAppliedSchema);

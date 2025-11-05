@@ -20,7 +20,7 @@ export default function JobPoster() {
   const [showStatusModal, setShowStatusModal] = useState(false);
 
   // Transform API data to match our table structure
-  const posters = jobPosterData?.data?.map((poster) => ({
+  const posters = jobPosterData?.data?.map((poster: any) => ({
     id: poster._id,
     name: poster.fullName,
     company: poster.companyName || 'N/A',
@@ -126,7 +126,7 @@ export default function JobPoster() {
             </tr>
           </thead>
           <tbody>
-            {posters.map((poster) => (
+            {posters.map((poster: any) => (
               <tr key={poster.id} className="border-b border-gray-200 hover:bg-gray-50">
                 <td className="py-4 px-4">
                   <div className="font-medium text-[#000000]">{poster.name}</div>

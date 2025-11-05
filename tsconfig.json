@@ -30,6 +30,6 @@
     ".next/types/**/*.ts",
     "app/api/auth/[...nextauth]/route.js",
     "app/(auth)/register/page.tsx"
-, "app/api/category/category.controller.JS", "app/api/changePassword/route.js"  ],
+, "app/api/category/category.controller.ts", "app/api/changePassword/route.js", "components/(dashboard)/admin/ApplicantsPage.jsx"  ],
   "exclude": ["node_modules"]
 }
