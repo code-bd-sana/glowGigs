@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import {
   createJobApplication,
@@ -9,15 +10,13 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const newApplication = await createJobApplication(body);
     return NextResponse.json(
-      { message: "Application created successfully", newApplication },
+      { success: true, message: "Application created successfully", data: newApplication },
       { status: 201 }
     );
-  } catch (error) {
-    console.log(error)
-    return NextResponse.json(
-      { message: error || "Failed to create application" },
-      { status: 400 }
-    );
+  } catch (error: any) {
+    const status = error?.status || 400;
+    const message = error?.message || "Failed to create application";
+    return NextResponse.json({ success: false, message }, { status });
   }
 }
 

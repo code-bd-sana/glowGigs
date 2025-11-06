@@ -1,13 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+
 import Image from "next/image";
-import { useGetJobsByPosterQuery, useGetJobsQuery } from "@/features/JobSlice";
-import { useState } from "react";
+import { useGetJobsByPosterQuery } from "@/features/JobSlice";
+import { useState, useMemo } from "react";
 import { format } from "date-fns";
 import { BiCalendarAlt } from "react-icons/bi";
+import { useSession } from "next-auth/react";
+import { useApplyForJobMutation, useGetApplicationsByApplicantQuery } from "@/features/jobAppliedSlice";
+import toast from "react-hot-toast";
 
 export default function JobList() {
-    interface Job {
+  interface Job {
     _id: string;
     title: string;
     department: string;
@@ -17,22 +21,39 @@ export default function JobList() {
     payType: string;
     description: string;
     companyPerks?: string[];
+    thumbnail?: string;
     createdAt: string;
   }
 
-  interface JobsResponse {
-  success: boolean;
-  data: Job[];
-}
- const { data: jobsResponse, isLoading, error } = useGetJobsByPosterQuery("");
-const jobs = jobsResponse?.data || [];
+  // Auth session from NextAuth (to get applicant id)
+  const { data: session } = useSession();
+  const applicantId = session?.user?.id;
 
-  console.log(jobsResponse);
+  // Fetch jobs from your backend
+  const { data: jobsResponse, isLoading } = useGetJobsByPosterQuery("");
+  const jobs = jobsResponse?.data || [];
+
+  // Fetch all applications for this applicant (to detect already applied)
+  const { data: appliedResponse } = useGetApplicationsByApplicantQuery(applicantId!, {
+    skip: !applicantId,
+  });
+
+  // Extract job IDs that the user already applied to
+  const appliedJobIds = useMemo(
+    () => appliedResponse?.map((app: any) => app.job?._id || app.job) || [],
+    [appliedResponse]
+  );
+
+  // Apply mutation
+  const [applyForJob, { isLoading: applying }] = useApplyForJobMutation();
+
+  // Local states
   const [typeFilter, setTypeFilter] = useState("All Type");
   const [deptFilter, setDeptFilter] = useState("All Department");
   const [locationFilter, setLocationFilter] = useState("All Location");
   const [selectedJob, setSelectedJob] = useState<any>(null);
 
+  // Loader
   if (isLoading) {
     return (
       <div className="flex justify-center min-h-screen items-center py-24">
@@ -41,6 +62,7 @@ const jobs = jobsResponse?.data || [];
     );
   }
 
+  // Filtering logic
   const filteredJobs = jobs?.filter((job) => {
     return (
       (typeFilter === "All Type" || job.jobType === typeFilter) &&
@@ -53,13 +75,39 @@ const jobs = jobsResponse?.data || [];
     );
   });
 
-  // Helper function to show only first 12 words
+  // Helper to shorten long text
   const truncateDescription = (text: string, wordLimit: number) => {
     if (!text) return "";
     const words = text.split(" ");
     return words.length > wordLimit
       ? words.slice(0, wordLimit).join(" ") + "..."
       : text;
+  };
+
+  // Apply button handler
+  const handleApply = async () => {
+    if (!applicantId) {
+      toast.error("Please log in to apply for this job.");
+      return;
+    }
+
+    try {
+      const res = await applyForJob({
+        job: selectedJob._id,
+        applicant: applicantId,
+      }).unwrap();
+
+      toast.success(res?.message || `Applied successfully for ${selectedJob.title}!`);
+      setSelectedJob(null);
+    } catch (error: any) {
+      console.error("Application failed:", error);
+
+      if (error?.data?.message?.includes("already applied")) {
+        toast.error("You have already applied for this job.");
+      } else {
+        toast.error(error?.data?.message || "Failed to apply. Please try again.");
+      }
+    }
   };
 
   return (
@@ -101,7 +149,6 @@ const jobs = jobsResponse?.data || [];
           >
             {/* Left Section */}
             <div className="flex items-center gap-4">
-              {/* Logo */}
               <div className="relative w-14 h-14 flex-shrink-0">
                 <Image
                   src={job.thumbnail || "/default-logo.png"}
@@ -113,7 +160,6 @@ const jobs = jobsResponse?.data || [];
                 />
               </div>
 
-              {/* Job Info */}
               <div>
                 <p className="text-[24px] font-semibold text-gray-900 leading-tight">
                   {job.title}
@@ -128,7 +174,7 @@ const jobs = jobsResponse?.data || [];
                   {truncateDescription(job.description, 12)}
                 </p>
 
-                {/* View Details Button (LEFT) */}
+                {/* View Details Button */}
                 <button
                   onClick={() => setSelectedJob(job)}
                   className="mt-4 bg-black cursor-pointer text-white text-sm font-medium px-4 py-2 rounded-md 
@@ -183,12 +229,8 @@ const jobs = jobsResponse?.data || [];
                 <h2 className="text-[24px] font-semibold text-gray-900">
                   {selectedJob.title}
                 </h2>
-                <p className="text-gray-600 text-sm">
-                  {selectedJob.companyName}
-                </p>
-                <p className="text-gray-500 text-sm">
-                  {selectedJob.companyLocation}
-                </p>
+                <p className="text-gray-600 text-sm">{selectedJob.companyName}</p>
+                <p className="text-gray-500 text-sm">{selectedJob.companyLocation}</p>
               </div>
             </div>
 
@@ -221,15 +263,23 @@ const jobs = jobsResponse?.data || [];
 
             {/* Footer */}
             <div className="mt-6 flex gap-2 justify-end">
-              <button
-                onClick={() =>
-                  alert(`Applied successfully for ${selectedJob.title}!`)
-                }
-                className="bg-gradient-to-r from-[#f0efca] to-[#83a7dc] cursor-pointer text-black font-medium px-5 py-2.5 rounded-md 
-             hover:opacity-90 active:scale-[0.98] transition-all duration-300 shadow-sm"
-              >
-                Apply
-              </button>
+              {appliedJobIds.includes(selectedJob._id) ? (
+                <button
+                  disabled
+                  className="bg-gray-400 text-white font-medium px-5 py-2.5 rounded-md cursor-not-allowed"
+                >
+                  Applied
+                </button>
+              ) : (
+                <button
+                  onClick={handleApply}
+                  disabled={applying}
+                  className="bg-gradient-to-r from-[#f0efca] to-[#83a7dc] cursor-pointer text-black font-medium px-5 py-2.5 rounded-md 
+               hover:opacity-90 active:scale-[0.98] transition-all duration-300 shadow-sm disabled:opacity-50"
+                >
+                  {applying ? "Applying..." : "Apply"}
+                </button>
+              )}
 
               <button
                 onClick={() => setSelectedJob(null)}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { dbConnect } from "@/lib/dbConnect";
 import User from "../users/user.model";
 import JobApplied from "./jobApplied.model";
@@ -22,6 +23,14 @@ export const createJobApplication = async (data: {
   const userExists = await User.findById(applicant);
   if (!userExists) throw new Error("Applicant not found");
 
+  // ✅ STOP DUPLICATE APPLICATION
+  const existingApplication = await JobApplied.findOne({ job, applicant });
+  if (existingApplication) {
+    const error: any = new Error("You have already applied for this job.");
+    error.status = 409; // Conflict
+    throw error;
+  }
+
   const application = await JobApplied.create({
     job,
     applicant,
@@ -30,9 +39,13 @@ export const createJobApplication = async (data: {
     interviewDate,
   });
 
+  // Optionally also track applicants inside Job collection
+  await Job.findByIdAndUpdate(job, { $addToSet: { applicants: applicant } });
+
   return application;
 };
 
+// hi buttler
 /**
  * Get all job applications
  */

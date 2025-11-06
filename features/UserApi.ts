@@ -1,40 +1,47 @@
-// features/UserApi.ts
+// import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
+// export const userApi = createApi({
+//   reducerPath: "userApi",
+//   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
+//   endpoints: (builder) => ({
+//     allEmployeer: builder.query<any, void>({
+//       query: () => /allEmployee,
+//     }),
+//   }),
+// });
+
+// // hook export
+// export const { useAllEmployeerQuery } = userApi;
+
+
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+interface UserRoleCountResponse {
+  success: boolean;
+  roles: {
+    ADMIN: number;
+    EMPLOYER: number;
+    SEEKER: number;
+  };
+}
 
 export const userApi = createApi({
+  
   reducerPath: "userApi",
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
-  tagTypes: ['Applicant'],
+  tagTypes: ["Users"],
   endpoints: (builder) => ({
-    allEmployeer: builder.query<any, void>({
-      query: () => `/allEmployee`,
+    // ✅ Get all users
+    getAllUsers: builder.query<unknown, void>({   
+      query: () =>  "/users/roles",
+      providesTags: ["Users"],
     }),
-    allApplicants: builder.query<any, { 
-      page: number; 
-      limit: number;
-      search?: string;
-      sortOrder?: string;
-    }>({
-      query: ({ page, limit, search = '', sortOrder = 'desc' }) => 
-        `/allapplicants?page=${page}&limit=${limit}&search=${search}&sortOrder=${sortOrder}`,
-      providesTags: ['Applicant'],
-    }),
-    updateApplicantStatus: builder.mutation<any, { 
-      id: string; 
-      status: string;
-    }>({
-      query: ({ id, status }) => ({
-        url: `/user/${id}/status`,
-        method: 'PUT',
-        body: { status },
-      }),
-      invalidatesTags: ['Applicant'],
+
+    // ✅ Get user role counts (EMPLOYER, ADMIN, SEEKER)
+    getUserRoleCount: builder.query<UserRoleCountResponse, void>({
+      query: () => "/users/roles",
+      providesTags: ["Users"],
     }),
   }),
 });
 
-export const { 
-  useAllEmployeerQuery, 
-  useAllApplicantsQuery,
-  useUpdateApplicantStatusMutation 
-} = userApi;
+export const { useGetAllUsersQuery, useGetUserRoleCountQuery } = userApi;
