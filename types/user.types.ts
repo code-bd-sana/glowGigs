@@ -1,17 +1,19 @@
-interface IuserBase {
+// Base fields common to all users
+export interface IUserBase {
   fullName: string;
   email: string;
-  password: string;
+  password: string; 
   phoneNumber: string;
   address: string;
-  img?:string;
-  status?:string,
-  postedJob?:Number,
-  totalApplicants?: Number
+  img?: string;
+  status?: string;
+  postedJob?: number;
+  totalApplicants?: number;
+  role: "JOB_SEEKER" | "EMPLOYER"; 
 }
 
-interface IJobSeekerFields {
-  role: "JOB_SEEKER";
+// Job Seeker–specific fields
+export interface IJobSeekerFields {
   dob: string;
   professionalTitle: string;
   bio?: string;
@@ -20,7 +22,7 @@ interface IJobSeekerFields {
   isAdult: boolean;
   isAuthorizedToWorkInUS: boolean;
   requiresVisaSponsorship: boolean;
-  applications?:number;
+  applications?: number;
   employmentEligibility:
     | "US_CITIZEN"
     | "PERMANENT_RESIDENT"
@@ -28,8 +30,8 @@ interface IJobSeekerFields {
   certificationAcknowledged: boolean;
 }
 
-interface IEmpoloyerFields {
-  role: "EMPLOYER";
+// Employer–specific fields
+export interface IEmployerFields {
   companyName: string;
   companyWebsite?: string;
   companyDescription?: string;
@@ -38,6 +40,5 @@ interface IEmpoloyerFields {
   isVerified?: boolean;
 }
 
-export type IUser =
-  | (IuserBase & IJobSeekerFields)
-  | (IuserBase & IEmpoloyerFields);
+// ✅ Combined user type — every user always has base fields + either job-seeker or employer fields
+export type IUser = IUserBase & (IJobSeekerFields | IEmployerFields);

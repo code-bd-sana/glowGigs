@@ -1,9 +1,9 @@
-import mongoose, { Schema, Document, models } from "mongoose";
+import mongoose, { Schema, model, models, Model } from "mongoose";
 
 export interface ICategory extends Document {
   name: string;
   description?: string;
-  image: string; // 👈 new image field
+  image: string;
 }
 
 const categorySchema = new Schema<ICategory>(
@@ -20,13 +20,14 @@ const categorySchema = new Schema<ICategory>(
     },
     image: {
       type: String,
-      required: true, // 👈 make it required if every category must have an image
+      required: true,
     },
   },
   { timestamps: true }
 );
 
-const Category =
-  models.Category || mongoose.model<ICategory>("Category", categorySchema);
+// ✅ Type-safe export to avoid "expression is not callable" error
+const Category: Model<ICategory> =
+  (models.Category as Model<ICategory>) || model<ICategory>("Category", categorySchema);
 
 export default Category;
