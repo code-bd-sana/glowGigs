@@ -20,9 +20,9 @@ export default async function middleware(req) {
 
   if (pathname === "/dashboard/payments") {
  
-    if (userRole !== 'customer' && userRole !== 'butler') {
-      return NextResponse.redirect(new URL('/login', req.url));
-    }
+    // if (userRole !== 'customer' && userRole !== 'butler') {
+    //   return NextResponse.redirect(new URL('/login', req.url));
+    // }
   }
 
   if (pathname === "/dashboard/messages") {

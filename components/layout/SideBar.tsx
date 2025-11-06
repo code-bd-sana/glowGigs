@@ -51,7 +51,7 @@ const adminItems = [
     href: "/dashboard/job-applicants",
   },
   { name: "Manage Jobs", icon: <FiGift />, href: "/dashboard/manage-jobs" },
-  { name: "Payments", icon: <FiDollarSign />, href: "/admin/payments" },
+  { name: "Payments", icon: <FiDollarSign />, href: "/dashboard/payments" },
   // { name: "Profile", icon: <FaRegUser />, href: "/admin/profile" },
 
 ];

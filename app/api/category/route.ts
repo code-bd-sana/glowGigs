@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from "@/lib/dbConnect";
-import { getAllCategories, createCategory } from "./category.controller";
+import { createCategory, getAllCategories } from "./category.controller";
+
 
 // ✅ Get all categories
 export async function GET() {
