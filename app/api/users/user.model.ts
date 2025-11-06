@@ -1,10 +1,7 @@
+import mongoose, { Schema, model, models, Model } from "mongoose";
 import { IUser } from "@/types/user.types";
-import mongoose, { Schema, Document, Model } from "mongoose";
 
-// IUserDocument interface extends IUser + mongoose Document
-export interface IUserDocument extends IUser, Document {}
-
-const userSchema = new Schema<IUserDocument>(
+const userSchema = new Schema<IUser>(
   {
     fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -13,6 +10,8 @@ const userSchema = new Schema<IUserDocument>(
     address: { type: String },
     img: { type: String },
     role: { type: String, enum: ["JOB_SEEKER", "EMPLOYER"], required: true },
+
+    // Job-Seeker fields
     professionalTitle: { type: String },
     bio: { type: String },
     resume: { type: String },
@@ -26,6 +25,8 @@ const userSchema = new Schema<IUserDocument>(
       enum: ["US_CITIZEN", "PERMANENT_RESIDENT", "AUTHORIZED_NONCITIZEN"],
     },
     certificationAcknowledged: { type: Boolean },
+
+    // Employer fields
     companyName: { type: String },
     companyWebsite: { type: String },
     companyDescription: { type: String },
@@ -33,6 +34,8 @@ const userSchema = new Schema<IUserDocument>(
       type: String,
       enum: ["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"],
     },
+
+    // Common meta fields
     status: { type: String, default: "active" },
     postedJob: { type: Number, default: 0 },
     totalApplicants: { type: Number, default: 0 },
@@ -42,8 +45,8 @@ const userSchema = new Schema<IUserDocument>(
   { timestamps: true }
 );
 
-// Explicitly cast the model to Model<IUserDocument>
-const User: Model<IUserDocument> =
-  (mongoose.models.User as Model<IUserDocument>) || mongoose.model<IUserDocument>("User", userSchema);
+// ✅ Explicitly cast model type to avoid union confusion
+const User: Model<IUser> =
+  (models.User as Model<IUser>) || model<IUser>("User", userSchema);
 
 export default User;
