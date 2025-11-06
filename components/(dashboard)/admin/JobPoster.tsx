@@ -1,57 +1,57 @@
-import Link from 'next/link';
-import React from 'react';
+import Link from "next/link";
+import React from "react";
 
 export default function JobPoster() {
   const posters = [
     {
       id: 1,
-      name: 'John Anderson',
-      company: 'TechCorp Inc.',
-      email: 'donna@jigroup.com',
-      phone: '+1 555-432-2299',
+      name: "John Anderson",
+      company: "TechCorp Inc.",
+      email: "donna@jigroup.com",
+      phone: "+1 555-432-2299",
       postedJobs: 12,
       applicants: 245,
-      status: 'Active',
+      status: "Active",
     },
     {
       id: 2,
-      name: 'John Anderson',
-      company: 'TechCorp Inc.',
-      email: 'donna@jigroup.com',
-      phone: '+1 555-432-2299',
+      name: "John Anderson",
+      company: "TechCorp Inc.",
+      email: "donna@jigroup.com",
+      phone: "+1 555-432-2299",
       postedJobs: 12,
       applicants: 245,
-      status: 'Active',
+      status: "Active",
     },
     {
       id: 3,
-      name: 'John Anderson',
-      company: 'TechCorp Inc.',
-      email: 'donna@jigroup.com',
-      phone: '+1 555-432-2299',
+      name: "John Anderson",
+      company: "TechCorp Inc.",
+      email: "donna@jigroup.com",
+      phone: "+1 555-432-2299",
       postedJobs: 12,
       applicants: 245,
-      status: 'Suspended',
+      status: "Suspended",
     },
     {
       id: 4,
-      name: 'John Anderson',
-      company: 'TechCorp Inc.',
-      email: 'donna@jigroup.com',
-      phone: '+1 555-432-2299',
+      name: "John Anderson",
+      company: "TechCorp Inc.",
+      email: "donna@jigroup.com",
+      phone: "+1 555-432-2299",
       postedJobs: 12,
       applicants: 245,
-      status: 'Active',
+      status: "Active",
     },
     {
       id: 5,
-      name: 'John Anderson',
-      company: 'TechCorp Inc.',
-      email: 'donna@jigroup.com',
-      phone: '+1 555-432-2299',
+      name: "John Anderson",
+      company: "TechCorp Inc.",
+      email: "donna@jigroup.com",
+      phone: "+1 555-432-2299",
       postedJobs: 12,
       applicants: 245,
-      status: 'Active',
+      status: "Active",
     },
   ];
 
@@ -59,7 +59,10 @@ export default function JobPoster() {
     <div className="p-6 bg-white rounded-md shadow-md">
       <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-3">
         <h6 className="text-lg font-semibold">Manage Job Posters</h6>
-        <Link href="/dashboard/create-job-post" className="bg-[#2199E8] cursor-pointer text-white text-sm px-4 py-2 rounded">
+        <Link
+          href="/dashboard/create-job-post"
+          className="bg-[#2199E8] cursor-pointer text-white text-sm px-4 py-2 rounded"
+        >
           + Add New Poster
         </Link>
       </div>
@@ -80,9 +83,11 @@ export default function JobPoster() {
             fill="currentColor"
             viewBox="0 0 16 16"
           >
-            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 
+            <path
+              d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 
             1.415-1.415l-3.85-3.85zm-5.242 1.106a5 5 0 1 1 0-10 
-            5 5 0 0 1 0 10z" />
+            5 5 0 0 1 0 10z"
+            />
           </svg>
         </div>
         <div className="flex gap-2 items-center">
@@ -91,7 +96,6 @@ export default function JobPoster() {
             <option>Active</option>
             <option>Suspended</option>
           </select>
-       
         </div>
       </div>
 
@@ -110,9 +114,14 @@ export default function JobPoster() {
           </thead>
           <tbody>
             {posters.map((poster) => (
-              <tr key={poster.id} className="border-b border-gray-200 hover:bg-gray-50">
+              <tr
+                key={poster.id}
+                className="border-b border-gray-200 hover:bg-gray-50"
+              >
                 <td className="py-4 px-4">
-                  <div className="font-medium text-[#000000]">{poster.name}</div>
+                  <div className="font-medium text-[#000000]">
+                    {poster.name}
+                  </div>
                   <div className="text-xs text-gray-500">{poster.company}</div>
                 </td>
                 <td className="py-4 px-4 text-sm">
@@ -124,21 +133,27 @@ export default function JobPoster() {
                 <td className="py-4 px-4">
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      poster.status === 'Active'
-                        ? 'bg-green-100 text-green-600'
-                        : 'bg-red-100 text-red-600'
+                      poster.status === "Active"
+                        ? "bg-green-100 text-green-600"
+                        : "bg-red-100 text-red-600"
                     }`}
                   >
                     {poster.status}
                   </span>
                 </td>
                 <td className="py-4 px-4 text-sm space-x-2">
-                    <Link href={'/dashboard/job-posters/3243'}>
-                                <button className="text-[#EF4444] hover:underline">Info</button>
-                    </Link>
-      
-                  <button className="text-indigo-500 hover:underline">Edit</button>
-                  <button className="text-red-500 hover:underline">Delete</button>
+                  <Link href={"/dashboard/job-posters/3243"}>
+                    <button className="text-[#EF4444] hover:underline">
+                      Info
+                    </button>
+                  </Link>
+
+                  <button className="text-indigo-500 hover:underline">
+                    Edit
+                  </button>
+                  <button className="text-red-500 hover:underline">
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}

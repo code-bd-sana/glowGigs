@@ -3,7 +3,7 @@ import { JobType } from "@/types/job.types";
 import Job from "./job.model";
 import { NextResponse } from "next/server";
 import { Types } from "mongoose";
-import "../../api/category/category.model" // ✅ Ensure Category model is registered
+import "../../api/category/category.model" 
 
 
 export const createJob = async (data: JobType) => {

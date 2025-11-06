@@ -1,4 +1,5 @@
 // components/AdminCard.tsx
+import { useAdminOverviewQuery } from '@/features/OverViewApi'
 import React from 'react'
 import { FaBuilding, FaUserFriends, FaBriefcase, FaWpforms, FaDollarSign } from 'react-icons/fa'
 
@@ -29,32 +30,36 @@ const StatCard: React.FC<StatCardProps> = ({ icon, title, value, percentage }) =
 }
 
 export default function AdminCard() {
+
+
+    const {data, isLoading, error} = useAdminOverviewQuery();
+console.log(data?.data , "Khalid vai bowa")
   const stats = [
     {
       icon: <FaBuilding />,
       title: 'Total Job Poster',
-      value: 1247,
+      value: data?.data?.totalJobPoster,
       percentage: '12.5%',
       color: 'bg-blue-500'
     },
     {
       icon: <FaUserFriends />,
       title: 'Total Job Candidates',
-      value: 8325,
+      value: data?.data?.totalJobCandidate,
       percentage: '8%',
       color: 'bg-green-500'
     },
     {
       icon: <FaBriefcase />,
       title: 'Total Jobs',
-      value: 456,
+      value: data?.data?.totalJobs,
       percentage: '15%',
       color: 'bg-purple-500'
     },
     {
       icon: <FaWpforms />,
       title: 'Total Applications',
-      value: 12847,
+      value: data?.data?.totalApplications,
       percentage: '23%',
       color: 'bg-orange-500'
     },
@@ -66,6 +71,8 @@ export default function AdminCard() {
       color: 'bg-green-500'
     }
   ]
+
+
 
   return (
     <div className="flex justify-center flex-wrap gap-4">
