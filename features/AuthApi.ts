@@ -10,7 +10,7 @@ export const authApi = createApi({
     register: builder.mutation<{
     message:string,
     user:IUser,
-    data:any
+    data
     }, IUser>({
       query: (data: IUser) => ({
         url: "/users",

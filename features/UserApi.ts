@@ -5,7 +5,7 @@
 //   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
 //   endpoints: (builder) => ({
 //     allEmployeer: builder.query<any, void>({
-//       query: () => `/allEmployee`,
+//       query: () => /allEmployee,
 //     }),
 //   }),
 // });
@@ -45,3 +45,4 @@ export const userApi = createApi({
 });
 
 export const { useGetAllUsersQuery, useGetUserRoleCountQuery } = userApi;
+

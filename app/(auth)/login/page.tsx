@@ -57,6 +57,7 @@ const LoginForm = () => {
     try {
       const resp = await login(formData).unwrap();
       const loginData = resp?.data;
+      console.log(loginData, "This is login data")
 
       toast.success("Login Success")
 
