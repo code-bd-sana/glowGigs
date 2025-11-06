@@ -1,10 +1,10 @@
+import mongoose, { Schema, model, models, Model } from "mongoose";
 import { JobType } from "@/types/job.types";
-import mongoose, { Schema } from "mongoose";
 
+// ✅ Define the schema
 const JobSchema = new Schema<JobType>(
   {
     title: { type: String, required: true },
-    // department: { type: String, required: true },
     department: {
       type: Schema.Types.ObjectId,
       ref: "Category",
@@ -29,7 +29,6 @@ const JobSchema = new Schema<JobType>(
       ],
       required: true,
     },
-
     description: { type: String, required: true },
     thumbnail: { type: String, default: "" },
     companyPerks: {
@@ -37,13 +36,13 @@ const JobSchema = new Schema<JobType>(
       default: [],
     },
     jobPoster: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
     applicants: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "User",
         default: [],
       },
@@ -52,4 +51,8 @@ const JobSchema = new Schema<JobType>(
   { timestamps: true }
 );
 
-export default mongoose.models.Job || mongoose.model<JobType>("Job", JobSchema);
+// ✅ Ensure consistent typing to prevent union type error
+const Job: Model<JobType> =
+  (models.Job as Model<JobType>) || model<JobType>("Job", JobSchema);
+
+export default Job;
