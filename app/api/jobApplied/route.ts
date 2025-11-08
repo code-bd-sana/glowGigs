@@ -3,14 +3,20 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   createJobApplication,
   getAllApplications,
+  getApplicationsByApplicant,
 } from "./jobApplied.controller";
 
+// ---------- CREATE NEW APPLICATION ----------
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const newApplication = await createJobApplication(body);
     return NextResponse.json(
-      { success: true, message: "Application created successfully", data: newApplication },
+      {
+        success: true,
+        message: "Application created successfully",
+        data: newApplication,
+      },
       { status: 201 }
     );
   } catch (error: any) {
@@ -20,13 +26,23 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+// ---------- GET APPLICATION(S) ----------
+export async function GET(req: NextRequest) {
   try {
+    const applicantId = req.nextUrl.searchParams.get("applicant");
+
+    if (applicantId) {
+      // ✅ Only fetch this user's applications
+      const applications = await getApplicationsByApplicant(applicantId);
+      return NextResponse.json(applications, { status: 200 });
+    }
+
+    // ✅ If no query param, return all (admin or general view)
     const applications = await getAllApplications();
     return NextResponse.json(applications, { status: 200 });
-  } catch (error) {
+  } catch (error: any) {
     return NextResponse.json(
-      { message: error || "Failed to fetch applications" },
+      { message: error?.message || "Failed to fetch applications" },
       { status: 500 }
     );
   }

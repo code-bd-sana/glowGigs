@@ -3,6 +3,7 @@ import { dbConnect } from "@/lib/dbConnect";
 import User from "../users/user.model";
 import JobApplied from "./jobApplied.model";
 import Job from "../jobs/job.model";
+import mongoose from "mongoose";
 /**
  * Create a new job application
  */
@@ -69,12 +70,28 @@ export const getApplicationsByJob = async (jobId: string) => {
 /**
  * Get applications by applicant
  */
+// export const getApplicationsByApplicant = async (applicantId: string) => {
+//   await dbConnect();
+//   return await JobApplied.find({ applicant: applicantId })
+//     .populate("job", "title company location")
+//     .populate("applicant", "name email");
+// };
+
 export const getApplicationsByApplicant = async (applicantId: string) => {
   await dbConnect();
-  return await JobApplied.find({ applicant: applicantId })
+
+  // Ensure it's treated as a valid ObjectId
+  const id = new mongoose.Types.ObjectId(applicantId);
+
+  const applications = await JobApplied.find({ applicant: id })
     .populate("job", "title company location")
     .populate("applicant", "name email");
+
+  return applications;
 };
+
+
+
 
 /**
  * Update application status
