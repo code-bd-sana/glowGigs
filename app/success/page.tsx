@@ -2,15 +2,14 @@
 
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 
-export default function SuccessPage() {
+function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-   
     if (sessionId) {
       console.log("Stripe session:", sessionId);
       setLoading(false);
@@ -18,13 +17,15 @@ export default function SuccessPage() {
   }, [sessionId]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] text-center"
-    style={{
+    <div
+      className="flex flex-col items-center justify-center min-h-[80vh] text-center"
+      style={{
         background: "linear-gradient(135deg, #f0efca, #83a7dc)",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-      }}>
+      }}
+    >
       {loading ? (
         <h2 className="text-xl font-semibold text-gray-700 animate-pulse">
           Verifying payment...
@@ -35,7 +36,7 @@ export default function SuccessPage() {
             🎉 Payment Successful!
           </h1>
           <p className="text-white text-xl mb-6">
-            Thank you for subscribing! your plan is now active.
+            Thank you for subscribing! Your plan is now active.
           </p>
 
           <Link
@@ -47,5 +48,13 @@ export default function SuccessPage() {
         </>
       )}
     </div>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-40 text-white">Loading...</div>}>
+      <SuccessContent />
+    </Suspense>
   );
 }
