@@ -147,6 +147,7 @@ export default function Pricing() {
                 </div>
               ))}
             </div>
+            {/* hi Butler */}
 
             {/* Button */}
             <div className="mt-6 flex justify-center">
