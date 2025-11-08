@@ -7,7 +7,10 @@ import { useState, useMemo } from "react";
 import { format } from "date-fns";
 import { BiCalendarAlt } from "react-icons/bi";
 import { useSession } from "next-auth/react";
-import { useApplyForJobMutation, useGetApplicationsByApplicantQuery } from "@/features/jobAppliedSlice";
+import {
+  useApplyForJobMutation,
+  useGetApplicationsByApplicantQuery,
+} from "@/features/jobAppliedSlice";
 import toast from "react-hot-toast";
 
 export default function JobList() {
@@ -28,21 +31,23 @@ export default function JobList() {
   // Auth session from NextAuth (to get applicant id)
   const { data: session } = useSession();
   const applicantId = session?.user?.id;
+  console.log(applicantId);
 
   // Fetch jobs from your backend
   const { data: jobsResponse, isLoading } = useGetJobsByPosterQuery("");
   const jobs = jobsResponse?.data || [];
 
   // Fetch all applications for this applicant (to detect already applied)
-  const { data: appliedResponse } = useGetApplicationsByApplicantQuery(applicantId!, {
-    skip: !applicantId,
-  });
+  const { data: appliedResponse } = useGetApplicationsByApplicantQuery(
+    applicantId!,
+    {
+      skip: !applicantId,
+    }
+  );
 
   // Extract job IDs that the user already applied to
-  const appliedJobIds = useMemo(
-    () => appliedResponse?.map((app: any) => app.job?._id || app.job) || [],
-    [appliedResponse]
-  );
+  const appliedJobIds =
+    appliedResponse?.map((app: any) => app.job?._id || app.job) || [];
 
   // Apply mutation
   const [applyForJob, { isLoading: applying }] = useApplyForJobMutation();
@@ -97,7 +102,9 @@ export default function JobList() {
         applicant: applicantId,
       }).unwrap();
 
-      toast.success(res?.message || `Applied successfully for ${selectedJob.title}!`);
+      toast.success(
+        res?.message || `Applied successfully for ${selectedJob.title}!`
+      );
       setSelectedJob(null);
     } catch (error: any) {
       console.error("Application failed:", error);
@@ -105,7 +112,9 @@ export default function JobList() {
       if (error?.data?.message?.includes("already applied")) {
         toast.error("You have already applied for this job.");
       } else {
-        toast.error(error?.data?.message || "Failed to apply. Please try again.");
+        toast.error(
+          error?.data?.message || "Failed to apply. Please try again."
+        );
       }
     }
   };
@@ -229,8 +238,12 @@ export default function JobList() {
                 <h2 className="text-[24px] font-semibold text-gray-900">
                   {selectedJob.title}
                 </h2>
-                <p className="text-gray-600 text-sm">{selectedJob.companyName}</p>
-                <p className="text-gray-500 text-sm">{selectedJob.companyLocation}</p>
+                <p className="text-gray-600 text-sm">
+                  {selectedJob.companyName}
+                </p>
+                <p className="text-gray-500 text-sm">
+                  {selectedJob.companyLocation}
+                </p>
               </div>
             </div>
 
