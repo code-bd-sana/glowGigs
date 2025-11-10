@@ -68,8 +68,5 @@ const userSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
-// ✅ Explicitly cast model type
-const User: Model<IUser> =
-  (models.User as Model<IUser>) || model<IUser>("User", userSchema);
+export default mongoose.models.User || mongoose.model("User", userSchema);
 
-export default User;
