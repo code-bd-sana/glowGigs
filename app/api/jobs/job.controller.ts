@@ -1,16 +1,20 @@
 import { dbConnect } from "@/lib/dbConnect";
-import User from "../../api/users/user.model"; // ✅ needed for populate
+import "../../api/users/user.model";  // ✅ must import this
 import { JobType } from "@/types/job.types";
 import Job from "./job.model";
 import { NextResponse } from "next/server";
 import mongoose, { Types } from "mongoose";
 import "../../api/category/category.model";
 import JobApplied from "../jobApplied/jobApplied.model";
+// import User from "../users/user.model";
+
 // 🧩 Type for populated fields (so TS knows applicant & job are full objects)
 type PopulatedJobApplied = {
   applicant: {
     _id: string;
     fullName: string;
+    email: string;
+    img: string;
   };
   job: {
     _id: string;
@@ -118,7 +122,7 @@ export const getApplicantsForPoster = async (posterId: string) => {
 
     // Step 2: Find job applications for these jobs
     const applications = await JobApplied.find({ job: { $in: jobIds } })
-      .populate("applicant", "fullName") // only applicant name
+      .populate("applicant", "fullName email img") // only applicant name
       .populate("job", "title") // only job title
       .sort({ applicationDate: -1 })
       .lean<PopulatedJobApplied[]>();
@@ -128,6 +132,8 @@ export const getApplicantsForPoster = async (posterId: string) => {
     // Step 3: Format output
     const formatted = applications.map((app) => ({
       applicantName: app.applicant?.fullName,
+      applicantEmail: app.applicant?.email,
+      applicantImg: app.applicant?.img,
       jobTitle: app.job?.title,
       appliedDate: app.applicationDate,
     }));
