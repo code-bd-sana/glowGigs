@@ -1,20 +1,23 @@
 "use client";
+
 import React, { useState } from "react";
 import SectionHeader from "../shared/SectionHeader/SectionHeader";
 import { RiCheckboxCircleFill } from "react-icons/ri";
 import { IoCloseCircle } from "react-icons/io5";
 import SecondaryButton from "../shared/SecondaryButton";
+import { useSession } from "next-auth/react";
 
 export default function Pricing() {
   interface Pricing {
     type: string;
     price: number;
-    stripePriceId: string; 
+    stripePriceId: string;
     description: string;
     activeFeature: string[];
     deactiveFeature?: string[];
   }
 
+  const { data: session } = useSession();
   const [loading, setLoading] = useState<string | null>(null);
 
   const pricing: Pricing[] = [
@@ -25,11 +28,11 @@ export default function Pricing() {
       description:
         "Ideal for individuals just entering the industry or seeking part time work",
       activeFeature: [
-        `Create a professional profile visible in search sults`,
+        `Create a professional profile visible in search results`,
         `Apply to up to 5 job listings per month`,
         `Receive email alerts for new jobs in your area`,
-        `Bookmark/save jobs for`,
-        `Limited visibility in the professional directions`,
+        `Bookmark/save jobs for later`,
+        `Limited visibility in the professional directory`,
       ],
       deactiveFeature: [
         `Full access to the employer directory`,
@@ -44,57 +47,66 @@ export default function Pricing() {
       description:
         "Ideal for professionals wanting maximum exposure and direct opportunities",
       activeFeature: [
-        `Apply to up unlimited listing per month`,
+        `Apply to unlimited listings per month`,
         `Receive email alerts for new jobs in your area`,
         `Bookmark/save jobs for later`,
-        `Full visibility in the professional directions`,
+        `Full visibility in the professional directory`,
         `Full access to the employer directory`,
         `Ability to message employers directly`,
         `VIP listing placement`,
         `Featured placement on "Top Professionals" page`,
-        `Showcase your portfolio, certifications and social links Direct connect requests from employers (without needing to apply)`,
+        `Showcase your portfolio, certifications and social links`,
+        `Direct connect requests from employers (without needing to apply)`,
       ],
     },
     {
       type: "Bronze",
-      price: 19,
-      stripePriceId: "price_1SR9YYLgZdKW43fRWCu3p9rF", 
+      price: 49,
+      stripePriceId: "price_1SR9YYLgZdKW43fRWCu3p9rF",
       description:
         "Ideal for actively job-seeking professionals wanting more reach and applications",
       activeFeature: [
         `Apply to up to 15 job listings per month`,
         `Receive email alerts for new jobs in your area`,
         `Bookmark/save jobs for later`,
-        `Full visibility in the professional directions`,
+        `Full visibility in the professional directory`,
         `Full access to the employer directory`,
         `Ability to message employers directly`,
         `Priority listing placement`,
       ],
       deactiveFeature: [
         `Featured placement on "Top Professionals" page`,
-        `Ability to message employers directly`,
         `Showcase your portfolio, certifications and social links`,
       ],
     },
   ];
 
-  // 👇 Stripe checkout function
-  const handleCheckout = async (priceId: string) => {
+  // ✅ Stripe checkout handler
+  const handleCheckout = async (priceId: string, plan: string) => {
     try {
       setLoading(priceId);
+
+      const userId = session?.user?.id;
+      if (!userId) {
+        alert("Please log in before purchasing a plan.");
+        setLoading(null);
+        return;
+      }
+
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ priceId, userId, plan }),
       });
+
       const data = await res.json();
       if (data?.url) {
         window.location.href = data.url;
       } else {
-        alert("Unable to start checkout.");
+        alert("Unable to start checkout session.");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Checkout error:", err);
       alert("Something went wrong. Please try again.");
     } finally {
       setLoading(null);
@@ -102,58 +114,64 @@ export default function Pricing() {
   };
 
   return (
-    <div className="mt-16 max-w-7xl mx-auto ">
+    <div className="mt-16 max-w-7xl mx-auto">
       <SectionHeader
         title="It's your time to shine"
         description=""
         align="center"
       />
       <p className="text-base text-center flex mx-auto justify-center text-gray-600 mt-2 w-full md:w-9/12">
-        Discover flexible pricing plans to connect employers in your industry.
+        Discover flexible pricing plans to connect with employers in your
+        industry.
       </p>
 
-      {/* pricing */}
-      <section className="lg:flex flex-wrap px-8 sm:px-16 lg:px-0 justify-center gap-16 mt-32 ">
+      {/* ✅ Pricing cards */}
+      <section className="lg:flex flex-wrap px-8 sm:px-16 lg:px-0 justify-center gap-16 mt-32">
         {pricing?.map((price, idx) => (
           <div
             key={idx}
             className={`bg-[#f0f4fa] w-full my-4 lg:my-0 lg:w-[340px] border rounded-2xl p-6 border-[#8cade0] flex flex-col justify-between
-        ${idx === 1 ? "lg:scale-110 shadow-xl border-[#5a8be0]" : "shadow-md"}
-        transition-transform duration-300 ease-in-out`}
+              ${
+                idx === 1
+                  ? "lg:scale-110 shadow-xl border-[#5a8be0]"
+                  : "shadow-md"
+              }
+              transition-transform duration-300 ease-in-out`}
           >
             <div>
               <div className="flex justify-between mt-4">
                 <h4 className="font-bold text-xl">{price.type}</h4>
-                <h4 className="font-bold text-xl">${price?.price} / mo</h4>
+                <h4 className="font-bold text-xl">${price.price} / mo</h4>
               </div>
 
               <p className="mx-auto w-[90%] text-center my-6 text-gray-700">
-                {price?.description}
+                {price.description}
               </p>
 
               {/* Active features */}
-              {price?.activeFeature?.map((item, idx2) => (
-                <div key={idx2} className="flex  gap-3 my-2">
+              {price.activeFeature.map((item, idx2) => (
+                <div key={idx2} className="flex gap-3 my-2">
                   <RiCheckboxCircleFill className="text-green-700 text-2xl flex-shrink-0 mt-1" />
                   <p className="text-lg leading-tight">{item}</p>
                 </div>
               ))}
 
               {/* Deactive features */}
-              {price?.deactiveFeature?.map((item, idx3) => (
-                <div key={idx3} className="flex  gap-3 my-2">
+              {price.deactiveFeature?.map((item, idx3) => (
+                <div key={idx3} className="flex gap-3 my-2">
                   <IoCloseCircle className="text-red-600 text-2xl flex-shrink-0" />
                   <p className="text-lg leading-tight">{item}</p>
                 </div>
               ))}
             </div>
-            {/* hi Butler */}
 
             {/* Button */}
             <div className="mt-6 flex justify-center">
               <button
                 disabled={loading === price.stripePriceId}
-                onClick={() => handleCheckout(price.stripePriceId)}
+                onClick={() =>
+                  handleCheckout(price.stripePriceId, price.type.toLowerCase())
+                }
               >
                 <SecondaryButton
                   type="button"
