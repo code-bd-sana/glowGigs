@@ -8,7 +8,7 @@ const JobAppliedSchema = new Schema<JobAppliedType>(
     applicationDate: { type: Date, default: Date.now },
     status: {
       type: String,
-      enum: ["Applied", "Shortlisted", "Rejected"],
+      enum: ["Applied", "Interview", "Offer", "Rejected"],
       default: "Applied",
     },
     coverLetter: { type: String, default: "" },
