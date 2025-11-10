@@ -81,7 +81,7 @@ export default function Pricing() {
     },
   ];
 
-  // ✅ Stripe checkout handler
+  // ✅ Stripe checkout handler (fixed)
   const handleCheckout = async (priceId: string, plan: string) => {
     try {
       setLoading(priceId);
@@ -93,17 +93,24 @@ export default function Pricing() {
         return;
       }
 
+      // 🟢 Create checkout session
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId, userId, plan }),
+        body: JSON.stringify({
+          priceId,
+          userId,
+          plan: plan.toLowerCase(), 
+        }),
       });
 
       const data = await res.json();
-      if (data?.url) {
+
+      if (res.ok && data?.url) {
         window.location.href = data.url;
       } else {
-        alert("Unable to start checkout session.");
+        console.error("Stripe error:", data);
+        alert(data?.error || "Unable to start checkout session.");
       }
     } catch (err) {
       console.error("Checkout error:", err);
@@ -170,7 +177,7 @@ export default function Pricing() {
               <button
                 disabled={loading === price.stripePriceId}
                 onClick={() =>
-                  handleCheckout(price.stripePriceId, price.type.toLowerCase())
+                  handleCheckout(price.stripePriceId, price.type)
                 }
               >
                 <SecondaryButton
