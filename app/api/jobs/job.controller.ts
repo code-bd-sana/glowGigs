@@ -1,5 +1,5 @@
 import { dbConnect } from "@/lib/dbConnect";
-import "../../api/users/user.model";  // ✅ must import this
+import "../../api/users/user.model"; // ✅ must import this
 import { JobType } from "@/types/job.types";
 import Job from "./job.model";
 import { NextResponse } from "next/server";
@@ -10,8 +10,8 @@ import JobApplied from "../jobApplied/jobApplied.model";
 
 // 🧩 Type for populated fields (so TS knows applicant & job are full objects)
 type PopulatedJobApplied = {
+  _id: string;
   applicant: {
-    _id: string;
     fullName: string;
     email: string;
     img: string;
@@ -127,10 +127,12 @@ export const getApplicantsForPoster = async (posterId: string) => {
       .sort({ applicationDate: -1 })
       .lean<PopulatedJobApplied[]>();
 
-      console.log(applications);
+    console.log(applications);
 
     // Step 3: Format output
     const formatted = applications.map((app) => ({
+      _id: app._id,
+      status: app.status,
       applicantName: app.applicant?.fullName,
       applicantEmail: app.applicant?.email,
       applicantImg: app.applicant?.img,

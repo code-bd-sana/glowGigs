@@ -42,11 +42,18 @@ export interface Applicant {
   appliedDate: string;
 }
 
+export interface JobApplied {
+  _id: string;
+  jobId: string;
+  applicantId: string;
+  status: string;
+  createdAt: string;
+}
 // API slice
 export const jobApi = createApi({
   reducerPath: "jobApi",
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
-  tagTypes: ["Jobs"],
+  tagTypes: ["Jobs", "JobApplied"],
   endpoints: (builder) => ({
     // ✅ Create a new job
     createJob: builder.mutation<Job, JobPayload>({
@@ -98,6 +105,19 @@ export const jobApi = createApi({
     >({
       query: (posterId) => `/jobs/jobApplicants?posterId=${posterId}`,
     }),
+
+    /* 🚀✅ Update JobApplied status */
+    updateJobAppliedStatus: builder.mutation<
+      { message: string; data: JobApplied }, // ✅ no 'any' — properly typed
+      { id: string; status: string }
+    >({
+      query: ({ id, status }) => ({
+        url: `/jobApplied/${id}`,
+        method: "PATCH",
+        body: { status },
+      }),
+      invalidatesTags: ["JobApplied"], // ✅ works because added to tagTypes
+    }),
   }),
 });
 
@@ -108,5 +128,6 @@ export const {
   useGetJobsByPosterQuery, // ✅ new hook
   useDeleteJobMutation,
   useUpdateJobMutation,
-  useGetApplicantsForPosterQuery
+  useGetApplicantsForPosterQuery,
+  useUpdateJobAppliedStatusMutation
 } = jobApi;
