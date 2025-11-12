@@ -131,3 +131,26 @@ export const updateJobAppliedStatus = async (id: string, status: string) => {
 
   return updated;
 };
+
+
+// Delete JobApplied by ID
+export const deleteJobApplied = async (id: string) => {
+  try {
+    await dbConnect();
+
+    if (!id) {
+      return { status: 400, message: "ID is required" };
+    }
+
+    const deleted = await JobApplied.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return { status: 404, message: "Job application not found" };
+    }
+
+    return { status: 200, message: "Job application rejected successfully" };
+  } catch (error) {
+    console.error("❌ Error deleting JobApplied:", error);
+    return { status: 500, message: "Failed to delete application" };
+  }
+};
