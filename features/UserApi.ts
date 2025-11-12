@@ -41,7 +41,19 @@ export const userApi = createApi({
       query: () => "/users/roles",
       providesTags: ["Users"],
     }),
+    getSingleUser:builder.query({
+      query:(id)=> `/singleUser/${id}`
+    }),
+
+    deleteUser : builder.mutation({
+      query:(id)=>({
+        url:`/userDelete/${id}`,
+        method:"DELETE",
+      
+      })
+    })
+
   }),
 });
 
-export const { useGetAllUsersQuery, useGetUserRoleCountQuery } = userApi;
+export const { useGetAllUsersQuery, useGetUserRoleCountQuery, useGetSingleUserQuery, useDeleteUserMutation } = userApi;
