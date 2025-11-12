@@ -3,7 +3,11 @@ import {
   deleteApplication,
   getApplicationsByJob,
   updateApplicationStatus,
+  updateJobAppliedStatus,
 } from "../jobApplied.controller";
+import mongoose from "mongoose";
+import { dbConnect } from "@/lib/dbConnect";
+import JobApplied from "../jobApplied.model";
 
 /**
  * GET: Fetch all applications for a specific job
@@ -66,5 +70,31 @@ export async function DELETE(
       { message: (error as Error).message || "Error deleting application" },
       { status: 400 }
     );
+  }
+}
+
+//shortlisted
+
+
+export async function PATCH(
+  req: Request,
+  context: { params: Promise<{ id: string }> } // ✅ params is a Promise
+) {
+  try {
+    const resolvedParams = await context.params; // ✅ await params
+    const id = resolvedParams.id;
+
+    console.log("Route hit! ID:", id);
+
+    await dbConnect();
+    const { status } = await req.json();
+    console.log("Status from body:", status);
+
+    const updated = await updateJobAppliedStatus(id, status);
+
+    return NextResponse.json({ message: "Status updated", data: updated });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ message: error.message || "Server error" }, { status: 500 });
   }
 }

@@ -90,9 +90,6 @@ export const getApplicationsByApplicant = async (applicantId: string) => {
   return applications;
 };
 
-
-
-
 /**
  * Update application status
  */
@@ -118,4 +115,19 @@ export const deleteApplication = async (id: string) => {
   const deleted = await JobApplied.findByIdAndDelete(id);
   if (!deleted) throw new Error("Application not found");
   return deleted;
+};
+
+export const updateJobAppliedStatus = async (id: string, status: string) => {
+  console.log('omaigod',id);
+  if (!status) throw new Error("Status required");
+
+  const updated = await JobApplied.findByIdAndUpdate(
+    id,
+    { status },
+    { new: true }
+  );
+
+  if (!updated) throw new Error("Application not found");
+
+  return updated;
 };
