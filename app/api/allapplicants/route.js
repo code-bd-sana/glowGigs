@@ -1,8 +1,10 @@
 // app/api/allapplicants/route.js
+import { dbConnect } from "@/lib/dbConnect";
 import { NextRequest, NextResponse } from "next/server";
 import User from "../users/user.model";
 
-export const GET = async (req: NextRequest) => {
+export const GET = async (req) => {
+  await dbConnect()
   try {
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
@@ -14,17 +16,24 @@ export const GET = async (req: NextRequest) => {
 
     // Build search query
     const searchQuery = {
-      role: "JOB_SEEKER",
-      $or: [
-        { fullName: { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
-        { _id: { $regex: search, $options: "i" } }
-      ]
+      role: "JOB_SEEKER"
     };
 
-    // If no search term, remove the $or condition to get all applicants
-    if (!search) {
-      delete searchQuery.$or;
+    // Add search condition only if search term exists
+    if (search) {
+      // Check if search term is a valid MongoDB ObjectId (24 character hex string)
+      const isObjectId = /^[0-9a-fA-F]{24}$/.test(search);
+      
+      if (isObjectId) {
+        // If search term is a valid ObjectId, search by _id
+        searchQuery._id = search;
+      } else {
+        // If not ObjectId, search by name and email
+        searchQuery.$or = [
+          { fullName: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } }
+        ];
+      }
     }
 
     // Determine sort order
@@ -53,15 +62,13 @@ export const GET = async (req: NextRequest) => {
       { status: 200 }
     );
   } catch (error) {
+    console.log(error, 'This is error')
     return NextResponse.json(
       {
         message: "Something went wrong!",
-        error:error.message,
+        error: error.message,
       },
       { status: 500 }
     );
   }
 };
-
-
-
