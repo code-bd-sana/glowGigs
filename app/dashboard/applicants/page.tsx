@@ -4,57 +4,22 @@ import Image from "next/image";
 import { CiCalendar, CiClock2, CiMail } from "react-icons/ci";
 import { LuDownload, LuEye } from "react-icons/lu";
 import { useSession } from "next-auth/react";
-import { useGetApplicantsForPosterQuery } from "@/features/JobSlice";
+import {
+  useGetApplicantsForPosterQuery,
+  useUpdateJobAppliedStatusMutation,
+} from "@/features/JobSlice";
 import { IoEyeOutline } from "react-icons/io5";
+import toast from "react-hot-toast";
 
-interface Applicant {
-  name: string;
-  role: string;
-  email: string;
-  experience: string;
-  applied: string;
+interface ApplicantData {
+  _id: string;
+  applicantName: string;
+  applicantEmail: string;
+  applicantImg: string;
+  jobTitle: string;
+  appliedDate: string;
   status: string;
-  image: string;
 }
-
-// const applicants: Applicant[] = [
-//   {
-//     name: "Sarah Johnson",
-//     role: "Senior Frontend Developer",
-//     email: "sarah.johnson@email.com",
-//     experience: "5 years experience",
-//     applied: "01-20-2024",
-//     status: "New",
-//     image: "https://i.pravatar.cc/100?img=1",
-//   },
-//   {
-//     name: "Michael Chen",
-//     role: "UX Designer",
-//     email: "michael.chen@email.com",
-//     experience: "3 years experience",
-//     applied: "01-19-2024",
-//     status: "Reviewed",
-//     image: "https://i.pravatar.cc/100?img=2",
-//   },
-//   {
-//     name: "Emily Davis",
-//     role: "Product Manager",
-//     email: "emily.davis@email.com",
-//     experience: "7 years experience",
-//     applied: "01-18-2024",
-//     status: "Shortlisted",
-//     image: "https://i.pravatar.cc/100?img=3",
-//   },
-//   {
-//     name: "David Wilson",
-//     role: "Backend Developer",
-//     email: "david.wilson@email.com",
-//     experience: "4 years experience",
-//     applied: "01-17-2024",
-//     status: "",
-//     image: "https://i.pravatar.cc/100?img=4",
-//   },
-// ];
 
 const StatusBadge = ({ status }: { status: string }) => {
   if (!status) return null;
@@ -84,11 +49,40 @@ const ApplicantsPage: React.FC = () => {
       console.log("Email:", session.user.email);
     }
   }, [session, status]);
-  const { data, isLoading, isError } = useGetApplicantsForPosterQuery(
+
+  const { data, isLoading, isError, refetch } = useGetApplicantsForPosterQuery(
     session?.user?.id,
     { skip: !session?.user?.id }
   );
+  // ✅ RTK Query mutation hook
+  const [updateStatus, { isLoading: isUpdating }] =
+    useUpdateJobAppliedStatusMutation();
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center h-40">
+        <span className="loading loading-infinity loading-lg"></span>
+      </div>
+    );
   console.log(data?.applicants);
+
+  const handleShortlist = async (id: string) => {
+    try {
+      const res = await updateStatus({ id, status: "Shortlisted" }).unwrap();
+      console.log("✅ Status updated:", res);
+      toast.success("Applicant Shortlisted Successfully!");
+
+      // Refetch applicants to update UI
+      refetch();
+    } catch (err) {
+      console.error("❌ Error updating status:", err);
+      toast.error(err?.data?.message || "Failed to update status");
+    }
+  };
+
+  const handleReject =async (id: string) =>{
+    console.log(id);
+  }
+
   return (
     <div className="bg-white rounded-3xl p-6">
       {/* Header */}
@@ -98,7 +92,7 @@ const ApplicantsPage: React.FC = () => {
 
       {/* Applicants Grid */}
       <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
-        {data?.applicants.map((applicant, i) => (
+        {data?.applicants.map((applicant: ApplicantData, i) => (
           <div
             key={i}
             className="bg-white shadow-sm rounded-lg p-5 border border-gray-100 hover:shadow-md transition"
@@ -141,16 +135,24 @@ const ApplicantsPage: React.FC = () => {
                 <CiCalendar className="text-black" size={14} /> Applied:{" "}
                 {new Date(applicant.appliedDate).toLocaleDateString()}
               </div>
-              
             </div>
 
             {/* Buttons */}
             <div className="flex flex-col gap-2.5">
               <div className="flex justify-between gap-2">
-                <button className="bg-[#BEF8D4] flex-1 text-[#137317] font-bold border border-green-200 text-sm px-3 py-1.5 rounded-md">
+                <button
+                  onClick={() => handleShortlist(applicant?._id)}
+                  disabled={applicant?.status === "Shortlisted"}
+                  className={`flex-1 text-sm font-bold px-3 py-1.5 rounded-md border 
+    ${
+      applicant?.status === "Shortlisted"
+        ? "bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed"
+        : "bg-[#BEF8D4] text-[#137317] border-green-200 hover:bg-green-200"
+    }`}
+                >
                   ✓ Shortlist
                 </button>
-                <button className="flex-1 text-[#E53935] border font-bold border-[#E53935] text-sm px-3 py-1.5 rounded-md">
+                <button onClick={()=> handleReject(applicant?._id)} className="flex-1 text-[#E53935] border font-bold border-[#E53935] text-sm px-3 py-1.5 rounded-md">
                   ✗ Reject
                 </button>
               </div>
