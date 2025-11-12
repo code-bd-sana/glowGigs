@@ -34,6 +34,14 @@ export interface JobsResponse {
   total: number;
 }
 
+export interface Applicant {
+  applicantName: string;
+  applicantEmail: string;
+  applicantImg?: string;
+  jobTitle: string;
+  appliedDate: string;
+}
+
 // API slice
 export const jobApi = createApi({
   reducerPath: "jobApi",
@@ -83,6 +91,13 @@ export const jobApi = createApi({
       }),
       invalidatesTags: ["Jobs"],
     }),
+    // ✅ Get applicants for a specific poster
+    getApplicantsForPoster: builder.query<
+      { success: boolean; applicants: Applicant[] },
+      string
+    >({
+      query: (posterId) => `/jobs/jobApplicants?posterId=${posterId}`,
+    }),
   }),
 });
 
@@ -93,4 +108,5 @@ export const {
   useGetJobsByPosterQuery, // ✅ new hook
   useDeleteJobMutation,
   useUpdateJobMutation,
+  useGetApplicantsForPosterQuery
 } = jobApi;

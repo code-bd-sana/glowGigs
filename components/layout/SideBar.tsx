@@ -3,7 +3,6 @@
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaRegUser } from "react-icons/fa6";
 import {
   FiHome,
   FiUsers,
@@ -14,7 +13,8 @@ import {
   FiPlusCircle,
 } from "react-icons/fi"
 import { MdOutlineWorkspacePremium } from "react-icons/md";
-import { RiHandbagLine } from "react-icons/ri";
+import { RiHandbagLine, RiPriceTag3Line } from "react-icons/ri";
+import { IoPricetagOutline } from "react-icons/io5";
 
 
  interface SidebarProps {
@@ -39,6 +39,11 @@ const EmployeeItems = [
     name: "Applicants",
     icon: <FiFileText />,
     href: "/dashboard/applicants",
+  },
+  {
+    name: "Pricing",
+    icon: <IoPricetagOutline />,
+    href: "/dashboard/employeePricing",
   },
   
 ];

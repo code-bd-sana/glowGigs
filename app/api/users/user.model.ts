@@ -1,6 +1,8 @@
 import mongoose, { Schema, model, models, Model } from "mongoose";
 import { IUser } from "@/types/user.types";
 
+// 🧩 If your IUser type doesn't include these fields yet, make sure to add them later in user.types.ts too!
+
 const userSchema = new Schema<IUser>(
   {
     fullName: { type: String, required: true },
@@ -9,9 +11,11 @@ const userSchema = new Schema<IUser>(
     phoneNumber: { type: String },
     address: { type: String },
     img: { type: String },
+
+    // 👥 User role
     role: { type: String, enum: ["JOB_SEEKER", "EMPLOYER"], required: true },
 
-    // Job-Seeker fields
+    // 🧠 Job-Seeker fields
     professionalTitle: { type: String },
     bio: { type: String },
     resume: { type: String },
@@ -26,7 +30,7 @@ const userSchema = new Schema<IUser>(
     },
     certificationAcknowledged: { type: Boolean },
 
-    // Employer fields
+    // 🏢 Employer fields
     companyName: { type: String },
     companyWebsite: { type: String },
     companyDescription: { type: String },
@@ -35,7 +39,26 @@ const userSchema = new Schema<IUser>(
       enum: ["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"],
     },
 
-    // Common meta fields
+    // 🟢 Subscription fields (for both job seekers & employers)
+    stripeCustomerId: { type: String, default: null },
+    stripeSubscriptionId: { type: String, default: null },
+    plan: {
+      type: String,
+      enum: ["free", "basic", "bronze", "pro", "premium"],
+      default: "free",
+    },
+    planStatus: {
+      type: String,
+      enum: ["inactive", "active", "canceled", "past_due"],
+      default: "inactive",
+    },
+    currentPeriodEnd: { type: Date, default: null },
+
+    // 💼 Employer-specific subscription limits
+    jobPostLimit: { type: Number, default: 0 },
+    jobsPostedThisMonth: { type: Number, default: 0 },
+
+    // 📊 Common fields
     status: { type: String, default: "active" },
     postedJob: { type: Number, default: 0 },
     totalApplicants: { type: Number, default: 0 },
@@ -45,8 +68,9 @@ const userSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
-// ✅ Explicitly cast model type to avoid union confusion
 const User: Model<IUser> =
-  (models.User as Model<IUser>) || model<IUser>("User", userSchema);
+  (mongoose.models.User as Model<IUser>) || mongoose.model<IUser>("User", userSchema);
 
 export default User;
+
+
