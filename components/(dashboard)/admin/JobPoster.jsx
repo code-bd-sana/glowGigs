@@ -1,3 +1,6 @@
+'use client'
+import { useGetAllJobPosterQuery } from "@/features/EmployeeApi";
+import { useGetJobsByPosterQuery } from "@/features/JobSlice";
 import Link from "next/link";
 import React from "react";
 
@@ -55,7 +58,11 @@ export default function JobPoster() {
     },
   ];
 
+  const {data} =useGetAllJobPosterQuery();
+  console.log(data?.data, "this is all job poster")
+
   return (
+    
     <div className="p-6 bg-white rounded-md shadow-md">
       <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-3">
         <h6 className="text-lg font-semibold">Manage Job Posters</h6>

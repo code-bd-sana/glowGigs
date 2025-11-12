@@ -1,6 +1,6 @@
 import { dbConnect } from "@/lib/dbConnect";
 import { NextRequest, NextResponse } from "next/server";
-import { getJobsByCategory } from "../category.controller.ts";
+import { getJobsByCategory } from "../category.controller";
 
 export async function GET(
   req: NextRequest,

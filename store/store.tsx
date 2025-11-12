@@ -1,5 +1,6 @@
 import { authApi } from "@/features/AuthApi";
 import { categoryApi } from "@/features/categorySlice";
+import { EmployeeApi } from "@/features/EmployeeApi";
 import { jobAppliedApi } from "@/features/jobAppliedSlice";
 import { jobApi } from "@/features/JobSlice";
 import { overViewApi } from "@/features/OverViewApi";
@@ -15,6 +16,7 @@ export const store = configureStore({
     [userApi.reducerPath]: userApi.reducer,
         [overViewApi.reducerPath] : overViewApi.reducer,
     [jobAppliedApi.reducerPath]: jobAppliedApi.reducer,
+    [EmployeeApi.reducerPath] : EmployeeApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -23,7 +25,8 @@ export const store = configureStore({
       categoryApi.middleware,
       userApi.middleware,
       jobAppliedApi.middleware,
-      overViewApi.middleware
+      overViewApi.middleware,
+      EmployeeApi.middleware
     ),
 });
 
