@@ -2,6 +2,7 @@ import { authApi } from "@/features/AuthApi";
 import { categoryApi } from "@/features/categorySlice";
 import { jobAppliedApi } from "@/features/jobAppliedSlice";
 import { jobApi } from "@/features/JobSlice";
+import { overViewApi } from "@/features/OverViewApi";
 // import { overViewApi } from "@/features/OverViewApi";
 import { userApi } from "@/features/UserApi";
 import { configureStore } from "@reduxjs/toolkit";
@@ -12,6 +13,7 @@ export const store = configureStore({
     [authApi.reducerPath]: authApi.reducer,
     [categoryApi.reducerPath]: categoryApi.reducer,
     [userApi.reducerPath]: userApi.reducer,
+        [overViewApi.reducerPath] : overViewApi.reducer,
     [jobAppliedApi.reducerPath]: jobAppliedApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -20,7 +22,8 @@ export const store = configureStore({
       authApi.middleware,
       categoryApi.middleware,
       userApi.middleware,
-      jobAppliedApi.middleware
+      jobAppliedApi.middleware,
+      overViewApi.middleware
     ),
 });
 

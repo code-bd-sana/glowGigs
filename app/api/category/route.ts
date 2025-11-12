@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from "@/lib/dbConnect";
-import { createCategory, getAllCategories } from "./category.controller";
+import { createCategory, getAllCategories } from "./category.controller.ts";
 
 
 // ✅ Get all categories

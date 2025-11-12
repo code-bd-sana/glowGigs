@@ -1,7 +1,8 @@
 import User from "@/app/api/users/user.model";
 import { NextRequest } from "next/server";
 import Job from "@/app/api/jobs/job.model";
-import jobAppliedModel from "@/app/api/jobApplied/jobApplied.model";
+import jobAppliedModel from "../../jobApplied/jobApplied.model";
+
 
 export const getAdminOverview = async () => {
   try {
