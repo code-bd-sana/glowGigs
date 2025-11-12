@@ -1,10 +1,18 @@
+'use client'
 import React from 'react';
 import profile from '@/app/(public)/dashboard/profile2.png'
 import Image from 'next/image';
 import { IoDocumentTextOutline } from 'react-icons/io5';
 import { LuDownload } from 'react-icons/lu';
+import { useGetSingleUserQuery } from '@/features/UserApi';
+import { useParams } from 'next/navigation';
 
-const ApplicantProfile: React.FC = () => {
+const ApplicantProfile = () => {
+  const {id} = useParams();
+  const {data, isLoading, error} = useGetSingleUserQuery(id, { skip: !id });
+  console.log(data, "hey sinamika");
+  const user = data?.data;
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen text-gray-800">
       <button className="mb-4 text-[#4B5563] hover:underline">&larr; Back</button>
@@ -12,17 +20,21 @@ const ApplicantProfile: React.FC = () => {
       <div className="flex justify-between  mb-6">
         <div className="flex items-center gap-4">
           <Image
-            src={profile}
+            src={user?.img || profile}
+            height={200}
+            width={200}
             alt="Profile"
             className="w-12 h-12 rounded-full"
           />
           <div>
-            <h6 className="text-xl font-semibold">David Thompson</h6>
-            <p className="text-sm text-gray-600">david.thompson@email.com</p>
+            <h6 className="text-xl font-semibold">{user?.fullName || "David Thompson"}</h6>
+            <p className="text-sm text-gray-600">{user?.email || "david.thompson@email.com"}</p>
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">Active</span>
+          <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+            {user?.status === 'active' ? 'Active' : 'Inactive'}
+          </span>
           {/* <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
             Contact Applicant
           </button> */}
@@ -41,27 +53,27 @@ const ApplicantProfile: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div className='space-y-2'>
                 <p className="font-medium text-[#6B7280]">Full Name</p>
-                <p className='text-[#000000]'>David Thompson</p>
+                <p className='text-[#000000]'>{user?.fullName || "--"}</p>
               </div>
               <div className='space-y-2'>
                 <p className="font-medium text-[#6B7280]">Email</p>
-                <p className='text-[#000000]'>david.thompson@email.com</p>
+                <p className='text-[#000000]'>{user?.email || "--"}</p>
               </div>
               <div className='space-y-2'>
                 <p className="font-medium text-[#6B7280]">Phone</p>
-                <p className='text-[#000000]'>+1 (555) 456-7890</p>
+                <p className='text-[#000000]'>{user?.phoneNumber || "--"}</p>
               </div>
               <div className='space-y-2'>
                 <p className="font-medium">Location</p>
-                <p className='text-[#000000]'>Seattle, WA</p>
+                <p className='text-[#000000]'>{user?.address || "--"}</p>
               </div>
               <div className='space-y-2'>
                 <p className="font-medium text-[#6B7280]">Experience</p>
-                <p className='text-[#000000]'>10 years</p>
+                <p className='text-[#000000]'>{user?.professionalTitle || "--"}</p>
               </div>
               <div className='space-y-2'>
                 <p className="font-medium text-[#6B7280]">Education</p>
-                <p className='text-[#000000]'>PhD in Data Science</p>
+                <p className='text-[#000000]'>{user?.education || '--'}</p>
               </div>
             </div>
           </div>
@@ -102,15 +114,14 @@ const ApplicantProfile: React.FC = () => {
           <div className="text-sm space-y-4">
             <div>
               <p className="font-medium  text-[#6B7280]">Total Applications</p>
-              <p className='text-xl font-bold text-black'>15</p>
+              <p className='text-xl font-bold text-black'>{user?.applications }</p>
             </div>
-            <div>
-              <p className="font-medium text-[#6B7280]">Last Active</p>
-              <p className='mt-2'>1/16/2024</p>
-            </div>
+        
             <div className='space-y-4'>
               <p className="font-medium text-[#6B7280]">Status</p>
-              <span className="bg-green-100 text-green-700 px-2 py-1  rounded-full text-sm">Active</span>
+              <span className="bg-green-100 text-green-700 px-2 py-1  rounded-full text-sm">
+                {user?.status === 'active' ? 'Active' : 'Inactive'}
+              </span>
             </div>
           </div>
         </div>
