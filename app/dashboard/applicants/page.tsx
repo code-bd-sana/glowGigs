@@ -6,6 +6,7 @@ import { LuDownload, LuEye } from "react-icons/lu";
 import { useSession } from "next-auth/react";
 import {
   useGetApplicantsForPosterQuery,
+  useRejectApplicantMutation,
   useUpdateJobAppliedStatusMutation,
 } from "@/features/JobSlice";
 import { IoEyeOutline } from "react-icons/io5";
@@ -54,6 +55,9 @@ const ApplicantsPage: React.FC = () => {
     session?.user?.id,
     { skip: !session?.user?.id }
   );
+
+  const [rejectApplicant, { isLoading: isRejecting }] = useRejectApplicantMutation();
+
   // ✅ RTK Query mutation hook
   const [updateStatus, { isLoading: isUpdating }] =
     useUpdateJobAppliedStatusMutation();
@@ -81,6 +85,14 @@ const ApplicantsPage: React.FC = () => {
 
   const handleReject =async (id: string) =>{
     console.log(id);
+     try {
+    await rejectApplicant(id).unwrap();
+    toast.success("Applicant rejected and deleted successfully!");
+    refetch()
+  } catch (err) {
+    console.error(err);
+    toast.error(err?.data?.message || "Failed to reject applicant");
+  }
   }
 
   return (

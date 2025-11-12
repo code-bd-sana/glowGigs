@@ -53,7 +53,7 @@ export interface JobApplied {
 export const jobApi = createApi({
   reducerPath: "jobApi",
   baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
-  tagTypes: ["Jobs", "JobApplied"],
+  tagTypes: ["Jobs", "JobApplied","Applicants"],
   endpoints: (builder) => ({
     // ✅ Create a new job
     createJob: builder.mutation<Job, JobPayload>({
@@ -118,6 +118,15 @@ export const jobApi = createApi({
       }),
       invalidatesTags: ["JobApplied"], // ✅ works because added to tagTypes
     }),
+
+    // ✅ Reject applicant mutation
+    rejectApplicant: builder.mutation({
+      query: (id: string) => ({
+        url: `/jobApplied/applicant/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Applicants"], // automatically refresh list
+    }),
   }),
 });
 
@@ -129,5 +138,6 @@ export const {
   useDeleteJobMutation,
   useUpdateJobMutation,
   useGetApplicantsForPosterQuery,
-  useUpdateJobAppliedStatusMutation
+  useUpdateJobAppliedStatusMutation,
+  useRejectApplicantMutation
 } = jobApi;
