@@ -13,8 +13,13 @@ type PopulatedJobApplied = {
   _id: string;
   applicant: {
     fullName: string;
+    bio: string;
     email: string;
+    address: string;
     img: string;
+    dob: string;
+    certificates: string[];
+    phoneNumber: string;
   };
   job: {
     _id: string;
@@ -122,7 +127,7 @@ export const getApplicantsForPoster = async (posterId: string) => {
 
     // Step 2: Find job applications for these jobs
     const applications = await JobApplied.find({ job: { $in: jobIds } })
-      .populate("applicant", "fullName email img") // only applicant name
+      .populate("applicant", "fullName bio email address img dob certificates phoneNumber") // only applicant name
       .populate("job", "title") // only job title
       .sort({ applicationDate: -1 })
       .lean<PopulatedJobApplied[]>();
@@ -136,6 +141,11 @@ export const getApplicantsForPoster = async (posterId: string) => {
       applicantName: app.applicant?.fullName,
       applicantEmail: app.applicant?.email,
       applicantImg: app.applicant?.img,
+      applicantBio: app.applicant?.bio,
+      applicantAddress: app.applicant?.address,
+      applicantDob: app.applicant?.dob,
+      applicantCertificates: app.applicant?.certificates,
+      applicantPhoneNumber: app.applicant?.phoneNumber,
       jobTitle: app.job?.title,
       appliedDate: app.applicationDate,
     }));
