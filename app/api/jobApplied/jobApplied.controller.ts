@@ -80,12 +80,18 @@ export const getApplicationsByJob = async (jobId: string) => {
 export const getApplicationsByApplicant = async (applicantId: string) => {
   await dbConnect();
 
-  // Ensure it's treated as a valid ObjectId
   const id = new mongoose.Types.ObjectId(applicantId);
 
   const applications = await JobApplied.find({ applicant: id })
-    .populate("job", "title company location")
-    .populate("applicant", "name email");
+    .populate({
+      path: "job",
+      select:
+        "title companyName companyLocation jobType payType description thumbnail companyPerks",
+    })
+    .populate({
+      path: "applicant",
+      select: "name email",
+    });
 
   return applications;
 };
