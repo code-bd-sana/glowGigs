@@ -1,4 +1,5 @@
-import { data } from "@/components/JobSeeker/ApplicationChart";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { IUser } from "@/types/user.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"; 
 import { strict } from "assert";

@@ -1,15 +1,55 @@
-
-import React from "react";
-
-const statuses = [
-  { count: 6, label: "All Status" },
-  { count: 2, label: "Pending" },
-  { count: 2, label: "Shortlisted" },
-  { count: 1, label: "Interview" },
-  { count: 1, label: "Rejected" },
-];
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+import React, { useMemo } from "react";
+import { useSession } from "next-auth/react";
+import { skipToken } from "@reduxjs/toolkit/query";
+import { useGetApplicationsByApplicantQuery } from "@/features/jobAppliedSlice";
 
 export default function StatusCards() {
+  const { data: session } = useSession();
+  const applicantId = session?.user?.id;
+
+  // Fetch real applications
+  const { data: applications = [] } = useGetApplicationsByApplicantQuery(
+    applicantId ? applicantId : skipToken
+  );
+
+  // Count statuses
+  const counts = useMemo(() => {
+    const stats = {
+      all: applications.length,
+      pending: 0,
+      shortlisted: 0,
+      interview: 0,
+      rejected: 0,
+    };
+
+    applications.forEach((app: any) => {
+      const status = app.status?.toLowerCase();
+
+      if (status === "pending" || status === "applied" || status === "under review") {
+        stats.pending++;
+      }
+      if (status === "shortlisted") {
+        stats.shortlisted++;
+      }
+      if (status === "rejected") {
+        stats.rejected++;
+      }
+    });
+
+    return stats;
+  }, [applications]);
+
+  // Format same structure as your dummy array
+  const statuses = [
+    { count: counts.all, label: "All Status" },
+    { count: counts.pending, label: "Pending" },
+    { count: counts.shortlisted, label: "Shortlisted" },
+ 
+    { count: counts.rejected, label: "Rejected" },
+  ];
+
   return (
     <div className="flex gap-4 py-4">
       {statuses.map((item, index) => (
