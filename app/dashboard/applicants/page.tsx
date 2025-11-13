@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { CiCalendar, CiClock2, CiMail } from "react-icons/ci";
 import { LuDownload, LuEye } from "react-icons/lu";
@@ -17,6 +17,11 @@ interface ApplicantData {
   applicantName: string;
   applicantEmail: string;
   applicantImg: string;
+  applicantBio: string;
+  applicantAddress: string;
+  applicantDob: string;
+  applicantCertificates: string[];
+  applicantPhoneNumber: string;
   jobTitle: string;
   appliedDate: string;
   status: string;
@@ -42,6 +47,8 @@ const StatusBadge = ({ status }: { status: string }) => {
 
 const ApplicantsPage: React.FC = () => {
   const { data: session, status } = useSession();
+  const [selectedApplicant, setSelectedApplicant] =
+    useState<ApplicantData | null>(null);
 
   useEffect(() => {
     if (status === "authenticated" && session?.user?.id) {
@@ -55,8 +62,9 @@ const ApplicantsPage: React.FC = () => {
     session?.user?.id,
     { skip: !session?.user?.id }
   );
-
-  const [rejectApplicant, { isLoading: isRejecting }] = useRejectApplicantMutation();
+  console.log(data?.applicants);
+  // const [rejectApplicant, { isLoading: isRejecting }] =
+  //   useRejectApplicantMutation();
 
   // ✅ RTK Query mutation hook
   const [updateStatus, { isLoading: isUpdating }] =
@@ -67,7 +75,6 @@ const ApplicantsPage: React.FC = () => {
         <span className="loading loading-infinity loading-lg"></span>
       </div>
     );
-  console.log(data?.applicants);
 
   const handleShortlist = async (id: string) => {
     try {
@@ -83,17 +90,28 @@ const ApplicantsPage: React.FC = () => {
     }
   };
 
-  const handleReject =async (id: string) =>{
+  const handleReject = async (id: string) => {
     console.log(id);
-     try {
-    await rejectApplicant(id).unwrap();
-    toast.success("Applicant rejected and deleted successfully!");
-    refetch()
-  } catch (err) {
-    console.error(err);
-    toast.error(err?.data?.message || "Failed to reject applicant");
-  }
-  }
+    // try {
+    //   await rejectApplicant(id).unwrap();
+    //   toast.success("Applicant rejected and deleted successfully!");
+    //   refetch();
+    // } catch (err) {
+    //   console.error(err);
+    //   toast.error(err?.data?.message || "Failed to reject applicant");
+    // }
+    try {
+      const res = await updateStatus({ id, status: "Rejected" }).unwrap();
+      console.log("✅ Status updated:", res);
+      toast.success("Applicant Rejected Successfully!");
+
+      // Refetch applicants to update UI
+      refetch();
+    } catch (err) {
+      console.error("❌ Error updating status:", err);
+      toast.error(err?.data?.message || "Failed to update status");
+    }
+  };
 
   return (
     <div className="bg-white rounded-3xl p-6">
@@ -126,12 +144,30 @@ const ApplicantsPage: React.FC = () => {
                     <p className="font-[500] leading-tight">
                       {applicant.applicantName}
                     </p>
-                    <StatusBadge status="New" />
+                    <span
+                      className={`text-xs font-medium px-3 py-1 rounded-xl 
+    ${
+      applicant?.status === "Shortlisted"
+        ? "bg-green-100 text-green-700"
+        : applicant?.status === "Applied"
+        ? "bg-blue-100 text-blue-700"
+        : applicant?.status === "Rejected"
+        ? "bg-red-100 text-red-700"
+        : "bg-gray-100 text-gray-700"
+    }`}
+                    >
+                      {applicant?.status}
+                    </span>
                   </div>
                   <p className="text-sm text-gray-500">{applicant.jobTitle}</p>
                 </div>
               </div>
-              <IoEyeOutline />
+              <button
+                onClick={() => setSelectedApplicant(applicant)}
+                className="text-gray-600 hover:text-black"
+              >
+                <IoEyeOutline size={20} />
+              </button>
             </div>
 
             {/* Info section */}
@@ -155,22 +191,125 @@ const ApplicantsPage: React.FC = () => {
                 <button
                   onClick={() => handleShortlist(applicant?._id)}
                   disabled={applicant?.status === "Shortlisted"}
-                  className={`flex-1 text-sm font-bold px-3 py-1.5 rounded-md border 
-    ${
-      applicant?.status === "Shortlisted"
-        ? "bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed"
-        : "bg-[#BEF8D4] text-[#137317] border-green-200 hover:bg-green-200"
-    }`}
+                  className={`flex-1 text-sm font-bold px-3 py-1.5 rounded-md border ${
+                    applicant?.status === "Shortlisted"
+                      ? "bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed"
+                      : "bg-[#BEF8D4] text-[#137317] border-green-200 hover:bg-green-200"
+                  }`}
                 >
                   ✓ Shortlist
                 </button>
-                <button onClick={()=> handleReject(applicant?._id)} className="flex-1 text-[#E53935] border font-bold border-[#E53935] text-sm px-3 py-1.5 rounded-md">
+                <button
+                  onClick={() => handleReject(applicant?._id)}
+                  className={`flex-1 text-sm font-bold px-3 py-1.5 rounded-md border ${
+                    applicant?.status === "Rejected"
+                      ? "bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed"
+                      : "bg-[#f3cfcf] text-red-600 border-red-200 hover:bg-red-200"
+                  }`}
+                >
                   ✗ Reject
                 </button>
               </div>
             </div>
           </div>
         ))}
+
+        {/* 🟢 Applicant Details Modal */}
+        {selectedApplicant && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-black/30 animate-fadeIn">
+            <div className="relative bg-white/80 backdrop-blur-md border border-gray-200 shadow-2xl rounded-2xl w-full max-w-lg p-6 animate-scaleUp">
+              {/* Close Button */}
+              <button
+                onClick={() => setSelectedApplicant(null)}
+                className="absolute top-3 right-3 text-gray-600 hover:text-black text-xl"
+              >
+                ✕
+              </button>
+
+              {/* Profile Section */}
+              <div className="flex flex-col items-center text-center">
+                <Image
+                  src={selectedApplicant.applicantImg}
+                  alt="Applicant"
+                  width={100}
+                  height={100}
+                  className=" w-26 h-26 rounded-full object-cover mb-3 border-4 border-white shadow-md"
+                />
+                <h2 className="text-lg font-semibold text-gray-800">
+                  {selectedApplicant.applicantName}
+                </h2>
+                <p className="text-sm text-gray-500">
+                  {selectedApplicant.applicantEmail}
+                </p>
+              </div>
+
+              {/* Info */}
+              <div className="mt-5 text-gray-700 space-y-3">
+                <p>
+                  <span className="font-semibold">Bio:</span>{" "}
+                  {selectedApplicant.applicantBio || "N/A"}
+                </p>
+                <p>
+                  <span className="font-semibold">Address:</span>{" "}
+                  {selectedApplicant.applicantAddress || "N/A"}
+                </p>
+                <p>
+                  <span className="font-semibold">Date of Birth:</span>{" "}
+                  {selectedApplicant.applicantDob
+                    ? new Date(
+                        selectedApplicant.applicantDob
+                      ).toLocaleDateString()
+                    : "N/A"}
+                </p>
+                <p>
+                  <span className="font-semibold">Phone:</span>{" "}
+                  {selectedApplicant.applicantPhoneNumber || "N/A"}
+                </p>
+
+                <div>
+                  <span className="font-semibold">Certificates:</span>
+                  <ul className="list-disc pl-6 text-sm mt-1">
+                    {selectedApplicant.applicantCertificates?.length > 0 ? (
+                      selectedApplicant.applicantCertificates.map((cert, i) => (
+                        <li key={i}>{cert}</li>
+                      ))
+                    ) : (
+                      <li>No certificates available</li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ✨ Simple fade-in & scale animations */}
+        <style jsx>{`
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+            }
+            to {
+              opacity: 1;
+            }
+          }
+          @keyframes scaleUp {
+            from {
+              opacity: 0;
+              transform: scale(0.9);
+            }
+            to {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+          .animate-fadeIn {
+            animation: fadeIn 0.25s ease forwards;
+          }
+          .animate-scaleUp {
+            animation: scaleUp 0.3s ease forwards;
+          }
+        `}</style>
       </div>
     </div>
   );
