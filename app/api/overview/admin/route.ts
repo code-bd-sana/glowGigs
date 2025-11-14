@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminOverview } from "./AdminOverview.controller";
+import { dbConnect } from "@/lib/dbConnect";
 
 export const GET = async(req:NextRequest)=>{
+     await dbConnect()
     try {
+
+
+       
 
         const res = await getAdminOverview();
 

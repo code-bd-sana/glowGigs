@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import Job from "../../jobs/job.model";
 import Category from "../../category/category.model";
+import { dbConnect } from "@/lib/dbConnect";
 
 export const GET = async (req: NextRequest) => {
+        await dbConnect()
   try {
+
     // Fetch all jobs
     const allJobs = await Job.find();
 

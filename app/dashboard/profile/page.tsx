@@ -112,7 +112,7 @@ toast.success("Password Change Successfull")
     if (!key) throw new Error("Missing NEXT_PUBLIC_IMGBB_API_KEY");
     const fd = new FormData();
     fd.append("image", file);
-    const res = await fetch(`https://api.imgbb.com/1/upload?key=${key}`, { method: "POST", body: fd });
+    const res = await fetch(`https://api.imgbb.com/1/upload?key=e08b74beabe30fbab72611c231923e98`, { method: "POST", body: fd });
     const json = await res.json();
     if (!json?.success) throw new Error("Upload failed");
     return json.data.url;
