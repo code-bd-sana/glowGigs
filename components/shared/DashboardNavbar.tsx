@@ -19,6 +19,9 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const data = useSession();
 
+
+  console.log(data, "tomi ama ")
+
   const user = data?.data?.user;
   const email = user?.email;
 
