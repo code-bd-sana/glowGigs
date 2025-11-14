@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import profileImg from "@/app/(public)/dashboard/profile.png";
 import Image from "next/image";
 import { FiMenu } from "react-icons/fi";
 import { signOut, useSession } from "next-auth/react";
