@@ -72,7 +72,7 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
         </button>
 
         <h4 className="text-base font-semibold text-gray-900">
-          Admin Dashboard
+        <span className="capitalize"> { user?.role } </span> Dashboard
         </h4>
       </div>
 

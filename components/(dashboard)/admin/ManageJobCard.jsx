@@ -1,3 +1,5 @@
+'use client'
+import { useJobOverviewQuery } from '@/features/OverViewApi';
 import React, { JSX } from 'react';
 import {
   FaClipboardList,
@@ -8,49 +10,41 @@ import {
   FaUserFriends,
 } from 'react-icons/fa';
 
-interface CardItem {
-  icon: JSX.Element;
-  label: string;
-  count: number;
-  bgColor: string;
+
+const ManageJobCard = () => {
+
+const {data, isLoading, error, isError} = useJobOverviewQuery();
+console.log(data?.data, "lav nai")
+
+if(isError){
+  console.log(error, "Error asca reee")
 }
 
-const ManageJobCard: React.FC = () => {
-  const cards: CardItem[] = [
+  const cards = [
     {
       icon: <FaClipboardList className="text-blue-500 text-xl" />,
       label: 'Total Jobs',
-      count: 8,
+      count: data?.data?.totalJob,
       bgColor: 'bg-blue-50',
     },
     {
       icon: <FaCheckCircle className="text-green-500 text-xl" />,
       label: 'Active',
-      count: 3,
+      count: data?.data?.totalActiveJob,
       bgColor: 'bg-green-50',
     },
-    {
-      icon: <FaClock className="text-yellow-500 text-xl" />,
-      label: 'Pending',
-      count: 2,
-      bgColor: 'bg-yellow-50',
-    },
-    {
-      icon: <FaThumbsUp className="text-blue-400 text-xl" />,
-      label: 'Approved',
-      count: 2,
-      bgColor: 'bg-blue-50',
-    },
+  
+   
     {
       icon: <FaTimesCircle className="text-red-500 text-xl" />,
-      label: 'Rejected',
-      count: 1,
+      label: 'Inactive',
+      count: data?.data?.totalInactiveJob,
       bgColor: 'bg-red-50',
     },
     {
       icon: <FaUserFriends className="text-purple-500 text-xl" />,
       label: 'Total Applicants',
-      count: 212,
+      count: data?.data?.totalApplicant,
       bgColor: 'bg-purple-50',
     },
   ];

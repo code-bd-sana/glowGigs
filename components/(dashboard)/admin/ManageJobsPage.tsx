@@ -2,6 +2,7 @@ import React from 'react'
 import ManageJobCard from './ManageJobCard'
 import { FaDownload, FaPlus } from 'react-icons/fa6'
 import JobManagementTable from './JobManagementTable'
+import Link from 'next/link'
 
 export default function ManageJobsPage() {
   return (
@@ -21,10 +22,11 @@ export default function ManageJobsPage() {
       {/* Right: Buttons */}
       <div className="flex gap-2 mt-4 md:mt-0">
      
+    <Link href={'/'}>
         <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition">
           <FaPlus className="text-white" />
           Add New Job
-        </button>
+        </button></Link>
       </div>
     </div>
         </section>
