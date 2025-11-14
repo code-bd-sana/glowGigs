@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import jobAppliedModel from "../../jobApplied/jobApplied.model";
+import { dbConnect } from "@/lib/dbConnect";
 
 export const GET = async (req: NextRequest) => {
+        await dbConnect()
   try {
+
+
     const result: number[] = [];
 
     const now = new Date();
