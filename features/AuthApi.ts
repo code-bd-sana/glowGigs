@@ -2,7 +2,7 @@
 
 import { IUser } from "@/types/user.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"; 
-import { strict } from "assert";
+
 
 export const authApi = createApi({
   reducerPath: "authApi",
@@ -47,6 +47,14 @@ changePasswordWithOtp: builder.mutation({
     body:data
   })
 }),
+changePassword: builder.mutation({
+  query:(data)=>({
+    url:'/changePassword',
+    method:"POST",
+    body:data
+  })
+}),
+
 
 
 
@@ -56,4 +64,4 @@ changePasswordWithOtp: builder.mutation({
 });
 
 // Correct hook export for mutation
-export const { useRegisterMutation, useLoginMutation, useGetSingleUserQuery, useSendOtpMutation, useChangePasswordWithOtpMutation } = authApi;
+export const { useRegisterMutation, useLoginMutation, useGetSingleUserQuery, useSendOtpMutation, useChangePasswordWithOtpMutation, useChangePasswordMutation } = authApi;

@@ -12,6 +12,7 @@ const userSchema = new Schema<IUser>(
     address: { type: String },
     img: { type: String },
 
+
     // 👥 User role
     role: { type: String, enum: ["JOB_SEEKER", "EMPLOYER"], required: true },
 
