@@ -34,7 +34,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${noir.variable} ${lato.variable}`}>
+    <html lang="en" data-theme="light" className={`${noir.variable} ${lato.variable}`}>
       <body>
         <ReduxProvider>
           <NavBar />

@@ -31,6 +31,14 @@ const JobSchema = new Schema<JobType>(
     },
     description: { type: String, required: true },
     thumbnail: { type: String, default: "" },
+    deadline: {
+      type: String,
+      required: true,
+    },
+    requirements: {
+      type: [String],
+      default: [],
+    },
     companyPerks: {
       type: [String],
       default: [],
@@ -40,13 +48,18 @@ const JobSchema = new Schema<JobType>(
       ref: "User",
       required: true,
     },
-    applicants: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-        default: [],
-      },
-    ],
+    status: {
+      type: String,
+      enum: ["Active", "Inactive"],
+      default: "Active",
+    },
+    // applicants: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: "User",
+    //     default: [],
+    //   },
+    // ],
   },
   { timestamps: true }
 );
