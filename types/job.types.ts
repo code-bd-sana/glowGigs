@@ -15,9 +15,12 @@ export interface JobType extends Document {
     | "Referral bonus program"
     | "Paid training or certification";
   description: string;
+  deadline: string;
+  requirements: string[];
   companyPerks?: string[];
   thumbnail?: string;
   perks?: string[];
+  status: "Active" | "Inactive";
   jobPoster: mongoose.Types.ObjectId; // new field
-  applicants?: mongoose.Types.ObjectId[]; // array of applicant IDs
+  // applicants?: mongoose.Types.ObjectId[]; // array of applicant IDs
 }
