@@ -325,7 +325,7 @@ export default function RegisterPage() {
             type="date"
             id="dob"
             required
-            className="w-full border bg-gray-200  border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+            className="w-full border  border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
             onChange={(e) => handleInputChange("dob", e.target.value)}
           />
         </div>

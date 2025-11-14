@@ -16,8 +16,13 @@ chartOverview:builder.query<any, void>({
 
 graphOverview:builder.query<any, void>({
   query:()=> `/overview/applicantsOverview`
+}),
+
+jobOverview:builder.query({
+  query:()=> `/jobSummury`
 })
+
     })
 });
 
-export const { useAdminOverviewQuery, useChartOverviewQuery , useGraphOverviewQuery} = overViewApi;
+export const { useAdminOverviewQuery, useChartOverviewQuery , useGraphOverviewQuery, useJobOverviewQuery} = overViewApi;
