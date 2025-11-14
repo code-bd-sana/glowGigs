@@ -90,9 +90,9 @@ const RecentApplications: React.FC = () => {
                   }`}
                 >
                   <td className="py-4 px-6">
-                    <div className="text-gray-800">{application.job.title}</div>
+                    <div className="text-gray-800">{application?.job?.title}</div>
                     <div className="text-sm text-gray-500">
-                      {application.job.companyLocation}
+                      {application?.job?.companyLocation}
                     </div>
                   </td>
 
