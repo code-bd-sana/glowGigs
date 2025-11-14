@@ -4,9 +4,11 @@
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import { FaUser, FaLock, FaCloudUploadAlt, FaTrash, FaFileImage } from "react-icons/fa";
-import { useGetSingleUserQuery } from "@/features/AuthApi";
+import { FaUser, FaLock, FaCloudUploadAlt, FaTrash, FaFileImage, FaLink, FaTimes } from "react-icons/fa";
+import { useChangePasswordMutation, useGetSingleUserQuery } from "@/features/AuthApi";
 import clsx from "clsx";
+import { useProfileUpdateMutation } from "@/features/UserApi";
+import toast, { Toaster } from "react-hot-toast";
 
 // === REQUIRED ENV ===
 // NEXT_PUBLIC_IMGBB_API_KEY = your_imgbb_api_key
@@ -37,9 +39,13 @@ export default function ProfilePage() {
   const userId = (session as any)?.user?.id;
 
   const { data: singleUser, isLoading } = useGetSingleUserQuery(email, { skip: !email });
+  const [changePassword, {isLoading:passwordChangeLoading, error:changePasswordError}] = useChangePasswordMutation();
 
   const [activeTab, setActiveTab] = useState<"personal" | "security">("personal");
   const [saving, setSaving] = useState(false);
+  const [savingSection, setSavingSection] = useState<string | null>(null);
+  const [showResumeModal, setShowResumeModal] = useState(false);
+  const [resumeLink, setResumeLink] = useState("");
 
   const [formData, setFormData] = useState<UserDoc>({
     fullName: "",
@@ -55,6 +61,7 @@ export default function ProfilePage() {
   });
 
   const isJobSeeker = useMemo(() => formData.role === "JOB_SEEKER", [formData.role]);
+  const [ profileUpdate, {isLoading:updateLoading, error}] = useProfileUpdateMutation()
 
   useEffect(() => {
     if (singleUser?.data) {
@@ -73,6 +80,28 @@ export default function ProfilePage() {
       });
     }
   }, [singleUser]);
+  
+
+  const passwordHandler = async(e)=>{
+    e.preventDefault();
+    try {
+
+const oldPassword = e.target.oldPassword.value;
+const newPassword = e.target.newPassword.value;
+const passwordData = {
+  email,
+  oldPassword,
+  newPassword
+};
+
+await changePassword(passwordData).unwrap();
+toast.success("Password Change Successfull")
+      
+    } catch (error) {
+      console.log(error)
+      toast.error(error?.data?.message || "Failed Please try again later!")
+    }
+  }
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setFormData((s) => ({ ...s, [e.target.name]: e.target.value }));
@@ -124,31 +153,144 @@ export default function ProfilePage() {
     if (uploaded.length) setFormData((s) => ({ ...s, certificates: [...(s.certificates || []), ...uploaded] }));
   };
 
+  const addCertificateLink = (link: string) => {
+    if (link.trim()) {
+      setFormData((s) => ({ ...s, certificates: [...(s.certificates || []), link.trim()] }));
+    }
+  };
+
   const removeCertificate = (url: string) =>
     setFormData((s) => ({ ...s, certificates: (s.certificates || []).filter((c) => c !== url) }));
 
-  // === Save to backend ===
-  const handleSave = async () => {
+  // Resume Modal Handlers
+  const handleResumeLinkSave = () => {
+    console.log("Resume Link:", resumeLink);
+    setFormData((s) => ({ ...s, resume: resumeLink }));
+    setShowResumeModal(false);
+    setResumeLink("");
+  };
+
+  // === Save handlers for different sections ===
+  const handleSavePersonalInfo = async () => {
+    setSavingSection("personal");
     setSaving(true);
+    
+    const personalData = {
+      email,
+      fullName: formData.fullName,
+      phoneNumber: formData.phoneNumber,
+      address: formData.address,
+      professionalTitle: formData.professionalTitle,
+      bio: formData.bio,
+      img: formData.img
+    };
+
+ 
+
     try {
-      const res = await fetch(`/api/users/${userId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      if (!res.ok) throw new Error("Update failed");
-      alert("Profile updated successfully!");
+      await  profileUpdate(personalData).unwrap();
+      toast.success("Profile Update Successfull")
+        setSaving(false);
+      setSavingSection(null);
     } catch (err: any) {
-      alert(err.message);
-    } finally {
-      setSaving(false);
-    }
+      toast.error(err.response?.data?.message || "Failed! Please try again later!");
+      
+    } 
+  };
+
+  const handleSaveResume = async () => {
+    setSavingSection("resume");
+    setSaving(true);
+
+    const resumeData = {
+      email,
+      resume: formData.resume
+    };
+
+ 
+
+    try {
+   
+
+    
+      await profileUpdate(resumeData)
+      toast.success("Resume Update Successfull")
+        setSaving(false);
+      setSavingSection(null);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Failed Please try again later!');
+    } 
+  };
+
+  const handleSaveCertificates = async () => {
+    setSavingSection("certificates");
+    setSaving(true);
+
+    const certificatesData = {
+      email,
+      certificates: formData.certificates
+    };
+
+    console.log("=== CERTIFICATES DATA ===");
+    console.log("Certificates:", certificatesData);
+    console.log("=========================");
+
+    try {
+      
+
+      await profileUpdate(certificatesData).unwrap();
+  
+      toast.success("Certificates updated successfully!");
+        setSaving(false);
+      setSavingSection(null);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed Please Try again later!");
+    } 
   };
 
   if (isLoading) return <div className="min-h-screen flex items-center justify-center">Loading profile...</div>;
 
   return (
     <div className="min-h-screen bg-[#f9fafb] py-10 px-6">
+      <Toaster/>
+      {/* Resume Link Modal */}
+      {showResumeModal && (
+        <div className="fixed inset-0  backdrop-blur-xs bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Add Resume Link</h3>
+              <button
+                onClick={() => setShowResumeModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <FaTimes />
+              </button>
+            </div>
+            <input
+              type="url"
+              placeholder="Paste your resume link here..."
+              value={resumeLink}
+              onChange={(e) => setResumeLink(e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 mb-4 focus:ring-1 focus:ring-blue-500 outline-none"
+            />
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowResumeModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleResumeLinkSave}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+              >
+                Save Link
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className=" mx-auto bg-white rounded-xl shadow-sm p-8 border border-gray-100">
         {/* Header */}
         <div className="mb-8">
@@ -188,7 +330,7 @@ export default function ProfilePage() {
         {activeTab === "personal" && (
           <div className="space-y-8">
             {/* Personal Info */}
-            <div>
+            <div className="border border-gray-100 rounded-lg p-5">
               <p className="text-lg font-medium text-gray-900 mb-2">Personal Information</p>
               <p className="text-gray-500 text-sm mb-6">
                 Update your personal details and profile information
@@ -272,8 +414,8 @@ export default function ProfilePage() {
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm text-gray-600 mb-1">Professional Summary</label>
+                  <div className="mb-6">
+                    <label className="block text-sm text-gray-600 mb-1">Professional Summary (BIO)</label>
                     <textarea
                       name="bio"
                       rows={4}
@@ -285,65 +427,106 @@ export default function ProfilePage() {
                   </div>
                 </>
               )}
+
+              {/* Personal Info Save Button */}
+              <div className="flex justify-end pt-4">
+                <button
+                  onClick={handleSavePersonalInfo}
+                  disabled={saving && savingSection === "personal"}
+                  className="bg-[linear-gradient(180deg,rgba(229,232,203,0.91)_0%,#92B1DA_100%)] text-black px-5 py-2 rounded-md transition disabled:opacity-50"
+                >
+                  {saving && savingSection === "personal" ? "Saving..." : "Save Personal Info"}
+                </button>
+              </div>
             </div>
 
             {/* Resume Upload */}
             {isJobSeeker && (
-              <div className="border rounded-lg p-5">
-                <p className="font-medium text-gray-800 mb-2">Resume Upload</p>
-                <div className="border-2 border-dashed rounded-lg p-6 text-center bg-gray-50">
+              <div className="border border-gray-100 rounded-lg p-5">
+                <p className="font-medium text-gray-800 mb-2">Resume Management</p>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center bg-gray-50">
                   <FaCloudUploadAlt className="mx-auto text-3xl text-gray-400 mb-2" />
-                  <p className="text-gray-700 font-medium mb-1">Upload Resume Image (Max 5MB)</p>
-                  <label className="inline-block bg-white border px-4 py-2 rounded-md text-sm font-medium cursor-pointer hover:bg-gray-100">
-                    Choose File
-                    <input
-                      type="file"
-                      accept="image/png,image/jpeg"
-                      hidden
-                      onChange={(e) => e.target.files && handleResumeUpload(e.target.files[0])}
-                    />
-                  </label>
+                  <p className="text-gray-700 font-medium mb-3">Add your resume via link </p>
+                  <div className="flex gap-3 justify-center">
+                    <button
+                      onClick={() => setShowResumeModal(true)}
+                      className="bg-white border border-blue-600 text-blue-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-50 flex items-center gap-2"
+                    >
+                      <FaLink /> Add Resume Link
+                    </button>
+                  </div>
                 </div>
                 {formData.resume && (
-                  <div className="mt-4 border rounded-md p-3 flex items-center gap-3 bg-white">
-                    <FaFileImage className="text-gray-500" />
-                    <a href={formData.resume} target="_blank" className="text-blue-600 hover:underline break-all">
-                      View Resume
-                    </a>
+                  <div className="mt-4 border rounded-md p-3 flex items-center justify-between bg-white">
+                    <div className="flex items-center gap-3">
+                      <FaFileImage className="text-gray-500" />
+                      <a href={formData.resume} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">
+                        {formData.resume}
+                      </a>
+                    </div>
+                    <button
+                      onClick={() => setFormData(s => ({ ...s, resume: "" }))}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <FaTrash />
+                    </button>
                   </div>
                 )}
+
+                {/* Resume Save Button */}
+                <div className="flex justify-end pt-4  mt-4">
+                  <button
+                    onClick={handleSaveResume}
+                    disabled={saving && savingSection === "resume"}
+                    className="bg-[linear-gradient(180deg,rgba(229,232,203,0.91)_0%,#92B1DA_100%)] text-black px-5 py-2 rounded-md transition disabled:opacity-50"
+                  >
+                    {saving && savingSection === "resume" ? "Saving..." : "Save Resume"}
+                  </button>
+                </div>
               </div>
             )}
 
             {/* Certificates Upload */}
             {isJobSeeker && (
-              <div className="border rounded-lg p-5">
+              <div className="border border-gray-100 rounded-lg p-5">
                 <p className="font-medium text-gray-800 mb-2">Certificates</p>
-                <div className="border-2 border-dashed rounded-lg p-6 text-center bg-gray-50">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center bg-gray-50 mb-4">
                   <FaCloudUploadAlt className="mx-auto text-3xl text-gray-400 mb-2" />
-                  <p className="text-gray-700 font-medium mb-1">
-                    Upload Certificates (Multiple JPG/PNG, Max 25MB each)
+                  <p className="text-gray-700 font-medium mb-3">
+                    Add certificates via link or upload files (Multiple JPG/PNG, Max 25MB each)
                   </p>
-                  <label className="inline-block bg-white border px-4 py-2 rounded-md text-sm font-medium cursor-pointer hover:bg-gray-100">
-                    Browse Files
-                    <input
-                      type="file"
-                      accept="image/png,image/jpeg"
-                      multiple
-                      hidden
-                      onChange={(e) => handleCertUpload(e.target.files)}
-                    />
-                  </label>
+                  <div className="flex gap-3 justify-center flex-wrap">
+                    <CertificateLinkInput onAddLink={addCertificateLink} />
+                    <label className="bg-white border border-gray-300 px-4 py-2 rounded-md text-sm font-medium cursor-pointer hover:bg-gray-100 flex items-center gap-2">
+                      <FaCloudUploadAlt /> Upload Files
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg"
+                        multiple
+                        hidden
+                        onChange={(e) => handleCertUpload(e.target.files)}
+                      />
+                    </label>
+                  </div>
                 </div>
 
                 {!!formData.certificates?.length && (
-                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                     {formData.certificates.map((url) => (
-                      <div key={url} className="relative border rounded-md overflow-hidden">
-                        <Image src={url} alt="certificate" width={400} height={300} className="object-cover w-full h-40" />
+                      <div key={url} className="relative border border-gray-300 rounded-md overflow-hidden group">
+                        <div className="h-40 bg-gray-100 flex items-center justify-center">
+                          {url.startsWith('http') ? (
+                            <Image src={url} alt="certificate" width={400} height={300} className="object-cover w-full h-full" />
+                          ) : (
+                            <div className="text-center p-4">
+                              <FaLink className="text-2xl text-gray-400 mx-auto mb-2" />
+                              <p className="text-xs text-gray-600 break-words">{url}</p>
+                            </div>
+                          )}
+                        </div>
                         <button
                           onClick={() => removeCertificate(url)}
-                          className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full text-xs"
+                          className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                           <FaTrash />
                         </button>
@@ -351,36 +534,38 @@ export default function ProfilePage() {
                     ))}
                   </div>
                 )}
+
+                {/* Certificates Save Button */}
+                <div className="flex justify-end pt-4  mt-4">
+                  <button
+                    onClick={handleSaveCertificates}
+                    disabled={saving && savingSection === "certificates"}
+                    className="bg-[linear-gradient(180deg,rgba(229,232,203,0.91)_0%,#92B1DA_100%)] text-black px-5 py-2 rounded-md transition disabled:opacity-50"
+                  >
+                    {saving && savingSection === "certificates" ? "Saving..." : "Save Certificates"}
+                  </button>
+                </div>
               </div>
             )}
-
-            {/* Save button */}
-            <div className="flex justify-end">
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition"
-              >
-                {saving ? "Saving..." : "Save Changes"}
-              </button>
-            </div>
           </div>
         )}
 
         {/* SECURITY */}
         {activeTab === "security" && (
-          <div className="space-y-4">
+          <form onSubmit={passwordHandler} className="space-y-4">
             <p className="text-lg font-medium text-gray-900 flex items-center gap-2">
               <FaLock className="text-blue-500" /> Security
             </p>
             <p className="text-sm text-gray-500 mb-3">Change your password</p>
             <input
+            name="oldPassword"
               type="password"
               placeholder="Current Password"
               className="w-full border border-gray-300 rounded-md px-3 py-2"
             />
             <input
               type="password"
+              name="newPassword"
               placeholder="New Password"
               className="w-full border border-gray-300 rounded-md px-3 py-2"
             />
@@ -390,13 +575,62 @@ export default function ProfilePage() {
               className="w-full border border-gray-300 rounded-md px-3 py-2"
             />
             <div className="flex justify-end">
-              <button className="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700">
-                Update Password
+              <button type="submit" className="bg-[linear-gradient(180deg,rgba(229,232,203,0.91)_0%,#92B1DA_100%)] text-black px-5 py-2 rounded-md transition disabled:opacity-50">
+              { passwordChangeLoading ? "Loading..." : "Update Password"}
               </button>
             </div>
-          </div>
+          </form>
         )}
       </div>
     </div>
   );
 }
+
+// Certificate Link Input Component
+const CertificateLinkInput = ({ onAddLink }: { onAddLink: (link: string) => void }) => {
+  const [link, setLink] = useState("");
+  const [showInput, setShowInput] = useState(false);
+
+  const handleAddLink = () => {
+    if (link.trim()) {
+      onAddLink(link.trim());
+      setLink("");
+      setShowInput(false);
+    }
+  };
+
+  if (!showInput) {
+    return (
+      <button
+        onClick={() => setShowInput(true)}
+        className="bg-white border border-blue-600 text-blue-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-50 flex items-center gap-2"
+      >
+        <FaLink /> Add Certificate Link
+      </button>
+    );
+  }
+
+  return (
+    <div className="flex gap-2 items-center">
+      <input
+        type="url"
+        placeholder="Paste certificate link..."
+        value={link}
+        onChange={(e) => setLink(e.target.value)}
+        className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 outline-none min-w-48"
+      />
+      <button
+        onClick={handleAddLink}
+        className="bg-blue-600 text-white px-3 py-2 rounded-md text-sm hover:bg-blue-700"
+      >
+        Add
+      </button>
+      <button
+        onClick={() => setShowInput(false)}
+        className="text-gray-500 hover:text-gray-700 px-2"
+      >
+        <FaTimes />
+      </button>
+    </div>
+  );
+};
