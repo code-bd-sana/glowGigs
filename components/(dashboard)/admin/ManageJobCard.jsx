@@ -17,20 +17,20 @@ const {data, isLoading, error, isError} = useJobOverviewQuery();
 console.log(data?.data, "lav nai")
 
 if(isError){
-  console.log(error)
+  console.log(error, "Error asca reee")
 }
 
   const cards = [
     {
       icon: <FaClipboardList className="text-blue-500 text-xl" />,
       label: 'Total Jobs',
-      count: 8,
+      count: data?.data?.totalJob,
       bgColor: 'bg-blue-50',
     },
     {
       icon: <FaCheckCircle className="text-green-500 text-xl" />,
       label: 'Active',
-      count: 3,
+      count: data?.data?.totalActiveJob,
       bgColor: 'bg-green-50',
     },
   
@@ -38,13 +38,13 @@ if(isError){
     {
       icon: <FaTimesCircle className="text-red-500 text-xl" />,
       label: 'Inactive',
-      count: 1,
+      count: data?.data?.totalInactiveJob,
       bgColor: 'bg-red-50',
     },
     {
       icon: <FaUserFriends className="text-purple-500 text-xl" />,
       label: 'Total Applicants',
-      count: 212,
+      count: data?.data?.totalApplicant,
       bgColor: 'bg-purple-50',
     },
   ];

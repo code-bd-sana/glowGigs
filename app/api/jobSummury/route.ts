@@ -5,21 +5,24 @@ export const GET = async(req:NextRequest)=>{
     try {
 
         const totalJob = await Job.countDocuments();
-     const result = await Job.aggregate([
+const result = await Job.aggregate([
   {
     $project: {
-      applicantCount: { $size: "$applicants" } 
+      applicantCount: {
+        $size: { $ifNull: ["$applicants", []] }
+      }
     }
   },
   {
     $group: {
       _id: null,
-      totalApplicants: { $sum: "$applicantCount" } 
+      totalApplicants: { $sum: "$applicantCount" }
     }
   }
 ]);
 
 const totalApplicant = result[0]?.totalApplicants || 0;
+
 const totalActiveJob = await Job.countDocuments({status:"active"});
 const totalInactiveJob = await Job.countDocuments({status:"inactive"});
 
