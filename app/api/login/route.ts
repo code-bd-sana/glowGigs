@@ -14,7 +14,7 @@ export const POST = async (req: NextRequest) => {
     if (!user) {
       return NextResponse.json({
         message: "User Not Found!",
-      });
+      }, {status:401});
     }
 
     const compare = await bcrypt.compare(password, user.password);

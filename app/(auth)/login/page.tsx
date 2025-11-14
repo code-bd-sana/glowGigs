@@ -56,7 +56,7 @@ const LoginForm = () => {
 
     try {
       const resp = await login(formData).unwrap();
-      const loginData = resp?.data;
+      const loginData = resp;
       console.log(loginData, "This is login data")
 
       toast.success("Login Success")
@@ -71,10 +71,11 @@ const LoginForm = () => {
       console.log(res, "this is res")
 
      
-        window.location.href = "/dashboard";
+        // window.location.href = "/dashboard";
       
       
     } catch (error) {
+
   const err = error as FetchBaseQueryError | SerializedError;
 
   // RTK query error হলে
