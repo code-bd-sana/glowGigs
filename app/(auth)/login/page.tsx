@@ -71,7 +71,7 @@ const LoginForm = () => {
       console.log(res, "this is res")
 
      
-        // window.location.href = "/dashboard";
+        window.location.href = "/dashboard";
       
       
     } catch (error) {
