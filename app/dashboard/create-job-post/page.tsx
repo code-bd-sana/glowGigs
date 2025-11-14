@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { useGetCategoriesQuery } from "@/features/categorySlice";
 import { useSession } from "next-auth/react";
 import { LiaTelegramPlane } from "react-icons/lia";
+import Image from "next/image";
 
 // ✅ Updated interface with strict unions
 export interface JobFormType {
@@ -22,12 +23,15 @@ export interface JobFormType {
     | "Employee Discount on products/services"
     | "Referral bonus program"
     | "Paid training or certification";
+  deadline: string;
   description: string;
+  requirements: string[];
   companyPerks: string[];
   thumbnail?: string;
 }
 
 export default function CreateJobPost() {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { data: session, status } = useSession();
 
   useEffect(() => {
@@ -44,10 +48,12 @@ export default function CreateJobPost() {
     companyLocation: "",
     jobType: "Full-time", // default valid value
     payType: "Competitive", // default valid value
+    deadline: "",
     description: "",
+    requirements: [],
     companyPerks: [],
   });
-
+  console.log(formData);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [createJob, { isLoading }] = useCreateJobMutation();
   const { data: categories = [], isLoading: isCategoryLoading } =
@@ -65,7 +71,10 @@ export default function CreateJobPost() {
   // Handle file selection
   const handleThumbnailChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) setThumbnail(file);
+    if (file) {
+      setThumbnail(file);
+      setPreviewUrl(URL.createObjectURL(file)); // Set preview URL
+    }
   };
 
   // Upload thumbnail to imgbb
@@ -117,7 +126,9 @@ export default function CreateJobPost() {
         companyLocation: "",
         jobType: "Full-time",
         payType: "Competitive",
+        deadline: "",
         description: "",
+        requirements: [],
         companyPerks: [],
       });
       setThumbnail(null);
@@ -146,7 +157,7 @@ export default function CreateJobPost() {
             value={formData.title}
             onChange={handleChange}
             placeholder="e.g. Junior Software Engineer"
-            className="w-full border border-gray-200 rounded-md px-4 py-3 focus:ring focus:ring-blue-100 outline-none"
+            className="w-full border border-gray-300 rounded-md px-4 py-3 focus:ring focus:ring-blue-100 outline-none"
             required
           />
         </div>
@@ -158,7 +169,7 @@ export default function CreateJobPost() {
             name="department"
             value={formData.department}
             onChange={handleChange}
-            className="w-full border border-gray-200 rounded-md px-4 py-[13px] text-gray-600"
+            className="w-full border border-gray-300 rounded-md px-4 py-[13px] text-gray-600"
             required
           >
             <option value="">Select Category</option>
@@ -187,7 +198,7 @@ export default function CreateJobPost() {
             value={formData.companyName}
             onChange={handleChange}
             placeholder="Your Company Name"
-            className="w-full border border-gray-200 rounded-md px-4 py-3 focus:ring focus:ring-blue-100 outline-none"
+            className="w-full border border-gray-300 rounded-md px-4 py-3 focus:ring focus:ring-blue-100 outline-none"
             required
           />
         </div>
@@ -201,7 +212,7 @@ export default function CreateJobPost() {
             value={formData.companyLocation}
             onChange={handleChange}
             placeholder="Your Company Location"
-            className="w-full border border-gray-200 rounded-md px-4 py-3 focus:ring focus:ring-blue-100 outline-none"
+            className="w-full border border-gray-300 rounded-md px-4 py-3 focus:ring focus:ring-blue-100 outline-none"
             required
           />
         </div>
@@ -217,7 +228,7 @@ export default function CreateJobPost() {
             name="jobType"
             value={formData.jobType}
             onChange={handleChange}
-            className="w-full border border-gray-200 rounded-md px-4 py-[13px] text-gray-600"
+            className="w-full border border-gray-300 rounded-md px-4 py-[13px] text-gray-600"
             required
           >
             <option value="Full-time">Full-Time</option>
@@ -233,7 +244,7 @@ export default function CreateJobPost() {
             name="payType"
             value={formData.payType}
             onChange={handleChange}
-            className="w-full border border-gray-200 rounded-md px-4 py-[13px] text-gray-600"
+            className="w-full border border-gray-300 rounded-md px-4 py-[13px] text-gray-600"
             required
           >
             <option value="Competitive">Competitive</option>
@@ -253,6 +264,23 @@ export default function CreateJobPost() {
           </select>
         </div>
       </div>
+      {/* deadline & others*/}
+      <div className="grid md:grid-cols-4 gap-6 mb-4">
+        {/*deadline */}
+        <div className="mb-4">
+          <label className="block font-medium text-gray-700 text-sm mb-1">
+            Application Deadline
+          </label>
+          <input
+            type="date"
+            name="deadline"
+            value={formData.deadline}
+            onChange={handleChange}
+            className="input w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent appearance-none"
+            required
+          />
+        </div>
+      </div>
 
       {/* Job Description */}
       <div className="mb-6">
@@ -264,11 +292,47 @@ export default function CreateJobPost() {
           value={formData.description}
           onChange={handleChange}
           placeholder="Describe the job responsibilities, requirements, and qualifications..."
-          className="w-full border border-gray-200 rounded-md px-4 py-3 h-32 focus:ring focus:ring-blue-100 outline-none"
+          className="w-full border border-gray-300 rounded-md px-4 py-3 h-32 focus:ring focus:ring-blue-100 outline-none"
           required
         />
       </div>
 
+      {/* Requirements */}
+      <div className="mb-7">
+        <label className="block text-sm font-medium mb-3">Requirements</label>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          {["Certificates", "License"].map((req) => (
+            <label
+              key={req}
+              className={`flex items-center border rounded-lg px-3 py-2 cursor-pointer transition ${
+                formData.requirements?.includes(req)
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-300 hover:bg-gray-50"
+              }`}
+            >
+              <input
+                type="checkbox"
+                className="checkbox checkbox-neutral rounded mr-2" // add a color class
+                checked={formData.requirements?.includes(req) || false}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setFormData((prev) => {
+                    const requirements = prev.requirements || [];
+                    return {
+                      ...prev,
+                      requirements: checked
+                        ? [...requirements, req]
+                        : requirements.filter((p) => p !== req),
+                    };
+                  });
+                }}
+              />
+
+              {req}
+            </label>
+          ))}
+        </div>
+      </div>
       {/* Company Perks */}
       <div className="mb-6">
         <label className="block text-sm font-medium mb-3">Company Perks</label>
@@ -326,7 +390,18 @@ export default function CreateJobPost() {
           className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl py-10 cursor-pointer hover:bg-gray-50 transition"
         >
           <FiUpload className="text-3xl text-gray-400 mb-2" />
-          {thumbnail ? (
+
+          {previewUrl ? (
+            <div className="relative w-32 h-32 mb-2">
+              <Image
+                src={previewUrl}
+                alt="Logo Preview"
+                fill
+                className="object-contain rounded"
+                unoptimized
+              />
+            </div>
+          ) : thumbnail ? (
             <p className="text-gray-700">{thumbnail.name}</p>
           ) : (
             <>
@@ -336,6 +411,7 @@ export default function CreateJobPost() {
               <p className="text-xs text-gray-400 mt-1">PNG, JPG up to 10MB</p>
             </>
           )}
+
           <input
             id="thumbnailUpload"
             type="file"
