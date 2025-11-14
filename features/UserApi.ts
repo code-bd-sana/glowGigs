@@ -50,10 +50,19 @@ export const userApi = createApi({
         url:`/userDelete/${id}`,
         method:"DELETE",
       
-      })
-    })
+      }),
+
+    }),
+       profileUpdate: builder.mutation({
+  query: (data) => ({
+    url: `/profileUpdate`,
+    method: "PUT",
+    body: data,
+  }),
+  invalidatesTags: ["Users"],
+}),
 
   }),
 });
 
-export const { useGetAllUsersQuery, useGetUserRoleCountQuery, useGetSingleUserQuery, useDeleteUserMutation } = userApi;
+export const { useGetAllUsersQuery, useGetUserRoleCountQuery, useGetSingleUserQuery, useDeleteUserMutation, useProfileUpdateMutation } = userApi;

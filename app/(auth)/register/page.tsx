@@ -325,7 +325,7 @@ export default function RegisterPage() {
             type="date"
             id="dob"
             required
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+            className="w-full border bg-gray-200  border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
             onChange={(e) => handleInputChange("dob", e.target.value)}
           />
         </div>
@@ -588,7 +588,7 @@ export default function RegisterPage() {
               type="submit"
               className="w-full bg-black text-white font-medium text-lg px-12 py-4 rounded-full hover:bg-gray-900 transition-all duration-300 transform hover:scale-105"
             >
-              {isLoading ? "Loading..." : "Sign in"}
+              {isLoading ? "Loading..." : "Sign Up"}
             </button>
           </div>
         </form>
