@@ -1,3 +1,5 @@
+'use client'
+import { useJobOverviewQuery } from '@/features/OverViewApi';
 import React, { JSX } from 'react';
 import {
   FaClipboardList,
@@ -8,15 +10,17 @@ import {
   FaUserFriends,
 } from 'react-icons/fa';
 
-interface CardItem {
-  icon: JSX.Element;
-  label: string;
-  count: number;
-  bgColor: string;
+
+const ManageJobCard = () => {
+
+const {data, isLoading, error, isError} = useJobOverviewQuery();
+console.log(data?.data, "lav nai")
+
+if(isError){
+  console.log(error)
 }
 
-const ManageJobCard: React.FC = () => {
-  const cards: CardItem[] = [
+  const cards = [
     {
       icon: <FaClipboardList className="text-blue-500 text-xl" />,
       label: 'Total Jobs',
@@ -29,21 +33,11 @@ const ManageJobCard: React.FC = () => {
       count: 3,
       bgColor: 'bg-green-50',
     },
-    {
-      icon: <FaClock className="text-yellow-500 text-xl" />,
-      label: 'Pending',
-      count: 2,
-      bgColor: 'bg-yellow-50',
-    },
-    {
-      icon: <FaThumbsUp className="text-blue-400 text-xl" />,
-      label: 'Approved',
-      count: 2,
-      bgColor: 'bg-blue-50',
-    },
+  
+   
     {
       icon: <FaTimesCircle className="text-red-500 text-xl" />,
-      label: 'Rejected',
+      label: 'Inactive',
       count: 1,
       bgColor: 'bg-red-50',
     },

@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import mongoose, { Types } from "mongoose";
 import "../../api/category/category.model";
 import JobApplied from "../jobApplied/jobApplied.model";
+import User from "../../api/users/user.model";
 // import User from "../users/user.model";
 
 // 🧩 Type for populated fields (so TS knows applicant & job are full objects)
@@ -33,6 +34,12 @@ export const createJob = async (data: JobType) => {
   try {
     await dbConnect();
     const newJob = await Job.create(data);
+await User.updateOne(
+  { _id: data?._id },
+  {
+    $inc: { postedJob: 1 }   
+  }
+)
     return NextResponse.json({ success: true, data: newJob }, { status: 201 });
   } catch (error: unknown) {
     const message =
