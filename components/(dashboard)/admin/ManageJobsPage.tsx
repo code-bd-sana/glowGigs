@@ -22,7 +22,7 @@ export default function ManageJobsPage() {
       {/* Right: Buttons */}
       <div className="flex gap-2 mt-4 md:mt-0">
      
-    <Link href={'/'}>
+    <Link href={'/create-job-post'}>
         <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition">
           <FaPlus className="text-white" />
           Add New Job
