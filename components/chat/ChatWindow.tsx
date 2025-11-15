@@ -1,44 +1,47 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { socket } from "@/lib/socket";
 
 export default function ChatWindow({ conversation, userId }: any) {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<any[]>([]);
   const [text, setText] = useState("");
 
-  // 📌 Load existing messages when conversation changes
-  useEffect(() => {
+  // 🔁 Helper: load messages from API
+  const loadMessages = useCallback(async () => {
     if (!conversation?._id) return;
 
-    async function loadMessages() {
-      const res = await fetch(
-        `/api/chat/message?conversationId=${conversation._id}`
-      );
-      const data = await res.json();
-      setMessages(data);
-    }
+    const res = await fetch(
+      `/api/chat/message?conversationId=${conversation._id}`
+    );
+    const data = await res.json();
+    setMessages(data);
+  }, [conversation?._id]);
 
+  // 1️⃣ Initial load when conversation changes
+  useEffect(() => {
+    if (!conversation?._id) return;
     loadMessages();
-  }, [conversation]);
+  }, [conversation?._id, loadMessages]);
 
-  // 📌 Connect to Socket + Listen for Real-Time Messages
-  // 📌 Connect to Socket + Join Conversation Room + Listen for Messages
+  // 2️⃣ Socket: connect, join room, listen for "receiveMessage"
   useEffect(() => {
     if (!conversation?._id) return;
 
     if (!socket.connected) {
       socket.connect();
+      console.log("⚡ socket connected", socket.id);
     }
 
-    // 🟢 Join this conversation room
+    // Join this conversation room
     socket.emit("joinRoom", conversation._id);
 
-    // 🟢 Handle incoming messages only for this room
     const handleIncoming = (msg: any) => {
+      console.log("🔥 incoming socket msg:", msg);
       if (msg.conversationId === conversation._id) {
-        setMessages((prev: any) => [...prev, msg]);
+        // Instead of pushing manually, reload from DB
+        loadMessages();
       }
     };
 
@@ -47,9 +50,9 @@ export default function ChatWindow({ conversation, userId }: any) {
     return () => {
       socket.off("receiveMessage", handleIncoming);
     };
-  }, [conversation?._id]);
+  }, [conversation?._id, loadMessages]);
 
-  // 📌 Send New Message
+  // 3️⃣ Send message
   async function sendMessage() {
     if (!text.trim()) return;
 
@@ -59,7 +62,7 @@ export default function ChatWindow({ conversation, userId }: any) {
       text,
     };
 
-    // 1️⃣ Save message to database
+    // Save message to DB
     const res = await fetch("/api/chat/message", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -68,17 +71,14 @@ export default function ChatWindow({ conversation, userId }: any) {
 
     const savedMessage = await res.json();
 
-    // 2️⃣ Emit the message through socket for real-time delivery
+    // Notify others (and myself) via socket
     socket.emit("sendMessage", {
       conversationId: conversation._id,
-      sender: savedMessage.sender,
-      text: savedMessage.text,
-      _id: savedMessage._id,
-      createdAt: savedMessage.createdAt,
     });
 
-    // 3️⃣ Add to my own UI immediately
-    setMessages((prev: any) => [...prev, savedMessage]);
+    // 🔁 Optionally reload immediately for sender as well
+    // (in case socket comes a bit later)
+    await loadMessages();
 
     setText("");
   }
