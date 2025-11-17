@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
     const conversations = await Conversation.find({
       participants: objectId,
     })
-      .populate("participants", "fullName email role")
+    .populate("participants", "fullName email role img")
       .sort({ updatedAt: -1 });
 
     return NextResponse.json(conversations, { status: 200 });

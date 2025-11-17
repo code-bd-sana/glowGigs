@@ -3,17 +3,22 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
-export default function ConversationList({ onSelect }: any) {
+interface ConversationListProps {
+  onSelect: (conversation: any) => void;
+}
+
+export default function ConversationList({ onSelect }: ConversationListProps) {
   const { data: session } = useSession();
-  const [conversations, setConversations] = useState([]);
-
-  const userId = session?.user?.id;
+  const userId = (session as any)?.user?.id;
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     if (!userId) return;
 
-    async function loadData() {
+    const load = async () => {
       try {
         const res = await fetch(`/api/chat/list?userId=${userId}`);
         const data = await res.json();
@@ -21,48 +26,84 @@ export default function ConversationList({ onSelect }: any) {
       } catch (err) {
         console.error("Failed to load conversations:", err);
       }
-    }
+    };
 
-    loadData();
+    load();
   }, [userId]);
 
+  const filteredConversations = conversations.filter((c) => {
+    const other = c.participants?.find((p: any) => p._id !== userId);
+    const name = other?.fullName || other?.email || "";
+    const lastMsg = c.lastMessage || "";
+    const term = search.toLowerCase();
+    return (
+      name.toLowerCase().includes(term) ||
+      lastMsg.toLowerCase().includes(term)
+    );
+  });
+  
+
   return (
-    <div className="p-4 border-r h-screen bg-gray-100 w-64">
-      <h2 className="text-xl font-semibold mb-4">Conversations</h2>
+    <div className="h-screen w-80 bg-white border-r rounded-3xl border-gray-100 shadow-lg flex flex-col">
+      {/* Top header */}
+      <div className="px-4 pt-5 pb-3">
+        <h1 className="text-2xl font-bold text-gray-900 mb-3">Messages</h1>
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search"
+          className="w-full px-3 py-2.5 rounded-2xl text-sm bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black"
+        />
+      </div>
 
-      {!userId && (
-        <p className="text-sm text-gray-500">Loading user session...</p>
-      )}
-
-      {userId && conversations.length === 0 && (
-        <p className="text-sm text-gray-500">No conversations found.</p>
-      )}
-
-      <div className="space-y-3">
-        {conversations.map((conversation: any) => {
-          const otherUser = conversation.participants.find(
+      {/* Conversation list */}
+      <div className="flex-1 overflow-y-auto px-2 pb-4 space-y-1">
+        {filteredConversations.map((conversation) => {
+          const otherUser = conversation.participants?.find(
             (p: any) => p._id !== userId
           );
 
+          const avatarSrc =
+            otherUser.img 
+      
+
           return (
-            <div
+            <button
               key={conversation._id}
-              onClick={() => onSelect && onSelect(conversation)}
-              className="p-3 bg-white rounded shadow cursor-pointer hover:bg-gray-50"
+              onClick={() => onSelect(conversation)}
+              className="w-full flex items-center gap-3 px-3 py-3 rounded-2xl hover:bg-gray-50 transition text-left"
             >
-              {/* FIXED: SHOW REAL NAME */}
-              <div className="font-medium">
-                {otherUser?.fullName ||
-                  otherUser?.email ||
-                  "Unknown User"}
+              <div className="relative w-11 h-11 flex-shrink-0">
+                <Image
+                  src={avatarSrc}
+                  alt="avatar"
+                  fill
+                  className="rounded-full object-cover border border-white shadow-sm"
+                />
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border border-white" />
               </div>
 
-              <div className="text-sm text-gray-500 truncate">
-                {conversation.lastMessage || "No messages yet"}
+              <div className="flex-1 min-w-0">
+                <p className="text-[14px] font-semibold text-gray-900 truncate">
+                  {otherUser?.fullName || otherUser?.email || "User"}
+                </p>
+                <p className="text-[12px] text-gray-500 truncate">
+                  {conversation.lastMessage || "No messages yet"}
+                </p>
               </div>
-            </div>
+
+              <div className="ml-2">
+                {/* You can add time or unread dot here */}
+              </div>
+            </button>
           );
         })}
+
+        {filteredConversations.length === 0 && (
+          <p className="text-xs text-gray-400 px-3 mt-4">
+            No conversations yet. Apply for a job to start chatting.
+          </p>
+        )}
       </div>
     </div>
   );
