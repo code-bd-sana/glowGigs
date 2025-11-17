@@ -1,7 +1,7 @@
 // app/dashboard/page.tsx or pages/dashboard.tsx
 import Card from "@/components/(dashboard)/Employee/Card";
 import LatestApplications from "@/components/(dashboard)/Employee/LatestApplication";
-import JobsPostedByWeek from "@/components/(dashboard)/Employee/JobsPostedByWeek";
+import JobsPostedByWeek from "@/components/(dashboard)/Employee/JobsPostedByMonth";
 import { FaUser, FaBriefcase } from "react-icons/fa";
 
 import { HiOutlineUsers } from "react-icons/hi";
@@ -14,15 +14,15 @@ import {
   useGetAllUsersQuery,
   useGetUserRoleCountQuery,
 } from "@/features/UserApi";
+import JobPostedByMonth from "@/components/(dashboard)/Employee/JobsPostedByMonth";
 
-
-const jobsData = [
-  { week: "Week 1", jobs: 3 },
-  { week: "Week 2", jobs: 5 },
-  { week: "Week 3", jobs: 2 },
-  { week: "Week 4", jobs: 8 },
-  { week: "Week 5", jobs: 6 },
-];
+// const jobsData = [
+//   { week: "Week 1", jobs: 3 },
+//   { week: "Week 2", jobs: 5 },
+//   { week: "Week 3", jobs: 2 },
+//   { week: "Week 4", jobs: 8 },
+//   { week: "Week 5", jobs: 6 },
+// ];
 
 export default function EmployeeDashboard() {
   const { data: session, status } = useSession();
@@ -43,14 +43,21 @@ export default function EmployeeDashboard() {
   } = useGetJobsByPosterQuery(posterId ?? "", {
     skip: !posterId,
   });
-  console.log(jobs?.total);
-  console.log(jobs?.total);
+  console.log(jobs?.data);
 
   const { data: allJobs } = useGetJobsQuery();
   console.log(allJobs?.total);
 
   const { data: userByRole } = useGetUserRoleCountQuery();
   console.log(userByRole?.roles?.SEEKER);
+
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center h-40">
+        <span className="loading loading-infinity loading-lg"></span>
+      </div>
+    );
+
   return (
     <div className="p-6 space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -75,9 +82,9 @@ export default function EmployeeDashboard() {
           icon={<MdWorkspacePremium />}
         />
       </div>
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col lg:flex-row gap-6 h-[800px]">
         <LatestApplications />
-        <JobsPostedByWeek data={jobsData} />
+        <JobPostedByMonth data={jobs?.data || []} />
       </div>
     </div>
   );

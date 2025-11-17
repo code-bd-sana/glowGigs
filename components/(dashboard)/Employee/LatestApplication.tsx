@@ -56,14 +56,14 @@ const LatestApplications = () => {
   return (
     <div className="bg-white p-4 rounded-lg shadow w-full">
       <div className="flex justify-between items-center my-4">
-        <p className="font-bold">Latest Posted Jobs</p>
+        <p className="font-bold text-2xl">Latest Posted Jobs</p>
         <a href="#" className="text-blue-600">
           View All
         </a>
       </div>
 
       <ul className="space-y-9 mt-10">
-        {jobs?.data?.map((job: Job, index: number) => (
+        {jobs?.data?.slice(4).map((job: Job, index: number) => (
           <div
             key={index}
             className="flex items-center justify-between py-4 border-b border-gray-200 last:border-none"
