@@ -30,6 +30,6 @@
     ".next/types/**/*.ts",
     "app/api/auth/[...nextauth]/route.js",
     "app/(auth)/register/page.tsx"
-, "app/api/category/category.controller.ts", "app/api/changePassword/route.js", "components/(dashboard)/admin/ApplicantsPage.jsx", "components/(dashboard)/admin/JobPoster.jsx", "app/api/allapplicants/route.js", "components/(dashboard)/admin/JobManagementTable.jsx", "app/api/jobAll/route.js", "app/api/singleUser/route.js", "app/api/singleUser/route.js", "components/(dashboard)/admin/JobPosterDetails.jsx", "components/(dashboard)/admin/ApplicantProfile.ksx", "app/api/userDelete/[id]/route.js", "app/api/profileUpdate/ProfileUpdateController.js", "components/(dashboard)/admin/ManageJobCard.jsx", "app/dashboard/(admin)/payments/page.jsx", "app/api/adminPayment/route.js"  ],
+, "app/api/category/category.controller.ts", "app/api/changePassword/route.js", "components/(dashboard)/admin/ApplicantsPage.jsx", "components/(dashboard)/admin/JobPoster.jsx", "app/api/allapplicants/route.js", "components/(dashboard)/admin/JobManagementTable.jsx", "app/api/jobAll/route.js", "app/api/singleUser/route.js", "app/api/singleUser/route.js", "components/(dashboard)/admin/JobPosterDetails.jsx", "components/(dashboard)/admin/ApplicantProfile.ksx", "app/api/userDelete/[id]/route.js", "app/api/profileUpdate/ProfileUpdateController.js", "components/(dashboard)/admin/ManageJobCard.jsx", "app/dashboard/(admin)/payments/page.jsx", "app/api/adminPayment/route.js", "app/api/users/get/[id]/route.js"  ],
   "exclude": ["node_modules"]
 }
