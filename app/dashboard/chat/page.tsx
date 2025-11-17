@@ -11,7 +11,7 @@ export default function ChatPage() {
   const userId = session?.user?.id;
 
   return (
-    <div className="flex h-screen">
+    <div className="flex gap-3 min-h-screen">
       {/* LEFT SIDEBAR */}
       <ConversationList onSelect={setSelectedConversation} />
 
