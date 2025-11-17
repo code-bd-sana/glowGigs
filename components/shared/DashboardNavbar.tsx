@@ -143,7 +143,13 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
                 className="w-8 h-8 rounded-full object-cover"
               />
             ) : (
-              <ImUser className="text-3xl" />
+              <Image
+                src={"https://i.ibb.co.com/HTrtKbvX/images.png"}
+                alt="Profile"
+                width={32}
+                height={32}
+                className="w-8 h-8 rounded-full object-cover"
+              />
             )}
             <div className="hidden sm:block leading-tight">
               <p className="text-sm font-medium whitespace-nowrap text-gray-900">

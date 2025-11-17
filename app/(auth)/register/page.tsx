@@ -66,7 +66,7 @@ export default function RegisterPage() {
 
     try {
       const defaultAvatar =
-        "https://i.ibb.co.com/pvmhnThC/matheus-ferrero-W7b3e-DUb-2-I-unsplash.jpg".trim();
+        "https://i.ibb.co.com/HTrtKbvX/images.png".trim();
 
       const extraJobSeekerFields =
         formData.role === "JOB_SEEKER"
