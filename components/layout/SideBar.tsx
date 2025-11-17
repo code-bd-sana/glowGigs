@@ -12,7 +12,7 @@ import {
   FiX,
   FiPlusCircle,
 } from "react-icons/fi";
-import { MdOutlineWorkspacePremium } from "react-icons/md";
+import { MdMessage, MdOutlineWorkspacePremium } from "react-icons/md";
 import { RiHandbagLine, RiPriceTag3Line } from "react-icons/ri";
 import { IoPricetagOutline } from "react-icons/io5";
 import Image from "next/image";
@@ -48,6 +48,11 @@ export default function Sidebar({ onClose }: SidebarProps) {
       icon: <IoPricetagOutline />,
       href: "/dashboard/employeePricing",
     },
+    {
+      name: "Chat",
+      icon: <MdMessage />,
+      href: "/dashboard/chat",
+    },
   ];
   const adminItems = [
     { name: "Dashboard", icon: <FiHome />, href: "/dashboard" },
@@ -59,6 +64,11 @@ export default function Sidebar({ onClose }: SidebarProps) {
     },
     { name: "Manage Jobs", icon: <FiGift />, href: "/dashboard/manage-jobs" },
     { name: "Payments", icon: <FiDollarSign />, href: "/dashboard/payments" },
+    {
+      name: "Chat",
+      icon: <MdMessage />,
+      href: "/dashboard/chat",
+    },
     // { name: "Profile", icon: <FaRegUser />, href: "/admin/profile" },
   ];
   const jobSeekerItems = [
@@ -72,6 +82,11 @@ export default function Sidebar({ onClose }: SidebarProps) {
       name: "Profile & Resume",
       icon: <FiFileText />,
       href: "/dashboard/profile",
+    },
+    {
+      name: "Chat",
+      icon: <MdMessage />,
+      href: "/dashboard/chat",
     },
   ];
 
