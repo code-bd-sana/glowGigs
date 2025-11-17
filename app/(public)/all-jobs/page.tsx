@@ -91,33 +91,46 @@ export default function JobList() {
 
   // Apply button handler
   const handleApply = async () => {
-    if (!applicantId) {
-      toast.error("Please log in to apply for this job.");
-      return;
+  if (!applicantId) {
+    toast.error("Please log in to apply for this job.");
+    return;
+  }
+
+  try {
+    // 1️⃣ Apply for the job
+    const res = await applyForJob({
+      job: selectedJob._id,
+      applicant: applicantId,
+    }).unwrap();
+
+    // 2️⃣ Create OR Get Conversation between Applicant + Job Poster
+    const convoRes = await fetch("/api/chat/conversation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user1Id: applicantId,
+        user2Id: selectedJob.jobPoster, // 👈 EMPLOYER ID
+      }),
+    });
+
+    const convoData = await convoRes.json();
+    console.log("🔗 Conversation created or returned:", convoData);
+
+    toast.success(
+      res?.message || `Applied successfully for ${selectedJob.title}!`
+    );
+
+    setSelectedJob(null);
+  } catch (error: any) {
+    console.error("Application failed:", error);
+
+    if (error?.data?.message?.includes("already applied")) {
+      toast.error("You have already applied for this job.");
+    } else {
+      toast.error(error?.data?.message || "Failed to apply. Please try again.");
     }
-
-    try {
-      const res = await applyForJob({
-        job: selectedJob._id,
-        applicant: applicantId,
-      }).unwrap();
-
-      toast.success(
-        res?.message || `Applied successfully for ${selectedJob.title}!`
-      );
-      setSelectedJob(null);
-    } catch (error: any) {
-      console.error("Application failed:", error);
-
-      if (error?.data?.message?.includes("already applied")) {
-        toast.error("You have already applied for this job.");
-      } else {
-        toast.error(
-          error?.data?.message || "Failed to apply. Please try again."
-        );
-      }
-    }
-  };
+  }
+};
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10 min-h-screen">
