@@ -20,9 +20,13 @@ graphOverview:builder.query<any, void>({
 
 jobOverview:builder.query({
   query:()=> `/jobSummury`
-})
+}),
+allPayment:builder.query({
+  query:()=>`/adminPayment`
+
+}),
 
     })
 });
 
-export const { useAdminOverviewQuery, useChartOverviewQuery , useGraphOverviewQuery, useJobOverviewQuery} = overViewApi;
+export const { useAdminOverviewQuery, useChartOverviewQuery , useGraphOverviewQuery, useJobOverviewQuery, useAllPaymentQuery} = overViewApi;
