@@ -132,6 +132,7 @@ export default function CreateJobPost() {
         companyPerks: [],
       });
       setThumbnail(null);
+      setPreviewUrl(null);
     } catch (error) {
       console.error("Error creating job:", error);
       alert("Failed to create job!");
