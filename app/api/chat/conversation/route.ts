@@ -4,10 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from "@/lib/dbConnect";
 import Conversation from "../conversation.model";
 import User from "../../users/user.model";
-import mongoose from "mongoose";   // <-- ADD THIS
+import mongoose from "mongoose";   
+import { PLAN_RULES } from "@/config/plans"; 
 
-// POST /api/chat/conversation
-// body: { user1Id: string, user2Id: string }
 export async function POST(req: NextRequest) {
   try {
     await dbConnect();
@@ -22,7 +21,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // check users exist
+    // Fetch both users
     const user1 = await User.findById(user1Id);
     const user2 = await User.findById(user2Id);
 
@@ -33,29 +32,83 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // check existing conversation
+    // ---------------------------------------------
+    // 🔥 Identify the JOB SEEKER (chat limit applies only to them)
+    // ---------------------------------------------
+    const seeker = user1.role === "JOB_SEEKER" ? user1 : user2;
+
+    const planName = seeker.plan;            // bronze / pro / basic
+    const planStatus = seeker.planStatus;    // active / inactive
+    const planEnd = seeker.currentPeriodEnd; // date
+
+    // ---------------------------------------------
+    // ❌ If plan not found → block
+    // ---------------------------------------------
+    if (!PLAN_RULES[planName]) {
+      return NextResponse.json(
+        { error: "You do not have an active subscription. Please upgrade." },
+        { status: 403 }
+      );
+    }
+
+    // ❌ If plan inactive
+    if (planStatus !== "active") {
+      return NextResponse.json(
+        { error: "Your subscription is not active. Upgrade to chat." },
+        { status: 403 }
+      );
+    }
+
+    // ❌ If plan expired
+    if (new Date(planEnd) < new Date()) {
+      return NextResponse.json(
+        { error: "Your subscription has expired. Renew to chat." },
+        { status: 403 }
+      );
+    }
+
+    // ❌ If this plan does NOT allow chatting
+    if (!PLAN_RULES[planName].canChatWithEmployers) {
+      return NextResponse.json(
+        {
+          error:
+            "Chatting with employers is not included in your current plan. Please upgrade.",
+        },
+        { status: 403 }
+      );
+    }
+
+    // ---------------------------------------------
+    // ✔ If allowed → continue conversation logic
+    // ---------------------------------------------
+
     let conversation = await Conversation.findOne({
       participants: {
         $all: [
           new mongoose.Types.ObjectId(user1Id),
-          new mongoose.Types.ObjectId(user2Id)
-        ]
-      }
+          new mongoose.Types.ObjectId(user2Id),
+        ],
+      },
     });
 
-    // create conversation if not exists
     if (!conversation) {
       conversation = await Conversation.create({
         participants: [
-          new mongoose.Types.ObjectId(user1Id),  
-          new mongoose.Types.ObjectId(user2Id)   
+          new mongoose.Types.ObjectId(user1Id),
+          new mongoose.Types.ObjectId(user2Id),
         ],
         lastMessage: "",
         lastMessageAt: new Date(),
       });
     }
 
-    return NextResponse.json(conversation, { status: 200 });
+    // 🧩 Populate participant details (for UI)
+    const populated = await Conversation.findById(conversation._id).populate(
+      "participants",
+      "fullName email img role"
+    );
+
+    return NextResponse.json(populated, { status: 200 });
   } catch (error) {
     console.error("Error in conversation API:", error);
     return NextResponse.json(

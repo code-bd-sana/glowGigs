@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import toast from "react-hot-toast";
 
 interface ConversationListProps {
   onSelect: (conversation: any) => void;
@@ -37,11 +38,9 @@ export default function ConversationList({ onSelect }: ConversationListProps) {
     const lastMsg = c.lastMessage || "";
     const term = search.toLowerCase();
     return (
-      name.toLowerCase().includes(term) ||
-      lastMsg.toLowerCase().includes(term)
+      name.toLowerCase().includes(term) || lastMsg.toLowerCase().includes(term)
     );
   });
-  
 
   return (
     <div className="h-screen w-80 bg-white border-r rounded-3xl border-gray-100 shadow-lg flex flex-col">
@@ -63,14 +62,31 @@ export default function ConversationList({ onSelect }: ConversationListProps) {
             (p: any) => p._id !== userId
           );
 
-          const avatarSrc =
-            otherUser.img 
-      
+          const avatarSrc = otherUser.img;
 
           return (
             <button
               key={conversation._id}
-              onClick={() => onSelect(conversation)}
+              onClick={() => {
+                const role = session?.user?.role;
+                const plan = session?.user?.plan;
+
+                // EMPLOYERS can chat always
+                if (role === "EMPLOYER") {
+                  onSelect(conversation);
+                  return;
+                }
+
+                // JOB SEEKER must have valid plan (bronze or pro)
+                if (!["bronze", "pro"].includes(plan)) {
+                  toast.error(
+                    "Upgrade to Bronze or Pro to chat with employers."
+                  );
+                  return;
+                }
+
+                onSelect(conversation);
+              }}
               className="w-full flex items-center gap-3 px-3 py-3 rounded-2xl hover:bg-gray-50 transition text-left"
             >
               <div className="relative w-11 h-11 flex-shrink-0">
