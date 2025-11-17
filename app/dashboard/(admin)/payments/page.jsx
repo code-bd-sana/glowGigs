@@ -1,24 +1,35 @@
 "use client";
 import { useAllPaymentQuery } from "@/features/OverViewApi";
-import React from "react";
-import { FiTrendingUp, FiDollarSign, FiUsers, FiCheckCircle, FiEye, FiDownload } from "react-icons/fi";
+import React, { useState } from "react";
+import { FiTrendingUp, FiDollarSign, FiUsers, FiCheckCircle, FiEye, FiDownload, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 export default function PaymentsPage() {
   const { data, isLoading, error } = useAllPaymentQuery();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   console.log(data?.data, "All payment");
 
+  // Pagination calculation
+  const allPayments = data?.data || [];
+  const totalItems = allPayments.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  
+  // Get current page items
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentPayments = allPayments.slice(indexOfFirstItem, indexOfLastItem);
+
   // Calculate summary statistics from actual data
   const calculateSummary = () => {
-    if (!data?.data) return null;
+    if (!allPayments.length) return null;
 
-    const payments = data.data;
-    const totalRevenue = payments.reduce((sum, payment) => sum + payment.amount, 0);
-    const successfulPayments = payments.filter(p => p.status === 'success').length;
-    const successRate = payments.length > 0 ? (successfulPayments / payments.length) * 100 : 0;
+    const totalRevenue = allPayments.reduce((sum, payment) => sum + payment.amount, 0);
+    const successfulPayments = allPayments.filter(p => p.status === 'success').length;
+    const successRate = (successfulPayments / allPayments.length) * 100;
     
-    // This month's revenue (you might want to filter by current month)
-    const thisMonthsRevenue = payments.reduce((sum, payment) => {
+    // This month's revenue
+    const thisMonthsRevenue = allPayments.reduce((sum, payment) => {
       const paymentDate = new Date(payment.createdAt);
       const currentMonth = new Date().getMonth();
       const currentYear = new Date().getFullYear();
@@ -32,7 +43,7 @@ export default function PaymentsPage() {
     return {
       totalRevenue,
       thisMonthsRevenue,
-      activeSubscriptions: payments.length,
+      activeSubscriptions: allPayments.length,
       successRate
     };
   };
@@ -77,6 +88,38 @@ export default function PaymentsPage() {
       default:
         return { bg: 'bg-gray-100', text: 'text-gray-700' };
     }
+  };
+
+  // Handle page change
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Handle items per page change
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(1); // Reset to first page
+  };
+
+  // Generate page numbers
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      const startPage = Math.max(1, currentPage - 2);
+      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+      
+      for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(i);
+      }
+    }
+    
+    return pageNumbers;
   };
 
   if (isLoading) {
@@ -202,7 +245,7 @@ export default function PaymentsPage() {
               </tr>
             </thead>
             <tbody>
-              {data?.data?.map((payment) => {
+              {currentPayments.map((payment) => {
                 const statusInfo = getStatusColor(payment.status);
                 const planInfo = getPlanColor(payment.plan);
                 
@@ -251,9 +294,73 @@ export default function PaymentsPage() {
           </table>
         </div>
 
-        {(!data?.data || data.data.length === 0) && (
+        {(!allPayments || allPayments.length === 0) && (
           <div className="text-center py-8 text-gray-500">
             No payment records found
+          </div>
+        )}
+
+        {/* Pagination */}
+        {allPayments.length > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between mt-6 pt-4 border-t">
+            <div className="flex items-center gap-4 mb-4 sm:mb-0">
+              <span className="text-sm text-gray-600">Show</span>
+              <select
+                value={itemsPerPage}
+                onChange={handleItemsPerPageChange}
+                className="border rounded-lg px-3 py-1.5 text-sm text-gray-600"
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+              </select>
+              <span className="text-sm text-gray-600">entries</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`p-2 rounded-lg border ${
+                  currentPage === 1 
+                    ? 'text-gray-400 cursor-not-allowed' 
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                <FiChevronLeft size={16} />
+              </button>
+
+              {getPageNumbers().map((pageNumber) => (
+                <button
+                  key={pageNumber}
+                  onClick={() => handlePageChange(pageNumber)}
+                  className={`px-3 py-1 rounded-lg text-sm font-medium ${
+                    currentPage === pageNumber
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  {pageNumber}
+                </button>
+              ))}
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`p-2 rounded-lg border ${
+                  currentPage === totalPages 
+                    ? 'text-gray-400 cursor-not-allowed' 
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                <FiChevronRight size={16} />
+              </button>
+            </div>
+
+            <div className="text-sm text-gray-600 mt-4 sm:mt-0">
+              Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, totalItems)} of {totalItems} entries
+            </div>
           </div>
         )}
       </div>
