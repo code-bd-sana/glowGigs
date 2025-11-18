@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from "@/lib/dbConnect";
-
 import mongoose from "mongoose";
 import Message from "../message.model";
+import Conversation from "../conversation.model";
 
-// POST /api/chat/message
+
+// =====================
+// POST — SEND MESSAGE
+// =====================
 export async function POST(req: NextRequest) {
   try {
     await dbConnect();
@@ -18,10 +21,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 1️⃣ Create message
     const message = await Message.create({
       conversation: new mongoose.Types.ObjectId(conversationId),
       sender: new mongoose.Types.ObjectId(senderId),
       text,
+    });
+
+    // 2️⃣ UPDATE LAST MESSAGE
+    await Conversation.findByIdAndUpdate(conversationId, {
+      lastMessage: text,
+      lastMessageAt: new Date(),
     });
 
     return NextResponse.json(message, { status: 200 });
@@ -34,7 +44,9 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET /api/chat/message?conversationId=xxx
+// =====================
+// GET — FETCH MESSAGES
+// =====================
 export async function GET(req: NextRequest) {
   try {
     await dbConnect();
@@ -51,7 +63,7 @@ export async function GET(req: NextRequest) {
     const messages = await Message.find({
       conversation: new mongoose.Types.ObjectId(conversationId),
     })
-      .populate("sender", "name email")
+      .populate("sender", "fullName email img")
       .sort({ createdAt: 1 });
 
     return NextResponse.json(messages);
