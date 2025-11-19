@@ -326,7 +326,8 @@ const MyJobs = () => {
                 >
                   <option value="Full-time">Full-time</option>
                   <option value="Part-time">Part-time</option>
-                  <option value="Remote">Remote</option>
+                  <option value="Remote">Remote/Hybrid</option>
+                  <option value="Remote">Freelance</option>
                 </select>
               </div>
 
