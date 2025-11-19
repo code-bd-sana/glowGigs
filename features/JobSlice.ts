@@ -6,7 +6,7 @@ export interface JobPayload {
   department: string;
   companyName: string;
   companyLocation: string;
-  jobType: "Full-time" | "Part-time" | "Remote";
+  jobType: "Full-time" | "Part-time" | "Remote/Hybrid" | "Freelance" ;
   payType:
     | "Competitive"
     | "Performance Bonus"

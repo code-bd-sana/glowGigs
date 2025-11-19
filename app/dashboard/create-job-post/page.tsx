@@ -15,7 +15,7 @@ export interface JobFormType {
   department: string;
   companyName: string;
   companyLocation: string;
-  jobType: "Full-time" | "Part-time" | "Remote";
+  jobType: "Full-time" | "Part-time" | "Remote/Hybrid" | "Freelance";
   payType:
     | "Competitive"
     | "Performance Bonus"
@@ -31,6 +31,8 @@ export interface JobFormType {
 }
 
 export default function CreateJobPost() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { data: session, status } = useSession();
 
@@ -95,6 +97,9 @@ export default function CreateJobPost() {
 
   // Handle form submit
   const handleSubmit = async (e: FormEvent) => {
+    if (isSubmitting) return; // double submit stop
+    setIsSubmitting(true);
+    console.log("clicked");
     e.preventDefault();
 
     try {
@@ -136,6 +141,8 @@ export default function CreateJobPost() {
     } catch (error) {
       console.error("Error creating job:", error);
       alert("Failed to create job!");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -205,14 +212,14 @@ export default function CreateJobPost() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-600 mb-1">
-            Company Location
+            State
           </label>
           <input
             name="companyLocation"
             type="text"
             value={formData.companyLocation}
             onChange={handleChange}
-            placeholder="Your Company Location"
+            placeholder="Your Company State Location"
             className="w-full border border-gray-300 rounded-md px-4 py-3 focus:ring focus:ring-blue-100 outline-none"
             required
           />
@@ -234,7 +241,8 @@ export default function CreateJobPost() {
           >
             <option value="Full-time">Full-Time</option>
             <option value="Part-time">Part-Time</option>
-            <option value="Remote">Remote</option>
+            <option value="Remote">Remote/Hybrid</option>
+            <option value="Freelance">Freelance</option>
           </select>
         </div>
         <div>
@@ -266,7 +274,7 @@ export default function CreateJobPost() {
         </div>
       </div>
       {/* deadline & others*/}
-      <div className="grid md:grid-cols-4 gap-6 mb-4">
+      <div className="grid md:grid-cols-2 gap-6 mb-4">
         {/*deadline */}
         <div className="mb-4">
           <label className="block font-medium text-gray-700 text-sm mb-1">
@@ -339,15 +347,15 @@ export default function CreateJobPost() {
         <label className="block text-sm font-medium mb-3">Company Perks</label>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {[
-            "Wellness services",
-            "Access to wellness facilities",
-            "Employee wellness programs",
-            "Flexible scheduling",
-            "Schedule & Flexibility",
-            "Flexibility hours or scheduling",
-            "Part-time or full-time availability",
-            "Remote or hybrid options",
-            "Ability to set your own schedule",
+            "Flexible Hours",
+            "Free or Discounted Services",
+            "Career Training",
+            "Vacation Days",
+            "Health Insurance",
+            "Paid Time Off",
+            "Remote or Hybrid Schedule",
+            "Continuing Education",
+            "Maternity/Paternity leave",
           ].map((perk) => (
             <label
               key={perk}
@@ -425,12 +433,16 @@ export default function CreateJobPost() {
 
       {/* Buttons */}
       <div className="flex justify-end gap-4">
-        <div className="px-6 py-3 cursor-pointer border hover:border bg-black text-white rounded-xl hover:bg-white hover:text-black  flex items-center gap-2 transition-all duration-300">
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={`px-6 py-3 cursor-pointer border hover:border bg-black text-white rounded-xl hover:bg-white hover:text-black flex items-center gap-2 transition-all duration-300 ${
+            isLoading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
           <LiaTelegramPlane className="text-2xl" />
-          <button type="submit" disabled={isLoading}>
-            {isLoading ? "Publishing..." : "Publish Job"}
-          </button>
-        </div>
+          {isLoading ? "Publishing..." : "Publish Job"}
+        </button>
       </div>
     </form>
   );
