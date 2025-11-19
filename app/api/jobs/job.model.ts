@@ -14,7 +14,7 @@ const JobSchema = new Schema<JobType>(
     companyLocation: { type: String, required: true },
     jobType: {
       type: String,
-      enum: ["Full-time", "Part-time", "Remote"],
+      enum: ["Full-time", "Part-time", "Remote/Hybrid", "Freelance"],
       required: true,
     },
     payType: {
