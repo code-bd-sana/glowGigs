@@ -40,6 +40,20 @@ const userSchema = new Schema<IUser>(
       enum: ["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"],
     },
 
+    
+     portfolio: [
+      {
+        url: { type: String, required: true },
+        publicId: { type: String, required: true },
+        resourceType: { type: String, required: true },
+        originalFilename: { type: String, required: true },
+        format: { type: String, required: true },
+        createdAt: { type: String, required: true },
+        uploadedAt: { type: Date, default: Date.now } // ✅ নতুন field
+      }
+    ],
+
+
     // 🟢 Subscription fields (for both job seekers & employers)
     stripeCustomerId: { type: String, default: null },
     stripeSubscriptionId: { type: String, default: null },
