@@ -54,6 +54,7 @@ export interface IJobSeekerFields {
 // ==========================
 export interface IEmployerFields {
   companyName: string;
+   portfolio?: {}
   companyWebsite?: string;
   companyDescription?: string;
   industry?: string;

@@ -19,7 +19,10 @@ const PortfolioPage = () => {
   const { data: session, status } = useSession();
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [newUploadedItems, setNewUploadedItems] = useState<PortfolioItem[]>([]);
 
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
@@ -38,6 +41,7 @@ const PortfolioPage = () => {
 
     setIsUploading(true);
     setUploadError(null);
+    setSaveError(null);
 
     try {
       const uploaded: PortfolioItem[] = [];
@@ -45,13 +49,14 @@ const PortfolioPage = () => {
       for (const file of Array.from(files)) {
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("upload_preset", uploadPreset);
+        formData.append("upload_preset", 'dcirauywt');
 
         const res = await fetch(
-          `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
+          `https://api.cloudinary.com/v1_1/dcirauywt/auto/upload`,
           { method: "POST", body: formData }
         );
         const data = await res.json();
+        console.log("📁 Cloudinary Response:", data);
 
         // 👇 Fix Cloudinary type bug
         let type = data.resource_type;
@@ -65,33 +70,91 @@ const PortfolioPage = () => {
           type = "pdf";
         else type = "raw";
 
-        uploaded.push({
+        const portfolioItem = {
           url: data.secure_url,
           publicId: data.public_id,
           resourceType: type,
           originalFilename: data.original_filename,
           format: ext,
           createdAt: data.created_at,
-        });
+        };
+
+        uploaded.push(portfolioItem);
       }
 
-      setItems((prev) => [...uploaded, ...prev]);
+      // ✅ Temporary state-এ store করুন (এখনো database-এ save হয়নি)
+      setNewUploadedItems(uploaded);
+      console.log("✅ Files uploaded to Cloudinary. Ready to save:", uploaded);
+
     } catch (err: any) {
-      console.error(err);
-      setUploadError("Upload failed. Try again.");
+      console.error("❌ Upload Error:", err);
+      setUploadError(err.message || "Upload failed. Try again.");
     } finally {
       setIsUploading(false);
     }
   };
 
+  // ==== Save to Database Handler ====
+  const handleSaveToDatabase = async () => {
+    if (newUploadedItems.length === 0) return;
+
+    setIsSaving(true);
+    setSaveError(null);
+
+    try {
+      // ✅ Database-এ save করুন
+
+      console.log(newUploadedItems, "tomi amar personal vudai")
+      const saveResponse = await fetch('/api/portfolio', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          portfolioItems: newUploadedItems,
+          email: (session as any)?.user?.email,
+        }),
+      });
+
+      const saveResult = await saveResponse.json();
+      
+      if (!saveResponse.ok) {
+        throw new Error(saveResult.message || 'Failed to save portfolio');
+      }
+
+      console.log("💾 Database Save Result:", saveResult);
+
+      // ✅ State update করুন (permanent items-এ add করুন)
+      setItems((prev) => [...newUploadedItems, ...prev]);
+      
+      // ✅ Temporary items clear করুন
+      setNewUploadedItems([]);
+
+      // ✅ Success message
+      alert(`✅ ${newUploadedItems.length} items saved to portfolio successfully!`);
+
+    } catch (err: any) {
+      console.error("❌ Save Error:", err);
+      setSaveError(err.message || "Failed to save to database.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // ==== Cancel Save Handler ====
+  const handleCancelSave = () => {
+    setNewUploadedItems([]);
+    setSaveError(null);
+  };
+
   // ==== PREVIEW COMPONENT ====
   const renderThumb = (item: PortfolioItem) => {
- const ext = (item?.format || item?.resourceType || "file").toLowerCase();
+    const ext = (item?.format || item?.resourceType || "file").toLowerCase();
 
     if (item.resourceType === "image") {
       return (
         <div className="relative w-full h-44 rounded-lg overflow-hidden">
-          <img src={item.url} className="w-full h-full object-cover" />
+          <img src={item.url} className="w-full h-full object-cover" alt={item.originalFilename} />
         </div>
       );
     }
@@ -112,6 +175,7 @@ const PortfolioPage = () => {
         <iframe
           src={item.url}
           className="w-full h-44 rounded-lg bg-gray-100"
+          title={item.originalFilename}
         ></iframe>
       );
     }
@@ -214,6 +278,7 @@ const PortfolioPage = () => {
                   className="hidden"
                   accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx"
                   onChange={handleFileChange}
+                  disabled={isUploading}
                 />
               </label>
             </div>
@@ -223,10 +288,55 @@ const PortfolioPage = () => {
             )}
           </div>
 
+          {/* SAVE TO DATABASE SECTION - Show only when new items are uploaded */}
+          {newUploadedItems.length > 0 && (
+            <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-xl shadow-sm mb-10">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h2 className="font-semibold text-lg text-yellow-800">
+                    Save to Portfolio?
+                  </h2>
+                  <p className="text-yellow-700 text-sm">
+                    {newUploadedItems.length} file(s) uploaded successfully. 
+                    Click Save to add them to your portfolio.
+                  </p>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleCancelSave}
+                    className="px-5 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-sm"
+                    disabled={isSaving}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveToDatabase}
+                    className="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm flex items-center gap-2"
+                    disabled={isSaving}
+                  >
+                    {isSaving ? (
+                      <>
+                        <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      `Save ${newUploadedItems.length} File(s)`
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {saveError && (
+                <p className="text-red-500 text-sm mt-3">{saveError}</p>
+              )}
+            </div>
+          )}
+
           {/* PORTFOLIO GRID */}
           <h3 className="text-lg font-semibold mb-4">Your Portfolio</h3>
 
-          {items.length === 0 ? (
+          {items.length === 0 && newUploadedItems.length === 0 ? (
             <div className="p-10 border rounded-xl bg-gray-50 text-center">
               <p className="text-gray-600 text-sm">
                 No items yet — upload your first portfolio piece.
@@ -234,11 +344,22 @@ const PortfolioPage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {items.map((item) => (
+              {/* Show both saved items and temporary new items */}
+              {[...newUploadedItems, ...items].map((item, index) => (
                 <div
-                  key={item.publicId}
-                  className="bg-white border rounded-xl shadow-sm p-3"
+                  key={`${item.publicId}-${index}`}
+                  className={`bg-white border rounded-xl shadow-sm p-3 ${
+                    index < newUploadedItems.length ? 'border-yellow-400 border-2' : ''
+                  }`}
                 >
+                  {index < newUploadedItems.length && (
+                    <div className="mb-2">
+                      <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
+                        Unsaved
+                      </span>
+                    </div>
+                  )}
+                  
                   {renderThumb(item)}
 
                   <div className="mt-3">
@@ -249,6 +370,7 @@ const PortfolioPage = () => {
                   <a
                     href={item.url}
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="text-blue-600 text-sm mt-2 inline-block hover:underline"
                   >
                     Open File ↗
