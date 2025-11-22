@@ -15,6 +15,8 @@ await dbConnect();
        const password = data?.password;
         const hashPassword =await bcrypt.hash(password, 10);
        data.password = hashPassword;
+
+       console.log(data, "All User Data")
     
         const newUser = new User(data);
         const saved = await newUser.save();

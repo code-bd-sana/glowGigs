@@ -79,6 +79,7 @@ const userSchema = new Schema<IUser>(
     totalApplicants: { type: Number, default: 0 },
     applications: { type: Number, default: 0 },
     isVerified: { type: Boolean, default: false },
+  departments: [{ type: String }], 
   },
   { timestamps: true }
 );
