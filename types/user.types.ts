@@ -27,6 +27,7 @@ export interface IUserBase {
 
   createdAt?: Date;
   updatedAt?: Date;
+      departments?: string[];
 }
 
 // ==========================
