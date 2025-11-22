@@ -1,5 +1,6 @@
 "use client";
 import { useRegisterMutation } from "@/features/AuthApi";
+import { useGetCategoriesQuery } from "@/features/categorySlice";
 import { IUser } from "@/types/user.types";
 import { SerializedError } from "@reduxjs/toolkit";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
@@ -11,10 +12,14 @@ export default function RegisterPage() {
     "JOB_SEEKER"
   );
   const [register, { isLoading, error }] = useRegisterMutation();
+  const { data: departments } = useGetCategoriesQuery();
+  console.log(departments, "all departments");
 
   const [formData, setFormData] = useState<Partial<IUser>>({
     role: "JOB_SEEKER",
   });
+
+  const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
@@ -30,35 +35,18 @@ export default function RegisterPage() {
     }));
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   console.log("Form submitted:", formData);
-
-  //   try {
-  //     const defaultAvatar =
-  //       "https://i.ibb.co.com/pvmhnThC/matheus-ferrero-W7b3e-DUb-2-I-unsplash.jpg".trim();
-
-  //     const finalData = {
-  //       ...formData,
-  //       img: defaultAvatar,
-  //     };
-
-  //     const resp = await register(finalData as IUser).unwrap();
-  //     console.log(resp, "Registration response");
-  //     toast.success("Registration successful!");
-  //     window.location.href = "/login";
-  //   } catch (error) {
-  //     const err = error as FetchBaseQueryError | SerializedError;
-
-  //     if ("data" in err && err.data && typeof err.data === "object") {
-  //       const apiError = err.data as { message?: string };
-  //       toast.error(apiError.message ?? "Something went wrong!");
-  //       return;
-  //     }
-
-  //     toast.error("Registration failed. Please try again.");
-  //   }
-  // };
+  const handleDepartmentChange = (departmentName: string) => {
+    setSelectedDepartments(prev => {
+      const isSelected = prev.includes(departmentName);
+      if (isSelected) {
+        // Remove if already selected
+        return prev.filter(dept => dept !== departmentName);
+      } else {
+        // Add if not selected
+        return [...prev, departmentName];
+      }
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,10 +65,16 @@ export default function RegisterPage() {
             }
           : {};
 
+      // For employers, include selected departments
+      const employerFields = formData.role === "EMPLOYER" 
+        ? { departments: selectedDepartments }
+        : {};
+
       const finalData = {
         ...formData,
         img: defaultAvatar,
         ...extraJobSeekerFields,
+        ...employerFields,
       };
 
       const resp = await register(finalData as IUser).unwrap();
@@ -186,117 +180,9 @@ export default function RegisterPage() {
     </div>
   );
 
-  // const JOB_SEEKERFields = (
-  //   <div className="space-y-6">
-  //     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-  //       <div className="text-left">
-  //         <label htmlFor="dob" className="block font-medium text-gray-900 mb-2">
-  //           Date of Birth *
-  //         </label>
-  //         <input
-  //           type="date"
-  //           id="dob"
-  //           required
-  //           className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-  //           onChange={(e) => handleInputChange("dob", e.target.value)}
-  //         />
-  //       </div>
-
-  //       <div className="text-left">
-  //         <label className="block font-medium text-gray-900 mb-2">
-  //           Employment Eligibility *
-  //         </label>
-  //         <select
-  //           className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-  //           onChange={(e) =>
-  //             handleInputChange("employmentEligibility", e.target.value)
-  //           }
-  //         >
-  //           <option value="">Select your employment eligibility</option>
-  //           <option value="US_CITIZEN">US Citizen</option>
-  //           <option value="PERMANENT_RESIDENT">Permanent Resident</option>
-  //           <option value="AUTHORIZED_NONCITIZEN">
-  //             Authorized Non-Citizen
-  //           </option>
-  //         </select>
-  //       </div>
-  //     </div>
-
-  //     <div className="space-y-4">
-  //       <div className="flex items-center">
-  //         <input
-  //           type="checkbox"
-  //           id="isAdult"
-  //           className="w-4 h-4 text-black border-gray-300 rounded focus:ring-gray-400"
-  //           onChange={(e) => handleCheckboxChange("isAdult", e.target.checked)}
-  //         />
-  //         <label htmlFor="isAdult" className="ml-2 text-gray-700">
-  //           I am 18 years or older
-  //         </label>
-  //       </div>
-
-  //       <div className="flex items-center">
-  //         <input
-  //           type="checkbox"
-  //           id="isAuthorizedToWorkInUS"
-  //           className="w-4 h-4 text-black border-gray-300 rounded focus:ring-gray-400"
-  //           onChange={(e) =>
-  //             handleCheckboxChange("isAuthorizedToWorkInUS", e.target.checked)
-  //           }
-  //         />
-  //         <label
-  //           htmlFor="isAuthorizedToWorkInUS"
-  //           className="ml-2 text-gray-700"
-  //         >
-  //           I am authorized to work in the US
-  //         </label>
-  //       </div>
-
-  //       <div className="flex items-center">
-  //         <input
-  //           type="checkbox"
-  //           id="requiresVisaSponsorship"
-  //           className="w-4 h-4 text-black border-gray-300 rounded focus:ring-gray-400"
-  //           onChange={(e) =>
-  //             handleCheckboxChange("requiresVisaSponsorship", e.target.checked)
-  //           }
-  //         />
-  //         <label
-  //           htmlFor="requiresVisaSponsorship"
-  //           className="ml-2 text-gray-700"
-  //         >
-  //           I require visa sponsorship
-  //         </label>
-  //       </div>
-
-  //       <div className="flex items-center">
-  //         <input
-  //           type="checkbox"
-  //           id="certificationAcknowledged"
-  //           required
-  //           className="w-4 h-4 text-black border-gray-300 rounded focus:ring-gray-400"
-  //           onChange={(e) =>
-  //             handleCheckboxChange(
-  //               "certificationAcknowledged",
-  //               e.target.checked
-  //             )
-  //           }
-  //         />
-  //         <label
-  //           htmlFor="certificationAcknowledged"
-  //           className="ml-2 text-gray-700"
-  //         >
-  //           I certify that the information provided is true and accurate *
-  //         </label>
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
-
   const JOB_SEEKERFields = (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* ✅ NEW FIELD: Professional Title */}
         <div className="text-left">
           <label
             htmlFor="professionalTitle"
@@ -315,7 +201,6 @@ export default function RegisterPage() {
             }
           />
         </div>
-        {/* ✅ END NEW FIELD */}
 
         <div className="text-left">
           <label htmlFor="dob" className="block font-medium text-gray-900 mb-2">
@@ -325,7 +210,7 @@ export default function RegisterPage() {
             type="date"
             id="dob"
             required
-            className="w-full border  border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
             onChange={(e) => handleInputChange("dob", e.target.value)}
           />
         </div>
@@ -499,6 +384,37 @@ export default function RegisterPage() {
         </div>
       </div>
 
+      {/* Department Selection Field */}
+      <div className="text-left">
+        <label className="block font-medium text-gray-900 mb-2">
+          Departments *
+        </label>
+        <div className="max-h-60 overflow-y-auto border border-gray-300 rounded-lg p-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {departments?.map((dept) => (
+              <div key={dept._id} className="flex items-center">
+                <input
+                  type="checkbox"
+                  id={`dept-${dept._id}`}
+                  className="w-4 h-4 text-black border-gray-300 rounded focus:ring-gray-400"
+                  onChange={(e) => handleDepartmentChange(dept.name)}
+                  checked={selectedDepartments.includes(dept.name)}
+                />
+                <label
+                  htmlFor={`dept-${dept._id}`}
+                  className="ml-2 text-gray-700 text-sm"
+                >
+                  {dept.name}
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+        <p className="text-sm text-gray-500 mt-2">
+          Select all departments that your company operates in
+        </p>
+      </div>
+
       <div className="text-left">
         <label
           htmlFor="companyDescription"
@@ -545,6 +461,7 @@ export default function RegisterPage() {
             onClick={() => {
               setActiveTab("JOB_SEEKER");
               setFormData((prev) => ({ ...prev, role: "JOB_SEEKER" }));
+              setSelectedDepartments([]);
             }}
           >
             Job Seeker
@@ -586,7 +503,8 @@ export default function RegisterPage() {
           <div className="pt-6">
             <button
               type="submit"
-              className="w-full bg-black text-white font-medium text-lg px-12 py-4 rounded-full hover:bg-gray-900 transition-all duration-300 transform hover:scale-105"
+              disabled={isLoading}
+              className="w-full bg-black text-white font-medium text-lg px-12 py-4 rounded-full hover:bg-gray-900 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Loading..." : "Sign Up"}
             </button>
