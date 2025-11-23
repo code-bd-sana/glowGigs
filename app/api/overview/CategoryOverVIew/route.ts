@@ -4,17 +4,26 @@ import Category from "../../category/category.model";
 import { dbConnect } from "@/lib/dbConnect";
 
 export const GET = async (req: NextRequest) => {
-        await dbConnect()
+  await dbConnect();
   try {
-
     // Fetch all jobs
     const allJobs = await Job.find();
 
-    // Extract all department IDs from jobs
-    const allDepartmentIds = allJobs.map((job) => job.department);
+    // Extract all department IDs, filter out null/undefined
+    const allDepartmentIds = allJobs
+      .map((job) => job.department)
+      .filter((id) => id); // remove null/undefined
+
+    if (allDepartmentIds.length === 0) {
+      return NextResponse.json({
+        message: "No departments found",
+        departments: [],
+        counts: [],
+      });
+    }
 
     // Unique department IDs
-    const uniqueDepartmentIds = [...new Set(allDepartmentIds)];
+    const uniqueDepartmentIds = [...new Set(allDepartmentIds.map(id => id.toString()))];
 
     // Fetch all relevant categories (departments) by their IDs
     const categories = await Category.find({ _id: { $in: uniqueDepartmentIds } });
@@ -37,7 +46,6 @@ export const GET = async (req: NextRequest) => {
       (dep) => departmentNames.filter((d) => d === dep).length
     );
 
-    // Return JSON response
     return NextResponse.json(
       {
         message: "Success",
@@ -48,6 +56,7 @@ export const GET = async (req: NextRequest) => {
     );
   } catch (error) {
     console.error("Error fetching department data:", error);
+
     return NextResponse.json(
       {
         message: "Something went wrong!",
@@ -57,3 +66,6 @@ export const GET = async (req: NextRequest) => {
     );
   }
 };
+
+
+// ajafdih
