@@ -79,7 +79,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
       href: "/dashboard/my-application",
     },
     {
-      name: "Profile & Resume",
+      name: "Resume",
       icon: <FiFileText />,
       href: "/dashboard/profile",
     },
@@ -87,6 +87,11 @@ export default function Sidebar({ onClose }: SidebarProps) {
       name: "Chat",
       icon: <MdMessage />,
       href: "/dashboard/chat",
+    },
+      {
+      name: "Portfolio",
+      icon: <FiFileText />,
+      href: "/dashboard/portfolio",
     },
   ];
 

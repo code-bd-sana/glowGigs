@@ -32,10 +32,12 @@ type PopulatedJobApplied = {
 
 export const createJob = async (data: JobType) => {
   try {
+
+    console.log(data)
     await dbConnect();
     const newJob = await Job.create(data);
 await User.updateOne(
-  { _id: data?._id },
+  { _id: data?.jobPoster },
   {
     $inc: { postedJob: 1 }   
   }
@@ -121,7 +123,7 @@ export const getApplicantsForPoster = async (posterId: string) => {
     // Step 1: Find jobs created by this poster
     const jobs = await Job.find({
       jobPoster: new mongoose.Types.ObjectId(posterId), // use 'jobPoster', not 'jobPosterId'
-    }).select("_id title");
+    }).select("_id title ");
     console.log(jobs);
     if (jobs.length === 0) {
       return NextResponse.json(

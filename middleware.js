@@ -79,6 +79,17 @@ export const config = {
     "/dashboard/services",
     "/dashboard/adminTools",
     "/dashboard/schedule",
-    '/my-shot'
+    '/my-shot',
+        "/dashboard/portfolio",
+        "/dashboard/employeePricing",
+        "/dashboard/applicants",
+        "/dashboard/my-jobs",
+        "/dashboard/create-job-post",
+        "/dashboard/chat",
+        "/dashboard/job-posters",
+        "/dashboard/job-applicants",
+        "/dashboard/manage-jobs",
+        "/dashboard/payments",
+  
   ],
 };
