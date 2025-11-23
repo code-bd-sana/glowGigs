@@ -5,12 +5,19 @@ import {
   getAllApplications,
   getApplicationsByApplicant,
 } from "./jobApplied.controller";
+import User from "../users/user.model";
 
 // ---------- CREATE NEW APPLICATION ----------
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    const {applicant} = body;
     const newApplication = await createJobApplication(body);
+ const updateCount = await User.updateOne(
+  { _id: applicant },
+  { $inc: { applications: 1 } }
+);
+
     return NextResponse.json(
       {
         success: true,
