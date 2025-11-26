@@ -4,6 +4,7 @@ import { useGetCategoriesQuery } from "@/features/categorySlice";
 import { IUser } from "@/types/user.types";
 import { SerializedError } from "@reduxjs/toolkit";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { signIn } from "next-auth/react";
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -80,7 +81,21 @@ export default function RegisterPage() {
       const resp = await register(finalData as IUser).unwrap();
       console.log(resp, "Registration response");
       toast.success("Registration successful!");
-      window.location.href = "/login";
+
+      
+
+        const res = await signIn("credentials", {
+              redirect: false,
+              email: resp?.data?.email,
+              role: resp?.data?.role,
+              _id: resp?.data?._id,
+            });
+      
+            console.log(res, "this is res")
+      
+           
+              window.location.href = "/dashboard";
+      // window.location.href = "/login";
     } catch (error) {
       const err = error as FetchBaseQueryError | SerializedError;
 
@@ -161,7 +176,7 @@ export default function RegisterPage() {
         />
       </div>
 
-      <div className="text-left md:col-span-2">
+      {/* <div className="text-left md:col-span-2">
         <label
           htmlFor="address"
           className="block font-medium text-gray-900 mb-2"
@@ -176,7 +191,7 @@ export default function RegisterPage() {
           className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
           onChange={(e) => handleInputChange("address", e.target.value)}
         />
-      </div>
+      </div> */}
     </div>
   );
 
@@ -445,7 +460,7 @@ export default function RegisterPage() {
             Create Your Account
           </h2>
           <p className="text-gray-600 text-lg">
-            Join our platform as a job seeker or employer
+            Join our platform as a Talent or employer
           </p>
         </div>
 
@@ -464,7 +479,7 @@ export default function RegisterPage() {
               setSelectedDepartments([]);
             }}
           >
-            Job Seeker
+            Talent
           </button>
           <button
             type="button"
@@ -494,7 +509,7 @@ export default function RegisterPage() {
           <div className="bg-gray-50 rounded-xl p-6">
             <h3 className="text-xl font-semibold text-gray-900 mb-6">
               {activeTab === "JOB_SEEKER"
-                ? "Job Seeker Information"
+                ? "Talent Information"
                 : "Company Information"}
             </h3>
             {activeTab === "JOB_SEEKER" ? JOB_SEEKERFields : employerFields}

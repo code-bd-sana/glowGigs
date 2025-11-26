@@ -21,6 +21,7 @@ return NextResponse.json({message:"Portfolio updated successfully", updated}, {s
     
     
 } catch (error) {
+  console.log(error)
     return NextResponse.json({message:"Error in updating portfolio", error}, {status:500})
 }
 

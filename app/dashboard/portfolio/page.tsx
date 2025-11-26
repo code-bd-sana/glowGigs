@@ -67,10 +67,10 @@ const PortfolioPage = () => {
       for (const file of Array.from(files)) {
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("upload_preset", 'dcirauywt');
+        formData.append("upload_preset", uploadPreset);
 
         const res = await fetch(
-          `https://api.cloudinary.com/v1_1/dcirauywt/auto/upload`,
+          `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
           { method: "POST", body: formData }
         );
         const data = await res.json();
