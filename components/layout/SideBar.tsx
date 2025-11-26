@@ -12,7 +12,7 @@ import {
   FiX,
   FiPlusCircle,
 } from "react-icons/fi";
-import { MdMessage } from "react-icons/md";
+import { MdMessage, MdOutlineWork } from "react-icons/md";
 import { RiHandbagLine } from "react-icons/ri";
 import { IoPricetagOutline } from "react-icons/io5";
 import Image from "next/image";
@@ -43,11 +43,11 @@ export default function Sidebar({ onClose }: SidebarProps) {
       icon: <FiFileText />,
       href: "/dashboard/applicants",
     },
-    {
-      name: "Pricing",
-      icon: <IoPricetagOutline />,
-      href: "/dashboard/employeePricing",
-    },
+    // {
+    //   name: "Pricing",
+    //   icon: <IoPricetagOutline />,
+    //   href: "/dashboard/employeePricing",
+    // },
     {
       name: "Chat",
       icon: <MdMessage />,
@@ -92,6 +92,11 @@ export default function Sidebar({ onClose }: SidebarProps) {
       name: "Portfolio",
       icon: <FiFileText />,
       href: "/dashboard/portfolio",
+    },
+      {
+      name: "Jobs",
+      icon: <MdOutlineWork />,
+      href: "/dashboard/jobs",
     },
   ];
 
