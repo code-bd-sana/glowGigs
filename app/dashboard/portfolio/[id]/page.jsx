@@ -256,7 +256,10 @@ if(error){
     <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 text-center mb-10">
       Portfolio Showcase
     </h1>
-
+<div className='justify-end ml-auto'>
+<Link href={'/dashboard/chat'}>
+  <button className='text-left bg-gray-200 px-5 rounded py-2 cursor-pointer flex ml-auto items-center jusl'>Chat</button></Link>
+</div>
     {/* GRID */}
     <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {portfolioItems.map((item, index) => (

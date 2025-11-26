@@ -73,9 +73,9 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
           <FiMenu className="text-xl text-gray-600" />
         </button>
 
-        <h4 className="text-base font-semibold text-gray-900">
+        {/* <h4 className="text-base font-semibold text-gray-900">
         <span className="capitalize"> { user?.role } </span> Dashboard
-        </h4>
+        </h4> */}
       </div>
 
       {/* Center - Search Bar */}
