@@ -47,6 +47,7 @@ const NavBar = () => {
           <Link href="/plans-pricing" className={getLinkClassName('/plans-pricing')}>Plans & Pricing</Link>
           <Link href="/business" className={getLinkClassName('/business')}>List Your Business</Link>
           <Link href="/professionals" className={getLinkClassName('/professionals')}>Professionals</Link>
+          <Link href="/showcase" className={getLinkClassName('/showcase')}>Showcase</Link>
           <Link href="/dashboard">
            <div className='text-black'>
              <FaUserCircle size={24} />
