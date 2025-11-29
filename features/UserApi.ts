@@ -62,7 +62,12 @@ export const userApi = createApi({
   invalidatesTags: ["Users"],
 }),
 
+
+getShowcaseUser:builder.query({
+  query: () => `/showcaseUser`
+})
+
   }),
 });
 
-export const { useGetAllUsersQuery, useGetUserRoleCountQuery, useGetSingleUserQuery, useDeleteUserMutation, useProfileUpdateMutation } = userApi;
+export const { useGetAllUsersQuery, useGetUserRoleCountQuery, useGetSingleUserQuery, useDeleteUserMutation, useProfileUpdateMutation, useGetShowcaseUserQuery } = userApi;
