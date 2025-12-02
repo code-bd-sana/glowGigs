@@ -14,7 +14,6 @@ import {
 } from "react-icons/fi";
 import { MdMessage, MdOutlineWork } from "react-icons/md";
 import { RiHandbagLine } from "react-icons/ri";
-import { IoPricetagOutline } from "react-icons/io5";
 import Image from "next/image";
 
 interface SidebarProps {

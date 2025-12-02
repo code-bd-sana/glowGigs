@@ -5,7 +5,6 @@ import Image from "next/image";
 import { FiMenu } from "react-icons/fi";
 import { signOut, useSession } from "next-auth/react";
 import { useGetSingleUserQuery } from "@/features/AuthApi";
-import { ImUser } from "react-icons/im";
 import Link from "next/link";
 
 interface DashboardNavbarProps {
@@ -14,7 +13,7 @@ interface DashboardNavbarProps {
 
 export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
   const [open, setOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+
   const dropdownRef = useRef<HTMLDivElement>(null);
   const data = useSession();
 
@@ -24,7 +23,7 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
   const user = data?.data?.user;
   const email = user?.email;
 
-  const { data: singleUser, isLoading } = useGetSingleUserQuery(email!, {
+  const { data: singleUser } = useGetSingleUserQuery(email!, {
     skip: !email,
   });
   console.log(singleUser)
@@ -43,12 +42,12 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Implement search functionality
-    console.log("Searching for:", searchQuery);
-    // You can add your search logic here
-  };
+  // const handleSearch = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   // Implement search functionality
+  //   console.log("Searching for:", searchQuery);
+  //   // You can add your search logic here
+  // };
 
   const handleLogout = async () => {
     // Implement logout logic

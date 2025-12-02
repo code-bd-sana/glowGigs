@@ -6,7 +6,6 @@ import image2 from "../../public/jobs/job2.jpg";
 import image3 from "../../public/jobs/job3.jpg";
 import image4 from "../../public/jobs/job4.jpg";
 import { StaticImageData } from "next/image";
-import Button from "../shared/Button";
 import SecondaryButton from "../shared/SecondaryButton";
 import Link from "next/link";
 

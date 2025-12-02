@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MdOutlineShoppingBag } from 'react-icons/md';
 import { RxHamburgerMenu, RxCross2 } from 'react-icons/rx';
 import Image from 'next/image';
 import { FaUserCircle } from 'react-icons/fa';
@@ -44,8 +43,8 @@ const NavBar = () => {
         <div className="hidden lg:flex gap-8 items-center">
           <Link href="/" className={getLinkClassName('/')}>Home</Link>
           <Link href="/jobs" className={getLinkClassName('/jobs')}>Jobs</Link>
-          <Link href="/plans-pricing" className={getLinkClassName('/plans-pricing')}>Plans & Pricing</Link>
-          <Link href="/business" className={getLinkClassName('/business')}>List Your Business</Link>
+          <Link href="/plans-pricing" className={getLinkClassName('/plans-pricing')}>Get Hired</Link>
+          <Link href="/business" className={getLinkClassName('/business')}>List Your Gigs</Link>
           <Link href="/professionals" className={getLinkClassName('/professionals')}>Professionals</Link>
           <Link href="/showcase" className={getLinkClassName('/showcase')}>Showcase</Link>
           <Link href="/dashboard">
