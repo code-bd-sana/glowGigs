@@ -6,11 +6,11 @@ const ConnectAndGrow = () => {
       <div className="max-w-3xl mx-auto text-center px-6">
         {/* Heading */}
         <h2 className="text-7xl text-gray-900 mb-8">
-          Connect and Grow
+     No more hiring hassel 
         </h2>
         {/* Subtext */}
         <p className="text-gray-600 text-lg">
-          Showcase your business and find top talent with ease and efficiency.
+   Find talent quickly and keep your business glowing
         </p>
       </div>
     </section>

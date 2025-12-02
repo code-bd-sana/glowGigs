@@ -3,11 +3,11 @@ import React from "react";
 
 const BusinessListingsFAQ = () => {
   return (
-    <section className="bg-white py-24">
+    <section className="bg-[linear-gradient(86deg,rgba(201,199,56,0.27),rgba(40,103,199,0.6))] py-24">
       <div className="max-w-7xl mx-auto px-6 md:px-0">
         {/* Heading */}
         <h2 className="text-5xl font-serif text-gray-900 text-center mb-16">
-          Business Listings FAQ
+        FAQ
         </h2>
   
 

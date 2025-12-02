@@ -1,4 +1,5 @@
-import BusinessListings from '@/components/Business/BusinessListings';
+
+import PriceingEmployee from '@/components/Business/BusinessListings';
 import BusinessListingsFAQ from '@/components/Business/BusinessListingsFAQ';
 import BuisinessTestimonial from '@/components/Business/BusinessTestimonial';
 import ConnectAndGrow from '@/components/Business/ConnectAndGrow';
@@ -11,12 +12,13 @@ const page = () => {
     return (
         <div>
            <ConnectAndGrow></ConnectAndGrow>
-           <JoinBusinessNetwork></JoinBusinessNetwork>
-           <BusinessListings></BusinessListings>
+  
+           <PriceingEmployee/>
+        
            <BuisinessTestimonial></BuisinessTestimonial>
            <BusinessListingsFAQ></BusinessListingsFAQ>
            <GetInTouch></GetInTouch>
-           <TermsOfUse></TermsOfUse>
+           {/* <TermsOfUse></TermsOfUse> */}
         </div>
     );
 };

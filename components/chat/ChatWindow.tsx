@@ -4,7 +4,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { socket } from "@/lib/socket";
 import Image from "next/image";
-import { FiMoreVertical, FiPhone, FiSend } from "react-icons/fi";
+import { FiSend } from "react-icons/fi";
 
 interface ChatWindowProps {
   conversation: any;
