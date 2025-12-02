@@ -155,7 +155,7 @@ export default function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
               <p className="text-sm font-medium whitespace-nowrap text-gray-900">
                 {singleUser?.data?.fullName}
               </p>
-              <p className="text-xs text-gray-500">{singleUser?.data?.role}</p>
+              {/* <p className="text-xs text-gray-500">{singleUser?.data?.role}</p> */}
             </div>
             <svg
               className={`w-4 h-4 text-gray-500 transition-transform ${
