@@ -53,7 +53,7 @@ export default function PriceingEmployee() {
     },
     {
       type: "Enterprise",
-      price: 199,
+      price: 99,
       stripePriceId: "price_1SRrEhLgZdKW43fRE1VlXVnl",
       description: "",
       activeFeature: [
