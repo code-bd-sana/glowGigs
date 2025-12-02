@@ -103,6 +103,7 @@ export default function JobApplications() {
       });
       refetch();
     } catch (error) {
+      console.log(error)
       Swal.fire({
         title: "Failed",
         text: "Could not withdraw the application.",
@@ -165,7 +166,7 @@ export default function JobApplications() {
       </p>
 
       <div className="space-y-4">
-        {filteredJobs.map((job, index) => (
+        {filteredJobs.map((job) => (
           <div
             key={job.id}
             className="bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all p-5"

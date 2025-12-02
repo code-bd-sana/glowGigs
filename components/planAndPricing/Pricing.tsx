@@ -22,70 +22,48 @@ export default function Pricing() {
 
   const pricing: Pricing[] = [
     {
-      type: "Basic",
-      price: 19,
+      type: "Basic Pack",
+      price: 19.99,
       stripePriceId: "price_1SR9WdLgZdKW43fRYUriYdM2",
-      description:
-        "Ideal for individuals just entering the industry or seeking part time work",
+      description: "",
       activeFeature: [
-        `Create a professional profile visible in search results`,
-        `Apply to up to 5 job listings per month`,
-        `Receive email alerts for new jobs in your area`,
-        `Bookmark/save jobs for later`,
-        `Limited visibility in the professional directory`,
+        "Apply up to 5 listings a month",
+        "Create a searchable profile",
       ],
       deactiveFeature: [
-        `Full access to the employer directory`,
-        `Ability to message employers directly`,
-        `Priority listing placement`,
+        "Chat directly with employers",
+        "Create showcase portfolio",
       ],
     },
     {
-      type: "Pro",
-      price: 99,
+      type: "Pro Pack",
+      price: 99.99,
       stripePriceId: "price_1SR9XsLgZdKW43fRNcAHUday",
-      description:
-        "Ideal for professionals wanting maximum exposure and direct opportunities",
+      description: "",
       activeFeature: [
-        `Apply to unlimited listings per month`,
-        `Receive email alerts for new jobs in your area`,
-        `Bookmark/save jobs for later`,
-        `Full visibility in the professional directory`,
-        `Full access to the employer directory`,
-        `Ability to message employers directly`,
-        `VIP listing placement`,
-        `Featured placement on "Top Professionals" page`,
-        `Showcase your portfolio, certifications and social links`,
-        `Direct connect requests from employers (without needing to apply)`,
+        "Apply to unlimited listings",
+        "Chat directly with employers",
+        "Create showcase portfolio",
+        "VIP listing placement",
       ],
     },
     {
-      type: "Bronze",
-      price: 49,
+      type: "Bronze Pack",
+      price: 49.99,
       stripePriceId: "price_1SR9YYLgZdKW43fRWCu3p9rF",
-      description:
-        "Ideal for actively job-seeking professionals wanting more reach and applications",
+      description: "",
       activeFeature: [
-        `Apply to up to 15 job listings per month`,
-        `Receive email alerts for new jobs in your area`,
-        `Bookmark/save jobs for later`,
-        `Full visibility in the professional directory`,
-        `Full access to the employer directory`,
-        `Ability to message employers directly`,
-        `Priority listing placement`,
+        "Apply up to 15 listings a month",
+        "Chat directly with employers",
+        "Full access to directory",
       ],
-      deactiveFeature: [
-        `Featured placement on "Top Professionals" page`,
-        `Showcase your portfolio, certifications and social links`,
-      ],
+      deactiveFeature: ["Create showcase portfolio"],
     },
   ];
 
-  // ✅ Stripe checkout handler (fixed)
   const handleCheckout = async (priceId: string, plan: string) => {
     try {
       setLoading(priceId);
-
       const userId = session?.user?.id;
       if (!userId) {
         alert("Please log in before purchasing a plan.");
@@ -93,15 +71,10 @@ export default function Pricing() {
         return;
       }
 
-      // 🟢 Create checkout session
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          priceId,
-          userId,
-          plan: plan.toLowerCase(), 
-        }),
+        body: JSON.stringify({ priceId, userId, plan: plan.toLowerCase() }),
       });
 
       const data = await res.json();
@@ -121,71 +94,66 @@ export default function Pricing() {
   };
 
   return (
-    <div className="mt-16 max-w-7xl mx-auto">
+    <div className="mt-16  mx-auto  ">
       <SectionHeader
         title="It's your time to shine"
         description=""
         align="center"
       />
-      <p className="text-base text-center flex mx-auto justify-center text-gray-600 mt-2 w-full md:w-9/12">
-        Discover flexible pricing plans to connect with employers in your
-        industry.
+      <p className="text-base text-center text-gray-600 mt-2 w-full md:w-9/12 mx-auto">
+        Discover flexible pricing plans to connect with employers in your industry.
       </p>
 
-      {/* ✅ Pricing cards */}
-      <section className="lg:flex flex-wrap px-8 sm:px-16 lg:px-0 justify-center gap-16 mt-32">
-        {pricing?.map((price, idx) => (
+      <section className="flex flex-col bg-[linear-gradient(86deg,rgba(201,199,56,0.27),rgba(40,103,199,0.6))] p-12 lg:flex-row justify-center gap-8 mt-16">
+        {pricing.map((plan, idx) => (
           <div
             key={idx}
-            className={`bg-[#f0f4fa] w-full my-4 lg:my-0 lg:w-[340px] border rounded-2xl p-6 border-[#8cade0] flex flex-col justify-between
-              ${
-                idx === 1
-                  ? "lg:scale-110 shadow-xl border-[#5a8be0]"
-                  : "shadow-md"
-              }
-              transition-transform duration-300 ease-in-out`}
+            className={`w-full p-6 rounded-2xl border ${
+              idx === 1
+                ? "shadow-2xl lg:w-96 p-12  border-black border-2 "
+                : "border lg:w-80  border-gray "
+            } bg-gradient-to-br ${
+              idx === 0
+                ? ""
+                : idx === 1
+                ? ""
+                : ""
+            } flex flex-col justify-between`}
           >
-            <div>
-              <div className="flex justify-between mt-4">
-                <h4 className="font-bold text-xl">{price.type}</h4>
-                <h4 className="font-bold text-xl">${price.price} / mo</h4>
-              </div>
+            {/* Header */}
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-bold text-xl">{plan.type}</h3>
+              <p className="font-bold text-xl">${plan.price} /Month</p>
+            </div>
 
-              <p className="mx-auto w-[90%] text-center my-6 text-gray-700">
-                {price.description}
-              </p>
-
-              {/* Active features */}
-              {price.activeFeature.map((item, idx2) => (
-                <div key={idx2} className="flex gap-3 my-2">
-                  <RiCheckboxCircleFill className="text-green-700 text-2xl flex-shrink-0 mt-1" />
-                  <p className="text-lg leading-tight">{item}</p>
+            {/* Features */}
+            <div className="mt-16">
+              {plan.activeFeature.map((feature, fIdx) => (
+                <div key={fIdx} className="flex items-start gap-2 mb-2">
+                  <RiCheckboxCircleFill className="text-green-600 text-2xl mt-0.5 flex-shrink-0" />
+                  <p className="text-gray-800 text-lg">{feature}</p>
                 </div>
               ))}
-
-              {/* Deactive features */}
-              {price.deactiveFeature?.map((item, idx3) => (
-                <div key={idx3} className="flex gap-3 my-2">
-                  <IoCloseCircle className="text-red-600 text-2xl flex-shrink-0" />
-                  <p className="text-lg leading-tight">{item}</p>
+              {plan.deactiveFeature?.map((feature, fIdx) => (
+                <div key={fIdx} className="flex items-start gap-2 mb-2">
+                  <IoCloseCircle className="text-black text-2xl mt-0.5 flex-shrink-0" />
+                  <p className="text-gray-500 text-lg">{feature}</p>
                 </div>
               ))}
             </div>
 
             {/* Button */}
-            <div className="mt-6 flex justify-center">
+            <div className="mt-6  flex justify-center">
               <button
-                disabled={loading === price.stripePriceId}
-                onClick={() =>
-                  handleCheckout(price.stripePriceId, price.type)
-                }
+                disabled={loading === plan.stripePriceId}
+                onClick={() => handleCheckout(plan.stripePriceId, plan.type)}
               >
                 <SecondaryButton
                   type="button"
                   text={
-                    loading === price.stripePriceId
+                    loading === plan.stripePriceId
                       ? "Redirecting..."
-                      : "Choose Plan"
+                      : "Choose Your Plan"
                   }
                 />
               </button>
