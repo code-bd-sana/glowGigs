@@ -67,7 +67,7 @@ const RecentApplications: React.FC = () => {
 
       {/* Data Table */}
       {!isLoading && !error && (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-scroll ">
           <table className="min-w-full bg-white border-collapse whitespace-nowrap">
             <thead>
               <tr className="text-left text-sm font-medium px-5 py-10 text-gray-600 border-b-2 border-gray-300">

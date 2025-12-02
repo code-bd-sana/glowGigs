@@ -3,7 +3,7 @@
 
 import Image from "next/image";
 import { useGetJobsByPosterQuery } from "@/features/JobSlice";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { BiCalendarAlt } from "react-icons/bi";
 import { useSession } from "next-auth/react";
@@ -12,23 +12,12 @@ import {
   useGetApplicationsByApplicantQuery,
 } from "@/features/jobAppliedSlice";
 import toast from "react-hot-toast";
+import { useGetCategoriesQuery } from "@/features/categorySlice";
+
+// Department interface
+
 
 export default function JobList() {
-  interface Job {
-    _id: string;
-    title: string;
-    department: string;
-    companyName: string;
-    companyLocation: string;
-    jobType: string;
-    payType: string;
-    description: string;
-    companyPerks?: string[];
-    thumbnail?: string;
-    createdAt: string;
-    jobPoster: string;
-  }
-
   const { data: session } = useSession();
   const applicantId = session?.user?.id;
 
@@ -38,22 +27,63 @@ export default function JobList() {
   const jobs = jobsResponse?.data || [];
 
   const { data: appliedResponse } = useGetApplicationsByApplicantQuery(
-    applicantId!,
+    applicantId,
     { skip: !applicantId }
   );
+  
+  // Use RTK Query for departments
+  const { data: depertmentResponse, isLoading: depertmentLoading } = useGetCategoriesQuery();
+  const departments = depertmentResponse?.data || depertmentResponse || [];
+
+  console.log(departments, "tomi amar personal depertment");
 
   const appliedJobIds =
-    appliedResponse?.map((app: any) => app.job?._id || app.job) || [];
+    appliedResponse?.map((app) => app.job?._id || app.job) || [];
 
   const [applyForJob, { isLoading: applying }] = useApplyForJobMutation();
 
   const [typeFilter, setTypeFilter] = useState("All Type");
   const [deptFilter, setDeptFilter] = useState("All Department");
   const [locationFilter, setLocationFilter] = useState("All Location");
-  const [selectedJob, setSelectedJob] = useState<any>(null);
+  const [selectedJob, setSelectedJob] = useState(null);
+
+  // State for departments
+  const [departmentsList, setDepartmentsList] = useState([]);
+  const [loadingDepts, setLoadingDepts] = useState(false);
 
   // ⭐ PREMIUM UPGRADE MODAL STATE
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  // Fetch departments from your API or use RTK Query data
+  useEffect(() => {
+    if (departments && departments.length > 0) {
+      setDepartmentsList(departments);
+      setLoadingDepts(false);
+    } else {
+      // Fallback to manual fetch if RTK Query returns empty
+      const fetchDepartments = async () => {
+        try {
+          setLoadingDepts(true);
+          const response = await fetch("/api/departments");
+          if (response.ok) {
+            const data = await response.json();
+            setDepartmentsList(data.data || data);
+          }
+        } catch (error) {
+          console.error("Failed to fetch departments:", error);
+        } finally {
+          setLoadingDepts(false);
+        }
+      };
+
+      fetchDepartments();
+    }
+  }, [departments]);
+
+  // Get unique locations from jobs
+  const uniqueLocations = Array.from(
+    new Set(jobs.map((job) => job.companyLocation).filter(Boolean))
+  );
 
   if (isLoading) {
     return (
@@ -64,18 +94,27 @@ export default function JobList() {
   }
 
   const filteredJobs = jobs?.filter((job) => {
-    return (
-      (typeFilter === "All Type" || job.jobType === typeFilter) &&
-      (deptFilter === "All Department" ||
-        job.department?.toLowerCase().includes(deptFilter.toLowerCase())) &&
-      (locationFilter === "All Location" ||
-        job.companyLocation
-          ?.toLowerCase()
-          .includes(locationFilter.toLowerCase()))
-    );
+    const typeMatch =
+      typeFilter === "All Type" || job.jobType === typeFilter;
+    
+    const deptMatch =
+      deptFilter === "All Department" ||
+      job.department === deptFilter; // Compare department IDs
+    
+    const locationMatch =
+      locationFilter === "All Location" ||
+      job.companyLocation?.toLowerCase().includes(locationFilter.toLowerCase());
+
+    return typeMatch && deptMatch && locationMatch;
   });
 
-  const truncateDescription = (text: string, wordLimit: number) => {
+  // Function to get department name by ID
+  const getDepartmentNameById = (deptId) => {
+    const dept = departmentsList.find(d => d._id === deptId);
+    return dept ? dept.name : "Unknown Department";
+  };
+
+  const truncateDescription = (text, wordLimit) => {
     if (!text) return "";
     const words = text.split(" ");
     return words.length > wordLimit
@@ -95,6 +134,9 @@ export default function JobList() {
       setShowUpgradeModal(true);
       return;
     }
+    
+    if (!selectedJob) return;
+    
     try {
       const res = await applyForJob({
         job: selectedJob._id,
@@ -116,7 +158,7 @@ export default function JobList() {
       );
 
       setSelectedJob(null);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Application failed:", error);
 
       if (error?.data?.message?.includes("already applied")) {
@@ -133,6 +175,7 @@ export default function JobList() {
     <div className="max-w-6xl mx-auto px-4 py-10 min-h-screen">
       {/* FILTER BAR */}
       <div className="flex flex-wrap gap-3 mb-8">
+        {/* Job Type Filter */}
         <select
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
@@ -144,20 +187,36 @@ export default function JobList() {
           <option>Remote</option>
         </select>
 
+        {/* Department Filter - FIXED */}
         <select
           value={deptFilter}
           onChange={(e) => setDeptFilter(e.target.value)}
           className="border border-gray-300 rounded-md px-3 py-2 text-sm"
         >
-          <option>All Department</option>
+          <option value="All Department">All Department</option>
+          {loadingDepts || depertmentLoading ? (
+            <option disabled>Loading departments...</option>
+          ) : (
+            departmentsList.map((item) => (
+              <option key={item._id} value={item._id}>
+                {item.name}
+              </option>
+            ))
+          )}
         </select>
 
+        {/* Location Filter */}
         <select
           value={locationFilter}
           onChange={(e) => setLocationFilter(e.target.value)}
           className="border border-gray-300 rounded-md px-3 py-2 text-sm"
         >
           <option>All Location</option>
+          {uniqueLocations.map((location, index) => (
+            <option key={index} value={location}>
+              {location}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -188,6 +247,12 @@ export default function JobList() {
                 <p className="text-[20px] font-medium text-gray-900">
                   {job.companyName}
                 </p>
+                <p className="text-[16px] text-gray-500">
+                  <strong>Department:</strong> {getDepartmentNameById(job.department)}
+                </p>
+                <p className="text-[16px] text-gray-500">
+                  <strong>Location:</strong> {job.companyLocation}
+                </p>
                 <p className="text-[16px] text-gray-500 max-w-lg">
                   {truncateDescription(job.description, 12)}
                 </p>
@@ -201,7 +266,7 @@ export default function JobList() {
               </div>
             </div>
 
-            <div className="flex flex-col items-end">
+            <div className="flex flex-col items-end gap-2">
               <span className="bg-[#3E6AAC33] flex items-center gap-1.5 text-[#4B5563] px-3 py-1.5 text-sm rounded-2xl">
                 <BiCalendarAlt className="text-[16px]" />
                 Dead Line: {format(new Date(job.createdAt), "yyyy-MM-dd")}
@@ -245,7 +310,10 @@ export default function JobList() {
                   {selectedJob.companyName}
                 </p>
                 <p className="text-gray-500 text-sm">
-                  {selectedJob.companyLocation}
+                  <strong>Location:</strong> {selectedJob.companyLocation}
+                </p>
+                <p className="text-gray-700 mt-1">
+                  <strong>Department:</strong> {getDepartmentNameById(selectedJob.department)}
                 </p>
               </div>
             </div>
@@ -265,7 +333,7 @@ export default function JobList() {
                 <div>
                   <strong>Company Perks:</strong>
                   <ul className="list-disc pl-5 space-y-1 mt-2 text-gray-600">
-                    {selectedJob.companyPerks.map((perk: string, i: number) => (
+                    {selectedJob.companyPerks.map((perk, i) => (
                       <li key={i}>{perk}</li>
                     ))}
                   </ul>
