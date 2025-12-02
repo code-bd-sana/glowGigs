@@ -63,7 +63,7 @@ const LatestApplications = () => {
       </div>
 
       <ul className="space-y-9 mt-10">
-        {jobs?.data?.slice(4).map((job: Job, index: number) => (
+        {jobs?.data?.slice(0, 6).map((job: Job, index: number) => (
           <div
             key={index}
             className="flex items-center justify-between py-4 border-b border-gray-200 last:border-none"
