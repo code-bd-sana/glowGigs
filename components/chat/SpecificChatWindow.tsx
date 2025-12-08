@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { socket } from "@/lib/socket";
 import { FiSend } from "react-icons/fi";
+import Image from "next/image";
 
 interface Message {
   _id: string;
@@ -119,12 +120,12 @@ export default function SpecificChatWindow({
       <div className="flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="relative w-11 h-11">
-            {/* <Image
+            <Image
               src="/default-avatar.png"
               alt="avatar"
               fill
               className="rounded-full object-cover border border-white shadow-sm"
-            /> */}
+            />
           </div>
           <div>
             <p className="font-semibold text-gray-900 text-[15px]">

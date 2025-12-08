@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -12,7 +16,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
       {
@@ -20,7 +24,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     }
   },
   "include": [
@@ -29,7 +35,30 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/api/auth/[...nextauth]/route.js",
-    "app/(auth)/register/page.tsx"
-, "app/api/category/category.controller.ts", "app/api/changePassword/route.js", "components/(dashboard)/admin/ApplicantsPage.jsx", "components/(dashboard)/admin/JobPoster.jsx", "app/api/allapplicants/route.js", "components/(dashboard)/admin/JobManagementTable.jsx", "app/api/jobAll/route.js", "app/api/singleUser/route.js", "app/api/singleUser/route.js", "components/(dashboard)/admin/JobPosterDetails.jsx", "components/(dashboard)/admin/ApplicantProfile.ksx", "app/api/userDelete/[id]/route.js", "app/api/profileUpdate/ProfileUpdateController.js", "components/(dashboard)/admin/ManageJobCard.jsx", "app/dashboard/(admin)/payments/page.jsx", "app/api/adminPayment/route.js", "app/api/users/get/[id]/route.js", "app/api/portfolio/route.ts", "app/showcase/showcaseUser/page.jsx", "app/dashboard/jobs/page.jsx"  ],
-  "exclude": ["node_modules"]
+    "app/(auth)/register/page.tsx",
+    "app/api/category/category.controller.ts",
+    "app/api/changePassword/route.js",
+    "components/(dashboard)/admin/ApplicantsPage.jsx",
+    "components/(dashboard)/admin/JobPoster.jsx",
+    "app/api/allapplicants/route.js",
+    "components/(dashboard)/admin/JobManagementTable.jsx",
+    "app/api/jobAll/route.js",
+    "app/api/singleUser/route.js",
+    "app/api/singleUser/route.js",
+    "components/(dashboard)/admin/JobPosterDetails.jsx",
+    "components/(dashboard)/admin/ApplicantProfile.ksx",
+    "app/api/userDelete/[id]/route.js",
+    "app/api/profileUpdate/ProfileUpdateController.js",
+    "components/(dashboard)/admin/ManageJobCard.jsx",
+    "app/dashboard/(admin)/payments/page.jsx",
+    "app/api/adminPayment/route.js",
+    "app/api/users/get/[id]/route.js",
+    "app/api/portfolio/route.ts",
+    "app/showcase/showcaseUser/page.jsx",
+    "app/dashboard/jobs/page.jsx",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
