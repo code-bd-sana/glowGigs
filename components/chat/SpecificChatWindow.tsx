@@ -19,6 +19,8 @@ interface SpecificChatWindowProps {
   applicantId: string;
   applicantEmail: string;
   applicantName?: string;
+  applicantImage?:string
+
 }
 
 export default function SpecificChatWindow({
