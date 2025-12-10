@@ -9,6 +9,7 @@ export const POST = async (req: NextRequest) => {
     await dbConnect();
 
     const { email, password } = await req.json();
+    console.log(email, "baler email");
 
     const user = await User.findOne({ email: email });
     if (!user) {
