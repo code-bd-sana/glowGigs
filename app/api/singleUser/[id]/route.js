@@ -2,34 +2,34 @@ import { NextResponse } from "next/server";
 import User from '../../../api/users/user.model'
 import { dbConnect } from "@/lib/dbConnect";
 
-export const GET = async (request, { params }) => {
+export const GET = async (request, context) => {
   try {
     await dbConnect();
-    
-    // Extract ID from params
-    const { id } = params;
-    
+
+    // Extract ID from context.params
+    const { id } =await context?.params || {};
+
     console.log("Fetching user with ID:", id);
 
     // Validate ID
-    if (!id || id === 'undefined' || id === 'null') {
+    if (!id || id === "undefined" || id === "null") {
       return NextResponse.json(
-        { 
+        {
           message: "Invalid user ID",
-          error: "User ID is required" 
+          error: "User ID is required",
         },
         { status: 400 }
       );
     }
 
     // Find user by ID
-    const user = await User.findById(id).select('-password'); // Exclude password
+    const user = await User.findById(id).select("-password"); // Exclude password
 
     if (!user) {
       return NextResponse.json(
-        { 
+        {
           message: "User not found",
-          error: "No user found with the provided ID" 
+          error: "No user found with the provided ID",
         },
         { status: 404 }
       );
@@ -38,27 +38,29 @@ export const GET = async (request, { params }) => {
     return NextResponse.json({
       success: true,
       message: "User fetched successfully",
-      data: user
+      data: user,
     });
-
   } catch (error) {
     console.error("Error fetching user:", error);
-    
+
     // Handle specific MongoDB errors
-    if (error.name === 'CastError') {
+    if (error.name === "CastError") {
       return NextResponse.json(
-        { 
+        {
           message: "Invalid user ID format",
-          error: "Please provide a valid user ID" 
+          error: "Please provide a valid user ID",
         },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { 
+      {
         message: "Internal server error",
-        error: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong'
+        error:
+          process.env.NODE_ENV === "development"
+            ? error.message
+            : "Something went wrong",
       },
       { status: 500 }
     );

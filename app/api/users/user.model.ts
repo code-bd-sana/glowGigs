@@ -44,12 +44,12 @@ const userSchema = new Schema<IUser>(
      portfolio: [
       {
         url: { type: String, required: true },
-        publicId: { type: String, required: true },
-        resourceType: { type: String, required: true },
-        originalFilename: { type: String, required: true },
-        format: { type: String, required: true },
-        createdAt: { type: String, required: true },
-        uploadedAt: { type: Date, default: Date.now } // ✅ নতুন field
+        publicId: { type: String },
+        resourceType: { type: String },
+        originalFilename: { type: String },
+        format: { type: String },
+        createdAt: { type: String},
+        uploadedAt: { type: Date,} // ✅ নতুন field
       }
     ],
 
