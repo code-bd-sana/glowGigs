@@ -1,73 +1,58 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { socket } from "@/lib/socket";
-import Image from "next/image";
 import { FiSend } from "react-icons/fi";
+import Image from "next/image";
 
-interface ChatWindowProps {
-  conversation: any;
-  userId: string;
+interface Message {
+  _id: string;
+  conversationId: string;
+  sender: string | { _id: string };
+  text: string;
+  createdAt: string;
 }
 
-export default function ChatWindow({ conversation, userId }: ChatWindowProps) {
-  const [messages, setMessages] = useState<any[]>([]);
+interface SpecificChatWindowProps {
+  conversationId: string;
+  userId: string;
+  applicantId: string;
+  applicantEmail: string;
+  applicantName?: string;
+}
+
+export default function SpecificChatWindow({
+  conversationId,
+  userId,
+   applicantImage,
+  applicantName,
+}: SpecificChatWindowProps) {
+  const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  // console.log(conversation, userId, "tyhiusjiushbjhbh");
+
   // Auto-scroll when messages change
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Helper: load messages from API
+  // Load messages from the API
   const loadMessages = useCallback(async () => {
-    if (!conversation?._id) return;
+    if (!conversationId) return;
 
     const res = await fetch(
-      `/api/chat/message?conversationId=${conversation._id}`
+      `/api/chat/message?conversationId=${conversationId}`
     );
     const data = await res.json();
     setMessages(data);
-  }, [conversation?._id]);
-
-  // console.log(messages, "jbnsydgvbyx")
-  // Initial load when conversation changes
-  useEffect(() => {
-    if (!conversation?._id) return;
-    loadMessages();
-  }, [conversation?._id, loadMessages]);
-
-  // Socket: join room and listen for incoming messages
-  useEffect(() => {
-    if (!conversation?._id) return;
-
-    if (!socket.connected) {
-      socket.connect();
-    }
-
-    socket.emit("joinRoom", conversation._id);
-
-    const handleIncoming = (msg: any) => {
-      if (msg.conversationId === conversation._id) {
-        loadMessages();
-      }
-    };
-
-    socket.on("receiveMessage", handleIncoming);
-
-    return () => {
-      socket.off("receiveMessage", handleIncoming);
-    };
-  }, [conversation?._id, loadMessages]);
+  }, [conversationId]);
 
   // Send message
-  async function sendMessage() {
-    if (!text.trim()) return;
+  const sendMessage = async () => {
+    if (!text.trim() || !conversationId) return;
 
     const payload = {
-      conversationId: conversation._id,
+      conversationId: conversationId,
       senderId: userId,
       text,
     };
@@ -80,17 +65,45 @@ export default function ChatWindow({ conversation, userId }: ChatWindowProps) {
 
     const savedMessage = await res.json();
 
-    // Notify via socket – only conversationId is enough
+    // Socket emit
     socket.emit("sendMessage", {
-      conversationId: conversation._id,
+      conversationId: conversationId,
     });
 
-    // Optimistically update
     setMessages((prev) => [...prev, savedMessage]);
     setText("");
-  }
+  };
 
-  // Enter key handling
+//   console.log(messages, "jbnsydgvbyx");
+  useEffect(() => {
+    if (!conversationId) return;
+    loadMessages();
+  }, [conversationId, loadMessages]);
+
+  // Socket: join room and listen for incoming messages
+  useEffect(() => {
+    if (!conversationId) return;
+
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    socket.emit("joinRoom", conversationId);
+
+    const handleIncoming = (msg: Message) => {
+      if (msg.conversationId === conversationId) {
+        loadMessages();
+      }
+    };
+
+    socket.on("receiveMessage", handleIncoming);
+
+    return () => {
+      socket.off("receiveMessage", handleIncoming);
+    };
+  }, [conversationId, loadMessages]);
+
+  // Handle Enter key
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -98,29 +111,18 @@ export default function ChatWindow({ conversation, userId }: ChatWindowProps) {
     }
   };
 
-  if (!conversation?._id) {
-    return (
-      <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-[#e9f0ff] via-[#f5f7fb] to-[#e5f4ec]">
-        <p className="text-gray-500 text-sm">
-          Select a conversation from the left to start chatting.
-        </p>
-      </div>
-    );
+  if (!conversationId) {
+    return <div>Select a conversation to start chatting.</div>;
   }
 
-  const otherUser =
-    conversation.participants?.find((p: any) => p._id !== userId) || {};
-
-  const avatarSrc = otherUser?.img;
-
   return (
-    <div className="flex flex-col h-screen w-full bg-gradient-to-br from-[#e7f3ec] via-[#f7fafc] to-[#e9f0ff] rounded-3xl overflow-hidden">
+    <div className="flex flex-col h-[600px] xl:h-[700px] w-max-6xl bg-gradient-to-br from-[#e7f3ec] via-[#f7fafc] to-[#e9f0ff] rounded-3xl overflow-hidden">
       {/* HEADER */}
       <div className="flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="relative w-11 h-11">
             <Image
-              src={avatarSrc}
+              src={ applicantImage}
               alt="avatar"
               fill
               className="rounded-full object-cover border border-white shadow-sm"
@@ -128,7 +130,7 @@ export default function ChatWindow({ conversation, userId }: ChatWindowProps) {
           </div>
           <div>
             <p className="font-semibold text-gray-900 text-[15px]">
-              {otherUser?.fullName || otherUser?.email || "User"}
+              {applicantName}
             </p>
             <p className="text-xs text-green-600 flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
@@ -136,21 +138,15 @@ export default function ChatWindow({ conversation, userId }: ChatWindowProps) {
             </p>
           </div>
         </div>
-
-        {/* <div className="flex items-center gap-3 text-gray-500">
-          <button className="p-2 rounded-full hover:bg-gray-100 transition">
-            <FiPhone className="text-lg" />
-          </button>
-          <button className="p-2 rounded-full hover:bg-gray-100 transition">
-            <FiMoreVertical className="text-lg" />
-          </button>
-        </div> */}
       </div>
 
       {/* MESSAGES AREA */}
       <div className="flex-1 px-6 py-5 overflow-y-auto space-y-3">
-        {messages.map((msg: any) => {
-          const isMine = msg.sender === userId || msg.sender?._id === userId;
+        {messages.map((msg: Message) => {
+          const isMine =
+            typeof msg.sender === "string"
+              ? msg.sender === userId
+              : msg.sender?._id === userId;
 
           return (
             <div

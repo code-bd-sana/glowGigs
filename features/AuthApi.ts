@@ -19,6 +19,7 @@ export const authApi = createApi({
         body: data,
       }),
     }),
+    // upate
   login: builder.mutation({
   query: (data) => ({
     url: "/login",

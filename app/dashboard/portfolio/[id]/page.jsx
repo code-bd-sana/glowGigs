@@ -1,41 +1,78 @@
-'use client'
-import React, { useState, useEffect } from 'react'
-import { useGetSingleUserQuery } from "../../../../features/AuthApi"
+"use client";
+import React, { useState, useEffect } from "react";
+import { useGetSingleUserQuery } from "../../../../features/AuthApi";
 import { useSession } from "next-auth/react";
-import Link from 'next/link';
-import Image from 'next/image';
+import Link from "next/link";
+import SpecificChatWindow from "@/components/chat/SpecificChatWindow";
+import { useParams } from 'next/navigation';
 
+export default function PortfolioShowcasePage() {
 
-
-export default function PortfolioShowcasePage({ params }) {
-
-  console.log("Hitr adljk;sf guif")
   const { data: session } = useSession();
   const [portfolioItems, setPortfolioItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [chatModalOpen, setChatModalOpen] = useState(false);
+  const [conversationId, setConversationId] = useState(null);
+
+
+  const params = useParams()
 
   const userId = params?.id;
-  console.log(userId, "baler user id")
-  const { data: userData, isLoading, error, isError, } = useGetSingleUserQuery(userId);
-  console.log(userData, "baler portfolio")
-if(error){
-  console.log(error)
-}
+  console.log(userId, "baler user id");
+  const {
+    data: userData,
+    isLoading,
+    error,
+    isError,
+  } = useGetSingleUserQuery(userId);
+
+  console.log(userData, "baler portfolio");
+  if (error) {
+    console.log(error);
+  }
   useEffect(() => {
     if (userData?.data?.portfolio) {
       setPortfolioItems(userData.data.portfolio);
     }
   }, [userData]);
 
-  const openModal = (item) => {
-    setSelectedItem(item);
-    setIsModalOpen(true);
+  const openChatModal = async () => {
+    if (!session?.user?.id || !userData?.data?._id) return;
+
+    try {
+      // Get all conversations
+      const res = await fetch(`/api/chat/list?userId=${session.user.id}`);
+      const conversations = await res.json();
+
+      // Find conversation with this applicant ID
+      const conversation = conversations.find((conv) =>
+        conv.participants?.some((p) => p._id === userData.data._id)
+      );
+
+      if (conversation) {
+        // Found existing conversation
+        setConversationId(conversation._id);
+        setChatModalOpen(true);
+      } else {
+        // If no conversation exists then create one
+        console.log(
+          "No conversation found. The system might need to create one when first message is sent."
+        );
+
+        setConversationId(userData.data._id);
+        setChatModalOpen(true);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setConversationId(userData.data._id);
+      setChatModalOpen(true);
+    }
   };
 
-  const closeModal = () => {
-    setSelectedItem(null);
-    setIsModalOpen(false);
+  const closeChatModal = () => {
+    setConversationId(null);
+    setChatModalOpen(false);
   };
 
   // ==== PREVIEW COMPONENT ====
@@ -45,31 +82,38 @@ if(error){
         <div className="flex items-center justify-center h-48 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-dashed border-blue-300">
           <div className="text-center p-4">
             <div className="text-4xl mb-3">🔗</div>
-            <span className="text-blue-600 text-sm font-semibold block">EXTERNAL LINK</span>
-            <span className="text-blue-500 text-xs mt-1 block truncate">{item.originalFilename}</span>
+            <span className="text-blue-600 text-sm font-semibold block">
+              EXTERNAL LINK
+            </span>
+            <span className="text-blue-500 text-xs mt-1 block truncate">
+              {item.originalFilename}
+            </span>
           </div>
         </div>
       );
     }
 
-   if (item.resourceType === "image") {
-  return (
-    <div className="space-y-4">
-      <div className="rounded-lg overflow-hidden bg-gray-100">
-        <img
-          src={item.url}
-          className="w-full max-h-96 object-contain"
-          alt={item.originalFilename}
-        />
-      </div>
-      <div className="text-center">
-        <h3 className="text-lg font-semibold text-gray-800">{item.originalFilename}</h3>
-        <p className="text-gray-600 text-sm">Image • {item.format.toUpperCase()}</p>
-      </div>
-    </div>
-  );
-}
-
+    if (item.resourceType === "image") {
+      return (
+        <div className="space-y-4">
+          <div className="rounded-lg overflow-hidden bg-gray-100">
+            <img
+              src={item.url}
+              className="w-full max-h-96 object-contain"
+              alt={item.originalFilename}
+            />
+          </div>
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-gray-800">
+              {item.originalFilename}
+            </h3>
+            <p className="text-gray-600 text-sm">
+              Image • {item.format.toUpperCase()}
+            </p>
+          </div>
+        </div>
+      );
+    }
 
     if (item.resourceType === "video") {
       return (
@@ -90,7 +134,9 @@ if(error){
       return (
         <div className="flex flex-col items-center justify-center h-48 rounded-lg bg-red-50 border-2 border-red-200 group hover:bg-red-100 transition-colors duration-300">
           <div className="text-4xl mb-3 text-red-500">📄</div>
-          <span className="text-red-600 text-sm font-semibold">PDF DOCUMENT</span>
+          <span className="text-red-600 text-sm font-semibold">
+            PDF DOCUMENT
+          </span>
           <span className="text-red-500 text-xs mt-2 text-center px-2 truncate w-full">
             {item.originalFilename}
           </span>
@@ -118,17 +164,29 @@ if(error){
       return (
         <div className="text-center">
           <div className="text-6xl mb-4">🔗</div>
-          <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.originalFilename}</h3>
+          <h3 className="text-xl font-semibold text-gray-800 mb-2">
+            {item.originalFilename}
+          </h3>
           <p className="text-gray-600 mb-6">External Link</p>
-          <a 
-            href={item.url} 
-            target="_blank" 
+          <a
+            href={item.url}
+            target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600  text-white rounded-lg transition-colors duration-200"
           >
             Visit Link
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+              />
             </svg>
           </a>
         </div>
@@ -139,15 +197,19 @@ if(error){
       return (
         <div className="space-y-4">
           <div className="rounded-lg overflow-hidden bg-gray-100">
-            <img 
-              src={item.url} 
-              className="w-full max-h-96 object-contain" 
-              alt={item.originalFilename} 
+            <img
+              src={item.url}
+              className="w-full max-h-96 object-contain"
+              alt={item.originalFilename}
             />
           </div>
           <div className="text-center">
-            <h3 className="text-lg font-semibold text-gray-800">{item.originalFilename}</h3>
-            <p className="text-gray-600 text-sm">Image • {item.format.toUpperCase()}</p>
+            <h3 className="text-lg font-semibold text-gray-800">
+              {item.originalFilename}
+            </h3>
+            <p className="text-gray-600 text-sm">
+              Image • {item.format.toUpperCase()}
+            </p>
           </div>
         </div>
       );
@@ -157,18 +219,18 @@ if(error){
       return (
         <div className="space-y-4">
           <div className="rounded-lg overflow-hidden bg-black">
-            <video 
-              controls 
-              className="w-full max-h-96"
-              autoPlay
-            >
+            <video controls className="w-full max-h-96" autoPlay>
               <source src={item.url} />
               Your browser does not support the video tag.
             </video>
           </div>
           <div className="text-center">
-            <h3 className="text-lg font-semibold text-gray-800">{item.originalFilename}</h3>
-            <p className="text-gray-600 text-sm">Video • {item.format.toUpperCase()}</p>
+            <h3 className="text-lg font-semibold text-gray-800">
+              {item.originalFilename}
+            </h3>
+            <p className="text-gray-600 text-sm">
+              Video • {item.format.toUpperCase()}
+            </p>
           </div>
         </div>
       );
@@ -178,14 +240,16 @@ if(error){
       return (
         <div className="space-y-4">
           <div className="rounded-lg overflow-hidden bg-gray-100 h-96">
-            <iframe 
-              src={item.url} 
+            <iframe
+              src={item.url}
               className="w-full h-full"
               title={item.originalFilename}
             />
           </div>
           <div className="text-center">
-            <h3 className="text-lg font-semibold text-gray-800">{item.originalFilename}</h3>
+            <h3 className="text-lg font-semibold text-gray-800">
+              {item.originalFilename}
+            </h3>
             <p className="text-gray-600 text-sm">PDF Document</p>
           </div>
         </div>
@@ -195,17 +259,29 @@ if(error){
     return (
       <div className="text-center py-8">
         <div className="text-6xl mb-4">📁</div>
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.originalFilename}</h3>
+        <h3 className="text-xl font-semibold text-gray-800 mb-2">
+          {item.originalFilename}
+        </h3>
         <p className="text-gray-600 mb-4">{item.format.toUpperCase()} File</p>
-        <a 
-          href={item.url} 
-          target="_blank" 
+        <a
+          href={item.url}
+          target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 px-6 py-3 bg-gray-600  text-white rounded-lg transition-colors duration-200"
         >
           Download File
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+            />
           </svg>
         </a>
       </div>
@@ -228,9 +304,16 @@ if(error){
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
         <div className="text-center p-8">
           <div className="text-6xl mb-4">😕</div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Portfolio Not Found</h1>
-          <p className="text-gray-600 mb-6">We couldn't find the portfolio you're looking for.</p>
-          <Link href="/" className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600  text-white rounded-lg transition-colors duration-200">
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">
+            Portfolio Not Found
+          </h1>
+          <p className="text-gray-600 mb-6">
+            We couldn't find the portfolio you're looking for.
+          </p>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600  text-white rounded-lg transition-colors duration-200"
+          >
             Go Home
           </Link>
         </div>
@@ -243,61 +326,96 @@ if(error){
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
         <div className="text-center p-8">
           <div className="text-6xl mb-4">🎨</div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Portfolio is Empty</h1>
-          <p className="text-gray-600">This user hasn't added any portfolio items yet.</p>
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">
+            Portfolio is Empty
+          </h1>
+          <p className="text-gray-600">
+            This user hasn't added any portfolio items yet.
+          </p>
         </div>
       </div>
     );
   }
 
   return (
- <div className="min-h-screen bg-gradient-to-b from-[#f3f7ff] to-[#fafafb] py-12 px-4 sm:px-10">
-    
-    <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 text-center mb-10">
-      Portfolio Showcase
-    </h1>
-<div className='justify-end ml-auto'>
-<Link href={'/dashboard/chat'}>
-  <button className='text-left bg-gray-200 px-5 rounded py-2 cursor-pointer flex ml-auto items-center jusl'>Chat</button></Link>
-</div>
-    {/* GRID */}
-    <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {portfolioItems.map((item, index) => (
-        <div
-          key={index}
-          onClick={() => openModal(item)}
-          className="cursor-pointer group bg-white rounded-2xl    overflow-hidden border border-gray-100"
+    <div className="min-h-screen bg-gradient-to-b from-[#f3f7ff] to-[#fafafb] py-12 px-4 sm:px-10">
+      <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 text-center mb-10">
+        Portfolio Showcase
+      </h1>
+      <div className="justify-end ml-auto">
+        <button
+          onClick={() => openChatModal(userData?.data)}
+          className="text-left bg-gray-200 px-5 rounded py-2 cursor-pointer flex ml-auto items-center"
         >
-          {/* Thumbnail */}
-          {renderThumb(item)}
+          Chat
+        </button>
+        
+        {/* Chat Modal */}
+        {chatModalOpen && (
+          <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6 relative">
+              {/* Close button */}
+              <button
+                onClick={closeChatModal}
+                className="absolute top-3 right-3 text-gray-600 text-2xl"
+              >
+                X
+              </button>
 
-          {/* Details */}
-          <div className="p-4">
-            <h3 className="font-semibold text-gray-800 text-base truncate">
-              {item.originalFilename}
-            </h3>
-            <p className="text-xs text-gray-500 mt-1 uppercase">{item.resourceType}</p>
+              <SpecificChatWindow
+                userId={session?.user?.id}
+                applicantId={userData?.data._id}
+                applicantName={userData?.data.fullName}
+                applicantEmail={userData?.data.email}
+                conversationId={conversationId}
+                applicantImage={userData?.data.img}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* GRID */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-8
+       gap-6">
+        {portfolioItems.map((item, index) => (
+          <div
+            key={index}
+            onClick={() => openModal(item)}
+            className="cursor-pointer group bg-white rounded-2xl    overflow-hidden border border-gray-100"
+          >
+            {/* Thumbnail */}
+            {renderThumb(item)}
+
+            {/* Details */}
+            <div className="p-4">
+              <h3 className="font-semibold text-gray-800 text-base truncate">
+                {item.originalFilename}
+              </h3>
+              <p className="text-xs text-gray-500 mt-1 uppercase">
+                {item.resourceType}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* MODAL */}
+      {isModalOpen && selectedItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-3xl w-full p-6 relative">
+            {/* Close Button */}
+            <button
+              onClick={closeModal}
+              className="absolute top-3 right-3 text-gray-600  text-2xl"
+            >
+              ×
+            </button>
+
+            {renderModalContent(selectedItem)}
           </div>
         </div>
-      ))}
+      )}
     </div>
-
-    {/* MODAL */}
-    {isModalOpen && selectedItem && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
-        <div className="bg-white rounded-xl shadow-xl max-w-3xl w-full p-6 relative">
-          {/* Close Button */}
-          <button
-            onClick={closeModal}
-            className="absolute top-3 right-3 text-gray-600  text-2xl"
-          >
-            ×
-          </button>
-
-          {renderModalContent(selectedItem)}
-        </div>
-      </div>
-    )}
-  </div>
   );
 }

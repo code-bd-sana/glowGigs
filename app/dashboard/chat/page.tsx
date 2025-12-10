@@ -18,10 +18,7 @@ export default function ChatPage() {
       {/* RIGHT SIDE */}
       <div className="flex-1">
         {selectedConversation ? (
-          <ChatWindow
-            conversation={selectedConversation}
-            userId={userId}   
-          />
+          <ChatWindow conversation={selectedConversation} userId={userId} />
         ) : (
           <div className="h-full flex items-center justify-center text-gray-500">
             Select a conversation
