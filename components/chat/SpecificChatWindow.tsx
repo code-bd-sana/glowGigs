@@ -19,11 +19,14 @@ interface SpecificChatWindowProps {
   applicantId: string;
   applicantEmail: string;
   applicantName?: string;
+  applicantImage?:string
+
 }
 
 export default function SpecificChatWindow({
   conversationId,
   userId,
+   applicantImage,
   applicantName,
 }: SpecificChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -121,7 +124,7 @@ export default function SpecificChatWindow({
         <div className="flex items-center gap-3">
           <div className="relative w-11 h-11">
             <Image
-              src="/default-avatar.png"
+              src={ applicantImage}
               alt="avatar"
               fill
               className="rounded-full object-cover border border-white shadow-sm"

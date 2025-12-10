@@ -4,15 +4,19 @@ import { useGetSingleUserQuery } from "../../../../features/AuthApi";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import SpecificChatWindow from "@/components/chat/SpecificChatWindow";
+import { useParams } from 'next/navigation';
 
-export default function PortfolioShowcasePage({ params }) {
-  console.log("Hitr adljk;sf guif");
+export default function PortfolioShowcasePage() {
+
   const { data: session } = useSession();
   const [portfolioItems, setPortfolioItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [chatModalOpen, setChatModalOpen] = useState(false);
   const [conversationId, setConversationId] = useState(null);
+
+
+  const params = useParams()
 
   const userId = params?.id;
   console.log(userId, "baler user id");
@@ -372,7 +376,8 @@ export default function PortfolioShowcasePage({ params }) {
       </div>
 
       {/* GRID */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-8 gap-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-8
+       gap-6">
         {portfolioItems.map((item, index) => (
           <div
             key={index}
