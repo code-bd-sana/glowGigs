@@ -10,7 +10,7 @@ const GetInTouch = () => {
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 relative">
 
         {/* LEFT CONTENT */}
-        <div className="flex flex-col justify-center pt-10">
+        <div className="flex flex-col justi pt-10">
           <h2 className="text-5xl font-serif text-gray-900 mb-4">
             Get in Touch
           </h2>
