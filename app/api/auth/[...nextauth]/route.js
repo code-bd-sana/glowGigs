@@ -95,10 +95,10 @@ const handler = NextAuth({
       /* 🔥 ADD PLAN HERE */
       if (token?.id) {
         try {
-          const baseUrl =
+          const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://glowgigs.com";
      
             process.env.NEXT_PUBLIC_APP_URL ||
-            "http://localhost:3000";
+            "https://glowgigs.com";
 
           const res = await fetch(`${baseUrl}/api/users/get/${token.id}`);
 
