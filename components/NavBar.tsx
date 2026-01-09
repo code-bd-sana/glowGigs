@@ -45,7 +45,7 @@ const NavBar = () => {
           <Link href="/jobs" className={getLinkClassName('/jobs')}>Jobs</Link>
           <Link href="/plans-pricing" className={getLinkClassName('/plans-pricing')}>Get Hired</Link>
           <Link href="/business" className={getLinkClassName('/business')}>List Your Gigs</Link>
-          <Link href="/professionals" className={getLinkClassName('/professionals')}>Professionals</Link>
+          {/* <Link href="/professionals" className={getLinkClassName('/professionals')}>Professionals</Link> */}
           <Link href="/showcase" className={getLinkClassName('/showcase')}>Showcase</Link>
           <Link href="/dashboard">
            <div className='text-black'>

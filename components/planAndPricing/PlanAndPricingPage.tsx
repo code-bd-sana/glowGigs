@@ -10,7 +10,7 @@ export default function PlanAndPricingPage() {
       
       <Pricing/>
       <UserFeedback/>
-       <Testimonials backgroundImage="/Home/testi2.webp">
+       <Testimonials backgroundImage="/Home/bbb.jpg">
           <InquiryForm/>
       </Testimonials>
     </div>
