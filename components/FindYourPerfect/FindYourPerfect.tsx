@@ -7,15 +7,21 @@ import SectionHeader from "../shared/SectionHeader/SectionHeader";
 
 const FindYourPerfect = () => {
   return (
-    <section className="flex my-10 text-white flex-col md:flex-row items-center justify-between gap-10 max-w-7xl mx-auto rounded-3xl">
+<div>
+      <section className="flex mt-10   text-white flex-col md:flex-row items-center justify-between  max-w-7xl mx-auto rounded-3xl">
       {/* Left Content */}
-      <div className="flex-1 text-center md:text-left space-y-4 text-white">
+      <div className="flex-1 text-center bg-[#F8F8E7] p-6 md:text-left space-y-4 text-white">
         <SectionHeader
           title="Find your perfect fit"
-          description="GlowGigs is your online bridge to connect health and beauty specialists with top employers in the industry."
+          description="No more generalized job boards and months of searching"
           align="left"
         />
-        <Button text="Join Us Now" />
+        <SectionHeader
+          title=""
+          description="We quiet the internet noise and connect businesses and talented specialists directly"
+          align="left"
+        />
+
       </div>
 
       {/* Right Image */}
@@ -28,7 +34,14 @@ const FindYourPerfect = () => {
           className="rounded-2xl object-cover w-full"
         />
       </div>
+
+          
     </section>
+<div  className="text-center mx-auto flex justify-center">
+
+          <Button text="Join Us Now" />
+</div>
+</div>
   );
 };
 
