@@ -1,11 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
 import { useSession } from "next-auth/react";
-import { RiCheckboxCircleFill } from "react-icons/ri";
+import { useState } from "react";
 import { IoCloseCircle } from "react-icons/io5";
-import SectionHeader from "@/components/shared/SectionHeader/SectionHeader";
-import SecondaryButton from "@/components/shared/SecondaryButton";
+import { RiCheckboxCircleFill } from "react-icons/ri";
 
 export default function PriceingEmployee() {
   interface Pricing {
@@ -23,11 +21,11 @@ export default function PriceingEmployee() {
 
   const [loading, setLoading] = useState<string | null>(null);
 
-  // ✅ Employer pricing plans with fewer features
+  // Employer pricing plans with fewer features
   const pricing: Pricing[] = [
     {
-      type: "Starter",
-      price: 29,
+      type: "Basic Pack",
+      price: 0,
       stripePriceId: "price_1SRrDSLgZdKW43fRuVF1DXCC",
       description: "",
       activeFeature: [
@@ -40,7 +38,7 @@ export default function PriceingEmployee() {
       ],
     },
     {
-      type: "Growth",
+      type: "Pro Pack",
       price: 99,
       stripePriceId: "price_1SRrEJLgZdKW43fRHQB05bZ8",
       description: "",
@@ -52,8 +50,8 @@ export default function PriceingEmployee() {
       ],
     },
     {
-      type: "Enterprise",
-      price: 99,
+      type: "Bronze Pack",
+      price: 79.99,
       stripePriceId: "price_1SRrEhLgZdKW43fRE1VlXVnl",
       description: "",
       activeFeature: [
@@ -62,14 +60,11 @@ export default function PriceingEmployee() {
         `Access to premium candidate pool`,
         `Priority listing placement`,
       ],
-        deactiveFeature: [
-       
-        `Access showcase portfolios`,
-      ],
+      deactiveFeature: [`Access showcase portfolios`],
     },
   ];
 
-  // ✅ Stripe Checkout
+  // Stripe Checkout
   const handleCheckout = async (priceId: string, plan: string) => {
     if (!userId) {
       alert("You must be logged in to subscribe.");
@@ -114,11 +109,8 @@ export default function PriceingEmployee() {
   };
 
   return (
-    <div className=" mx-auto">
-   
-  
-
-      <section className="flex flex-col bg-[linear-gradient(86deg,rgba(201,199,56,0.27),rgba(40,103,199,0.6))] p-12 lg:flex-row justify-center gap-8 ">
+    <div className=' mx-auto'>
+      <section className='flex flex-col bg-[linear-gradient(86deg,rgba(201,199,56,0.27),rgba(40,103,199,0.6))] p-12 lg:flex-row justify-center gap-8 '>
         {pricing.map((plan, idx) => (
           <div
             key={idx}
@@ -126,46 +118,51 @@ export default function PriceingEmployee() {
               idx === 1
                 ? "shadow-2xl lg:w-96 p-12 border-black border-2"
                 : "border lg:w-80 border-gray"
-            } bg-gradient-to-br flex flex-col justify-between`}
-          >
+            } bg-linear-to-br flex flex-col justify-between`}>
             {/* Header */}
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-xl">{plan.type}</h3>
-              <p className="font-bold text-xl">${plan.price} /Month</p>
+            <div className='flex justify-between flex-col items-center mb-4'>
+              <h3 className='font-bold text-xl'>{plan.type}</h3>
+              <p className='font-bold text-xl'>${plan.price} /Month</p>
             </div>
 
             {/* Features */}
-            <div className="mt-16">
+            <div className='mt-16'>
               {plan.activeFeature.map((feature, fIdx) => (
-                <div key={fIdx} className="flex items-start gap-2 mb-2">
-                  <RiCheckboxCircleFill className="text-green-600 text-2xl mt-0.5 flex-shrink-0" />
-                  <p className="text-gray-800 text-lg">{feature}</p>
+                <div key={fIdx} className='flex items-start gap-2 mb-2'>
+                  <RiCheckboxCircleFill className='text-green-600 text-2xl mt-0.5 flex-shrink-0' />
+                  <p className='text-gray-800 text-lg'>{feature}</p>
                 </div>
               ))}
               {plan.deactiveFeature?.map((feature, fIdx) => (
-                <div key={fIdx} className="flex items-start gap-2 mb-2">
-                  <IoCloseCircle className="text-black text-2xl mt-0.5 flex-shrink-0" />
-                  <p className="text-gray-500 text-lg">{feature}</p>
+                <div key={fIdx} className='flex items-start gap-2 mb-2'>
+                  <IoCloseCircle className='text-black text-2xl mt-0.5 flex-shrink-0' />
+                  <p className='text-gray-500 text-lg'>{feature}</p>
                 </div>
               ))}
             </div>
 
             {/* Button */}
-            <div className="mt-6 flex justify-center">
+            <div className='mt-6 flex justify-center'>
               <button
                 disabled={loading === plan.stripePriceId}
                 onClick={() =>
                   handleCheckout(plan.stripePriceId, plan.type.toLowerCase())
-                }
-              >
-                <SecondaryButton
-                  type="button"
+                }>
+                {/* <SecondaryButton
+                  className=''
+                  type='button'
                   text={
                     loading === plan.stripePriceId
                       ? "Redirecting..."
                       : "Choose Your Plan"
                   }
-                />
+                /> */}
+                <button
+                  className={`px-4 py-2 md:px-14 md:py-4 text-white cursor-pointer hover:bg-[#1f1c1c] text-center mx-auto rounded-full my-2 lg:my-10 bg-[#166be0] hover:text-white transition`}>
+                  {loading === plan.stripePriceId
+                    ? "Redirecting..."
+                    : "Choose Your Plan"}
+                </button>
               </button>
             </div>
           </div>

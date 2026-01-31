@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import SectionHeader from "../shared/SectionHeader/SectionHeader";
-import { RiCheckboxCircleFill } from "react-icons/ri";
-import { IoCloseCircle } from "react-icons/io5";
-import SecondaryButton from "../shared/SecondaryButton";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
+import { IoCloseCircle } from "react-icons/io5";
+import { RiCheckboxCircleFill } from "react-icons/ri";
+import SectionHeader from "../shared/SectionHeader/SectionHeader";
 
 export default function Pricing() {
   interface Pricing {
@@ -94,68 +93,68 @@ export default function Pricing() {
   };
 
   return (
-    <div className="mt-16  mx-auto  ">
+    <div className='mt-16  mx-auto  '>
       <SectionHeader
         title="It's your time to shine"
-        description=""
-        align="center"
+        description=''
+        align='center'
       />
-      <p className="text-base text-center text-gray-600 mt-2 w-full md:w-9/12 mx-auto">
-        Discover flexible pricing plans to connect with employers in your industry.
+      <p className='text-base text-center text-gray-600 mt-2 w-full md:w-9/12 mx-auto'>
+        Discover flexible pricing plans to connect with employers in your
+        industry.
       </p>
 
-      <section className="flex flex-col bg-[linear-gradient(86deg,rgba(201,199,56,0.27),rgba(40,103,199,0.6))] p-12 lg:flex-row justify-center gap-8 mt-16">
+      <section className='flex flex-col bg-[linear-gradient(86deg,rgba(201,199,56,0.27),rgba(40,103,199,0.6))] p-12 lg:flex-row justify-center gap-8 mt-16'>
         {pricing.map((plan, idx) => (
           <div
             key={idx}
             className={`w-full p-6 rounded-2xl border ${
               idx === 1
-                ? "shadow-2xl lg:w-96 p-12  border-black border-2 "
-                : "border lg:w-80  border-gray "
+                ? "lg:w-96 p-12 border-black border-2"
+                : "border lg:w-80 border-gray"
             } bg-gradient-to-br ${
-              idx === 0
-                ? ""
-                : idx === 1
-                ? ""
-                : ""
-            } flex flex-col justify-between`}
-          >
+              idx === 0 ? "" : idx === 1 ? "" : ""
+            } flex flex-col justify-between`}>
             {/* Header */}
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-xl">{plan.type}</h3>
-              <p className="font-bold text-xl">${plan.price} /Month</p>
+            <div className='flex flex-col justify-center items-center gap-2 mb-4'>
+              <h3 className='font-bold text-xl'>{plan.type}</h3>
+              <p className='font-bold text-xl'>${plan.price} /Month</p>
             </div>
 
             {/* Features */}
-            <div className="mt-16">
+            <div className='mt-16'>
               {plan.activeFeature.map((feature, fIdx) => (
-                <div key={fIdx} className="flex items-start gap-2 mb-2">
-                  <RiCheckboxCircleFill className="text-green-600 text-2xl mt-0.5 flex-shrink-0" />
-                  <p className="text-gray-800 text-lg">{feature}</p>
+                <div key={fIdx} className='flex items-start gap-2 mb-2'>
+                  <RiCheckboxCircleFill className='text-green-600 text-2xl mt-0.5 flex-shrink-0' />
+                  <p className='text-gray-800 text-lg'>{feature}</p>
                 </div>
               ))}
               {plan.deactiveFeature?.map((feature, fIdx) => (
-                <div key={fIdx} className="flex items-start gap-2 mb-2">
-                  <IoCloseCircle className="text-black text-2xl mt-0.5 flex-shrink-0" />
-                  <p className="text-gray-500 text-lg">{feature}</p>
+                <div key={fIdx} className='flex items-start gap-2 mb-2'>
+                  <IoCloseCircle className='text-black text-2xl mt-0.5 flex-shrink-0' />
+                  <p className='text-gray-500 text-lg'>{feature}</p>
                 </div>
               ))}
             </div>
 
             {/* Button */}
-            <div className="mt-6  flex justify-center">
+            <div className='mt-6  flex justify-center'>
               <button
                 disabled={loading === plan.stripePriceId}
-                onClick={() => handleCheckout(plan.stripePriceId, plan.type)}
-              >
-                <SecondaryButton
-                  type="button"
+                onClick={() => handleCheckout(plan.stripePriceId, plan.type)}>
+                {/* <SecondaryButton
+                  type='button'
                   text={
                     loading === plan.stripePriceId
                       ? "Redirecting..."
                       : "Choose Your Plan"
                   }
-                />
+                /> */}
+                <button className='px-4 py-2 md:px-14 md:py-4 text-white cursor-pointer hover:bg-[#1f1c1c] text-center mx-auto rounded-full my-2 lg:my-10 bg-[#166be0] hover:text-white transition'>
+                  {loading === plan.stripePriceId
+                    ? "Redirecting..."
+                    : "Choose Your Plan"}
+                </button>
               </button>
             </div>
           </div>
