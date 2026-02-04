@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import SectionHeader from "../shared/SectionHeader/SectionHeader";
 
 const Community = () => {
@@ -30,11 +31,13 @@ const Community = () => {
           </div>
 
           <div>
-            <button
-              type='submit'
-              className='bg-black text-white cursor-pointer text-lg px-12 py-4 rounded-full hover:bg-gray-900 transition-all'>
-              Sign Up
-            </button>
+            <Link href={"/register"}>
+              <button
+                type='submit'
+                className='bg-black text-white cursor-pointer text-lg px-12 py-4 rounded-full hover:bg-gray-900 transition-all'>
+                Sign Up
+              </button>
+            </Link>
           </div>
         </form>
       </div>
