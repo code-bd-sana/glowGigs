@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const HomeBanner = () => {
   return (
     <div
@@ -19,9 +21,11 @@ const HomeBanner = () => {
             Join our platform to find top job opportunities in health and
             beauty.
           </p>
-          <button className=' px-12 bg-white text-black mb-6 py-3 text-lg font-medium rounded-full  border border-white'>
+          <Link
+            href={"/register"}
+            className=' px-12 cursor-pointer bg-white text-black mb-6 py-3 text-lg font-medium rounded-full  border border-white'>
             Get Started
-          </button>
+          </Link>
 
           <h1 className='text-[56px] text-center mx-auto leading-[73px] max-w-5xl font-extrabold text-[#000000] mt-4'>
             Employers, find your next star
