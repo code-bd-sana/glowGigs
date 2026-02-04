@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import find from "../../public/Home/find.avif";
 import Button from "../shared/Button";
 import SectionHeader from "../shared/SectionHeader/SectionHeader";
@@ -33,9 +34,12 @@ const FindYourPerfect = () => {
           />
         </div>
       </section>
-      <div className='text-center mx-auto flex justify-center'>
+
+      <Link
+        href={"/register"}
+        className='text-center mx-auto flex justify-center'>
         <Button text='Connect Now' />
-      </div>
+      </Link>
     </div>
   );
 };
