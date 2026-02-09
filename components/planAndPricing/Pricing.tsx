@@ -37,7 +37,7 @@ export default function Pricing() {
     {
       type: "Pro Pack",
       price: 99.99,
-      stripePriceId: "price_1SR9XsLgZdKW43fRNcAHUday",
+      stripePriceId: "price_1SyVvxLQvROVJZJ0LZfoWCD4",
       description: "",
       activeFeature: [
         "Apply to unlimited listings",
@@ -49,7 +49,7 @@ export default function Pricing() {
     {
       type: "Bronze Pack",
       price: 49.99,
-      stripePriceId: "price_1SR9YYLgZdKW43fRWCu3p9rF",
+      stripePriceId: "price_1Syl9dLQvROVJZJ0Pzc2nVLB",
       description: "",
       activeFeature: [
         "Apply up to 15 listings a month",
