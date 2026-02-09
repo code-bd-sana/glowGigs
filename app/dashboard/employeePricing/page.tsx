@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import { useSession } from "next-auth/react";
-import { RiCheckboxCircleFill } from "react-icons/ri";
-import { IoCloseCircle } from "react-icons/io5";
-import SectionHeader from "@/components/shared/SectionHeader/SectionHeader";
 import SecondaryButton from "@/components/shared/SecondaryButton";
+import SectionHeader from "@/components/shared/SectionHeader/SectionHeader";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
+import { IoCloseCircle } from "react-icons/io5";
+import { RiCheckboxCircleFill } from "react-icons/ri";
 
 export default function EmployeePricing() {
   interface Pricing {
@@ -18,8 +18,8 @@ export default function EmployeePricing() {
   }
 
   const { data: session } = useSession();
-  const userId = session?.user?.id; 
- console.log(userId)
+  const userId = session?.user?.id;
+  console.log(userId);
 
   const [loading, setLoading] = useState<string | null>(null);
 
@@ -124,23 +124,22 @@ export default function EmployeePricing() {
   };
 
   return (
-    <div className="mt-16 max-w-7xl mx-auto px-6 md:px-12 lg:px-0 pb-24 flex flex-col items-center justify-center">
+    <div className='mt-16 max-w-7xl mx-auto px-6 md:px-12 lg:px-0 pb-24 flex flex-col items-center justify-center'>
       <SectionHeader
-        title="Find the perfect hiring plan"
-        description=""
-        align="center"
+        title='Find the perfect hiring plan'
+        description=''
+        align='center'
       />
-      <p className="text-base text-center text-gray-600 mt-2 max-w-2xl">
+      <p className='text-base text-center text-gray-600 mt-2 max-w-2xl'>
         Flexible plans for every employer — from startups to enterprises.
       </p>
 
       {/* ✅ Centered Pricing Cards */}
       <section
-        className="
+        className='
         flex flex-wrap justify-center items-stretch 
         gap-10 mt-20 w-full 
-        md:px-10 lg:px-0"
-      >
+        md:px-10 lg:px-0'>
         {pricing.map((plan, idx) => (
           <div
             key={idx}
@@ -151,23 +150,22 @@ export default function EmployeePricing() {
                 : "shadow-md"
             }
             transition-transform duration-300 ease-in-out hover:scale-105
-          `}
-          >
+          `}>
             <div>
-              <div className="flex justify-between mt-4">
-                <h4 className="font-bold text-xl">{plan.type}</h4>
-                <h4 className="font-bold text-xl">${plan.price} / mo</h4>
+              <div className='flex justify-between mt-4'>
+                <h4 className='font-bold text-xl'>{plan.type}</h4>
+                <h4 className='font-bold text-xl'>${plan.price} / mo</h4>
               </div>
 
-              <p className="mx-auto text-center my-6 text-gray-700 text-[15px] leading-relaxed">
+              <p className='mx-auto text-center my-6 text-gray-700 text-[15px] leading-relaxed'>
                 {plan.description}
               </p>
 
               {/* ✅ Active features */}
               {plan.activeFeature.map((feature, i) => (
-                <div key={i} className="flex gap-3 my-2">
-                  <RiCheckboxCircleFill className="text-green-700 text-2xl flex-shrink-0 mt-1" />
-                  <p className="text-base leading-tight text-gray-800">
+                <div key={i} className='flex gap-3 my-2'>
+                  <RiCheckboxCircleFill className='text-green-700 text-2xl flex-shrink-0 mt-1' />
+                  <p className='text-base leading-tight text-gray-800'>
                     {feature}
                   </p>
                 </div>
@@ -175,9 +173,9 @@ export default function EmployeePricing() {
 
               {/* ❌ Inactive features */}
               {plan.deactiveFeature?.map((feature, i) => (
-                <div key={i} className="flex gap-3 my-2">
-                  <IoCloseCircle className="text-red-600 text-2xl flex-shrink-0 mt-1" />
-                  <p className="text-base leading-tight text-gray-600">
+                <div key={i} className='flex gap-3 my-2'>
+                  <IoCloseCircle className='text-red-600 text-2xl flex-shrink-0 mt-1' />
+                  <p className='text-base leading-tight text-gray-600'>
                     {feature}
                   </p>
                 </div>
@@ -185,15 +183,14 @@ export default function EmployeePricing() {
             </div>
 
             {/* 🟩 Button */}
-            <div className="mt-8 flex justify-center">
+            <div className='mt-8 flex justify-center'>
               <button
                 disabled={loading === plan.stripePriceId}
                 onClick={() =>
                   handleCheckout(plan.stripePriceId, plan.type.toLowerCase())
-                }
-              >
+                }>
                 <SecondaryButton
-                  type="button"
+                  type='button'
                   text={
                     loading === plan.stripePriceId
                       ? "Redirecting..."

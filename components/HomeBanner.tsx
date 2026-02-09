@@ -18,8 +18,7 @@ const HomeBanner = () => {
             </h1>
           </div>
           <p className='text-[16px] text-[#000000] font-extrabold mb-16'>
-            Join our platform to find top job opportunities in health and
-            beauty.
+            The job board made specifically for the wellness and beauty industry
           </p>
           <Link
             href={"/register"}
