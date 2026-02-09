@@ -47,13 +47,9 @@
 
 // components/Footer.tsx
 "use client";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  FaFacebookF,
-  FaInstagram,
-  FaTiktok,
-  FaXTwitter,
-} from "react-icons/fa6";
+import { FaFacebookF, FaInstagram } from "react-icons/fa6";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -72,8 +68,16 @@ export default function Footer() {
             Bridging health and beauty professionals with employers.
           </p>
           <div className='flex gap-5 text-xl mb-6'>
-            <FaFacebookF className='cursor-pointer hover:text-blue-500' />
-            <FaInstagram className='cursor-pointer hover:text-pink-500' />
+            <Link
+              target='_blank'
+              href='https://www.facebook.com/share/1GQ1KSyyds/?mibextid=wwXIfr'>
+              <FaFacebookF className='cursor-pointer hover:text-blue-500' />
+            </Link>
+            <Link
+              target='_blank'
+              href='https://www.instagram.com/glowgigs?igsh=cDJrdnAyMDk2NTZl'>
+              <FaInstagram className='cursor-pointer hover:text-pink-500' />
+            </Link>
             {/* <FaTiktok className='cursor-pointer hover:text-gray-400' />
             <FaXTwitter className='cursor-pointer hover:text-gray-400' /> */}
           </div>
