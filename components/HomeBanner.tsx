@@ -12,12 +12,12 @@ const HomeBanner = () => {
       }}>
       <div className=''>
         <div className='text-center'>
-          <div className='flex justify-center'>
-            <h1 className='text-[56px] leading-[73px] max-w-xl font-extrabold text-[#070F14] mb-16'>
+          <div className='flex justify-center px-5 md:px-0'>
+            <h1 className='text-[28px] md:text-[56px] md:leading-[73px] max-w-xl font-extrabold text-[#070F14] mb-16'>
               Your pathway to glowing career opportunities
             </h1>
           </div>
-          <p className='text-[16px] text-[#000000] font-extrabold mb-16'>
+          <p className='text-[14px] px-3 md:px-0 md:text-[16px] text-[#000000] font-extrabold mb-16'>
             The job board made specifically for the wellness and beauty industry
           </p>
           <Link
@@ -26,7 +26,7 @@ const HomeBanner = () => {
             Get Started
           </Link>
 
-          <h1 className='text-[56px] text-center mx-auto leading-[73px] max-w-5xl font-extrabold text-[#000000] mt-4'>
+          <h1 className='text-[28px] md:text-[56px] text-center mx-auto leading-[73px] max-w-5xl font-extrabold text-[#000000] mt-4'>
             Employers, find your next star
           </h1>
         </div>
