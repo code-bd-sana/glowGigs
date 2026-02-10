@@ -26,7 +26,7 @@ export default function PriceingEmployee() {
     {
       type: "Basic Pack",
       price: 0,
-      stripePriceId: "price_1SylCyLQvROVJZJ0cxmAEgNK",
+      stripePriceId: "price_1SzCR5LUZFgYplI68Y6C1snu",
       description: "",
       activeFeature: [
         `Post up to 1 job listings`,
@@ -40,7 +40,7 @@ export default function PriceingEmployee() {
     {
       type: "Pro Pack",
       price: 99,
-      stripePriceId: "price_1SylEFLQvROVJZJ08g6H2uXK",
+      stripePriceId: "price_1SzCUHLUZFgYplI6um3Q9rzZ",
       description: "",
       activeFeature: [
         `Post unlimited job listings`,
@@ -52,7 +52,7 @@ export default function PriceingEmployee() {
     {
       type: "Bronze Pack",
       price: 79.99,
-      stripePriceId: "price_1SylFRLQvROVJZJ0HWJ0c3AI",
+      stripePriceId: "price_1SzCVmLUZFgYplI6JINKSxyP",
       description: "",
       activeFeature: [
         `Post 5 job listings`,
