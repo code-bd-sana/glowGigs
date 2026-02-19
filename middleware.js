@@ -1,95 +1,87 @@
-import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { NextResponse } from "next/server";
 
 export default async function middleware(req) {
   const { pathname } = req.nextUrl;
-  
 
-  const token = await getToken({ 
-    req, 
+  const token = await getToken({
+    req,
     secret: "aidfjnvociydfnovfadf",
-    secureCookie: process.env.NODE_ENV === 'production'
+    secureCookie: process.env.NODE_ENV === "production",
   });
 
-
   if (!token) {
-    return NextResponse.redirect(new URL('/login', req.url));
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   const userRole = token?.role;
 
   if (pathname === "/dashboard/payments") {
- 
     // if (userRole !== 'customer' && userRole !== 'butler') {
     //   return NextResponse.redirect(new URL('/login', req.url));
     // }
   }
 
   if (pathname === "/dashboard/messages") {
- 
   }
 
   if (pathname === "/dashboard/users") {
-    console.log(token, "I am your personal user")
+    console.log(token, "I am your personal user");
 
-    if (userRole !== 'admin') {
-      return NextResponse.redirect(new URL('/login', req.url));
+    if (userRole !== "admin") {
+      return NextResponse.redirect(new URL("/login", req.url));
     }
   }
 
   if (pathname === "/dashboard/financials") {
-
-    if (userRole !== 'admin') {
-      return NextResponse.redirect(new URL('/login', req.url));
+    if (userRole !== "admin") {
+      return NextResponse.redirect(new URL("/login", req.url));
     }
   }
 
   if (pathname === "/dashboard/services") {
-
-    if (userRole !== 'admin') {
-      return NextResponse.redirect(new URL('/login', req.url));
+    if (userRole !== "admin") {
+      return NextResponse.redirect(new URL("/login", req.url));
     }
   }
 
   if (pathname === "/dashboard/adminTools") {
-    
-    if (userRole !== 'admin') {
-      return NextResponse.redirect(new URL('/login', req.url));
+    if (userRole !== "admin") {
+      return NextResponse.redirect(new URL("/login", req.url));
     }
   }
 
-  
   if (pathname === "/dashboard/schedule") {
-    if (userRole !== 'butler') {
-      return NextResponse.redirect(new URL('/login', req.url));
+    if (userRole !== "butler") {
+      return NextResponse.redirect(new URL("/login", req.url));
     }
   }
 
-  return NextResponse.next();  
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
     "/dashboard",
     "/dashboard/payments",
-    "/dashboard/messages", 
+    "/dashboard/messages",
     "/dashboard/users",
     "/dashboard/profile",
     "/dashboard/financials",
     "/dashboard/services",
     "/dashboard/adminTools",
     "/dashboard/schedule",
-    '/my-shot',
-        "/dashboard/portfolio",
-        "/dashboard/employeePricing",
-        "/dashboard/applicants",
-        "/dashboard/my-jobs",
-        "/dashboard/create-job-post",
-        "/dashboard/chat",
-        "/dashboard/job-posters",
-        "/dashboard/job-applicants",
-        "/dashboard/manage-jobs",
-        "/dashboard/payments",
-  
+    "/my-shot",
+    "/dashboard/portfolio",
+    "/dashboard/employeePricing",
+    "/dashboard/applicants",
+    "/dashboard/my-jobs",
+    "/dashboard/create-job-post",
+    "/dashboard/chat",
+    "/dashboard/job-posters",
+    "/dashboard/job-applicants",
+    "/dashboard/manage-jobs",
+    "/dashboard/payments",
+    "/all-jobs",
   ],
 };
