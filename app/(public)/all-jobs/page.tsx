@@ -66,9 +66,6 @@ export default function JobList() {
       </div>
     );
   }
-  if (!session) {
-    return router.push("/login");
-  }
 
   const filteredJobs = jobs?.filter((job) => {
     return (
