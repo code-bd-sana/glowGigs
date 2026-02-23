@@ -115,10 +115,10 @@ const NavBar = () => {
             List Your Gigs
           </Link>
           <Link
-            href='/professionals'
+            href='/showcase'
             onClick={() => setMenuOpen(false)}
             className={getLinkClassName("/professionals")}>
-            Professionals
+            Showcase
           </Link>
         </div>
       )}

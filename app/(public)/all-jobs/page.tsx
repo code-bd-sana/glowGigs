@@ -9,7 +9,7 @@ import { useGetJobsByPosterQuery } from "@/features/JobSlice";
 import { format } from "date-fns";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { BiCalendarAlt } from "react-icons/bi";
@@ -44,7 +44,7 @@ export default function JobList() {
     { skip: !applicantId },
   );
 
-  const router = useRouter();
+  // const router = useRouter();
 
   const appliedJobIds =
     appliedResponse?.map((app: any) => app.job?._id || app.job) || [];
