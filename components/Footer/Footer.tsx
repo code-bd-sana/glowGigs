@@ -56,6 +56,10 @@ export default function Footer() {
 
   if (pathname.includes("/dashboard")) {
     return null;
+  } else if (pathname.includes("/login")) {
+    return null;
+  } else if (pathname.includes("/register")) {
+    return null;
   }
 
   return (

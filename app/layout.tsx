@@ -1,10 +1,10 @@
+import Footer from "@/components/Footer/Footer";
+import NavBar from "@/components/NavBar";
+import SupportChat from "@/components/SupportChat/SupportChat";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import NavBar from "@/components/NavBar";
-import Footer from "@/components/Footer/Footer";
 import ReduxProvider from "./provider/ReduxProvider";
-import SupportChat from "@/components/SupportChat/SupportChat";
 
 import { Toaster } from "react-hot-toast";
 // Noir font
@@ -34,7 +34,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" data-theme="light" className={`${noir.variable} ${lato.variable}`}>
+    <html
+      lang='en'
+      data-theme='light'
+      className={`${noir.variable} ${lato.variable}`}>
       <body>
         <ReduxProvider>
           <NavBar />
