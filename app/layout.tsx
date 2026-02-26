@@ -17,13 +17,13 @@ const noir = localFont({
 });
 
 // Lato font
-const lato = localFont({
-  src: "../public/Lato-Regular.ttf",
-  variable: "--font-lato",
-  weight: "400",
-  style: "normal",
-  display: "swap",
-});
+// const lato = localFont({
+//   src: "../public/Lato-Regular.ttf",
+//   variable: "--font-lato",
+//   weight: "400",
+//   style: "normal",
+//   display: "swap",
+// });
 
 export const metadata: Metadata = {
   title: "Glow Gigs",
@@ -34,10 +34,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang='en'
-      data-theme='light'
-      className={`${noir.variable} ${lato.variable}`}>
+    <html lang='en' data-theme='light' className={`${noir.variable}`}>
       <body>
         <ReduxProvider>
           <NavBar />
