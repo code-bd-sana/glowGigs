@@ -1,17 +1,15 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { CiCalendar, CiClock2, CiMail } from "react-icons/ci";
-import { LuDownload, LuEye } from "react-icons/lu";
-import { useSession } from "next-auth/react";
 import {
   useGetApplicantsForPosterQuery,
-  useRejectApplicantMutation,
   useUpdateJobAppliedStatusMutation,
 } from "@/features/JobSlice";
-import { IoEyeOutline } from "react-icons/io5";
-import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { CiCalendar, CiClock2, CiMail } from "react-icons/ci";
+import { IoEyeOutline } from "react-icons/io5";
 
 interface ApplicantData {
   _id: string;
@@ -26,8 +24,7 @@ interface ApplicantData {
   jobTitle: string;
   appliedDate: string;
   status: string;
-  
-applicant:string
+  applicant: string;
 }
 
 const StatusBadge = ({ status }: { status: string }) => {
@@ -41,8 +38,7 @@ const StatusBadge = ({ status }: { status: string }) => {
 
   return (
     <span
-      className={`text-xs font-medium px-3 py-1 rounded-xl ${colorMap[status]}`}
-    >
+      className={`text-xs font-medium px-3 py-1 rounded-xl ${colorMap[status]}`}>
       {status}
     </span>
   );
@@ -63,7 +59,7 @@ const ApplicantsPage: React.FC = () => {
 
   const { data, isLoading, isError, refetch } = useGetApplicantsForPosterQuery(
     session?.user?.id,
-    { skip: !session?.user?.id }
+    { skip: !session?.user?.id },
   );
   console.log(data?.applicants, "khela hobeeee");
   // const [rejectApplicant, { isLoading: isRejecting }] =
@@ -74,8 +70,8 @@ const ApplicantsPage: React.FC = () => {
     useUpdateJobAppliedStatusMutation();
   if (isLoading)
     return (
-      <div className="flex justify-center items-center h-40">
-        <span className="loading loading-infinity loading-lg"></span>
+      <div className='flex justify-center items-center h-40'>
+        <span className='loading loading-infinity loading-lg'></span>
       </div>
     );
 
@@ -117,34 +113,33 @@ const ApplicantsPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6">
+    <div className='bg-white rounded-3xl p-6'>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-gray-800">Applicants</h1>
+      <div className='flex items-center justify-between mb-6'>
+        <h1 className='text-xl font-semibold text-gray-800'>Applicants</h1>
       </div>
 
       {/* Applicants Grid */}
-      <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className='grid sm:grid-cols-2 xl:grid-cols-3 gap-6'>
         {data?.applicants.map((applicant: ApplicantData, i) => (
           <div
             key={i}
-            className="bg-white shadow-sm rounded-lg p-5 border border-gray-100 hover:shadow-md transition"
-          >
+            className='bg-white shadow-sm rounded-lg p-5 border border-gray-100 hover:shadow-md transition'>
             {/* Header section */}
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="relative w-10 h-10">
+            <div className='flex items-start justify-between mb-3'>
+              <div className='flex items-center gap-3'>
+                <div className='relative w-10 h-10'>
                   <Image
                     src={applicant.applicantImg}
-                    alt="applicant"
+                    alt='applicant'
                     fill
-                    className="rounded-full object-cover"
-                    sizes="40px"
+                    className='rounded-full object-cover'
+                    sizes='40px'
                   />
                 </div>
                 <div>
-                  <div className="flex items-center gap-6">
-                    <p className="font-[500] leading-tight">
+                  <div className='flex items-center gap-6'>
+                    <p className='font-[500] leading-tight'>
                       {applicant.applicantName}
                     </p>
                     <span
@@ -153,44 +148,42 @@ const ApplicantsPage: React.FC = () => {
       applicant?.status === "Shortlisted"
         ? "bg-green-100 text-green-700"
         : applicant?.status === "Applied"
-        ? "bg-blue-100 text-blue-700"
-        : applicant?.status === "Rejected"
-        ? "bg-red-100 text-red-700"
-        : "bg-gray-100 text-gray-700"
-    }`}
-                    >
+          ? "bg-blue-100 text-blue-700"
+          : applicant?.status === "Rejected"
+            ? "bg-red-100 text-red-700"
+            : "bg-gray-100 text-gray-700"
+    }`}>
                       {applicant?.status}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-500">{applicant.jobTitle}</p>
+                  <p className='text-sm text-gray-500'>{applicant.jobTitle}</p>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedApplicant(applicant)}
-                className="text-gray-600 hover:text-black"
-              >
+                className='text-gray-600 hover:text-black'>
                 <IoEyeOutline size={20} />
               </button>
             </div>
 
             {/* Info section */}
-            <div className="text-[#6B7280] space-y-2 mb-4">
-              <div className="flex items-center gap-2">
-                <CiMail className="text-black" size={14} />{" "}
+            <div className='text-[#6B7280] space-y-2 mb-4'>
+              <div className='flex items-center gap-2'>
+                <CiMail className='text-black' size={14} />{" "}
                 {applicant.applicantEmail}
               </div>
-              <div className="flex items-center gap-2">
-                <CiClock2 className="text-black" size={14} /> 7 Years Experience
+              <div className='flex items-center gap-2'>
+                <CiClock2 className='text-black' size={14} /> 7 Years Experience
               </div>
-              <div className="flex items-center gap-2">
-                <CiCalendar className="text-black" size={14} /> Applied:{" "}
+              <div className='flex items-center gap-2'>
+                <CiCalendar className='text-black' size={14} /> Applied:{" "}
                 {new Date(applicant.appliedDate).toLocaleDateString()}
               </div>
             </div>
 
             {/* Buttons */}
-            <div className="flex flex-col gap-2.5">
-              <div className="flex justify-between gap-2">
+            <div className='flex flex-col gap-2.5'>
+              <div className='flex justify-between gap-2'>
                 <button
                   onClick={() => handleShortlist(applicant?._id)}
                   disabled={applicant?.status === "Shortlisted"}
@@ -198,8 +191,7 @@ const ApplicantsPage: React.FC = () => {
                     applicant?.status === "Shortlisted"
                       ? "bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed"
                       : "bg-[#BEF8D4] text-[#137317] border-green-200 hover:bg-green-200"
-                  }`}
-                >
+                  }`}>
                   ✓ Shortlist
                 </button>
                 <button
@@ -208,8 +200,7 @@ const ApplicantsPage: React.FC = () => {
                     applicant?.status === "Rejected"
                       ? "bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed"
                       : "bg-[#f3cfcf] text-red-600 border-red-200 hover:bg-red-200"
-                  }`}
-                >
+                  }`}>
                   ✗ Reject
                 </button>
               </div>
@@ -219,59 +210,58 @@ const ApplicantsPage: React.FC = () => {
 
         {/* 🟢 Applicant Details Modal */}
         {selectedApplicant && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-black/30 animate-fadeIn">
-            <div className="relative bg-white/80 backdrop-blur-md border border-gray-200 shadow-2xl rounded-2xl w-full max-w-lg p-6 animate-scaleUp">
+          <div className='fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-black/30 animate-fadeIn'>
+            <div className='relative bg-white/80 backdrop-blur-md border border-gray-200 shadow-2xl rounded-2xl w-full max-w-lg p-6 animate-scaleUp'>
               {/* Close Button */}
               <button
                 onClick={() => setSelectedApplicant(null)}
-                className="absolute top-3 right-3 text-gray-600 hover:text-black text-xl"
-              >
+                className='absolute top-3 right-3 text-gray-600 hover:text-black text-xl'>
                 ✕
               </button>
 
               {/* Profile Section */}
-              <div className="flex flex-col items-center text-center">
+              <div className='flex flex-col items-center text-center'>
                 <Image
                   src={selectedApplicant.applicantImg}
-                  alt="Applicant"
+                  alt='Applicant'
                   width={100}
                   height={100}
-                  className=" w-26 h-26 rounded-full object-cover mb-3 border-4 border-white shadow-md"
+                  className=' w-26 h-26 rounded-full object-cover mb-3 border-4 border-white shadow-md'
                 />
-                <h2 className="text-lg font-semibold text-gray-800">
+                <h2 className='text-lg font-semibold text-gray-800'>
                   {selectedApplicant.applicantName}
                 </h2>
-                <p className="text-sm text-gray-500">
+                <p className='text-sm text-gray-500'>
                   {selectedApplicant.applicantEmail}
                 </p>
               </div>
 
               {/* Info */}
-              <div className="mt-5 text-gray-700 space-y-3">
+              <div className='mt-5 text-gray-700 space-y-3'>
                 <p>
-                  <span className="font-semibold">Bio:</span>{" "}
+                  <span className='font-semibold'>Bio:</span>{" "}
                   {selectedApplicant.applicantBio || "N/A"}
                 </p>
                 <p>
-                  <span className="font-semibold">Address:</span>{" "}
+                  <span className='font-semibold'>Address:</span>{" "}
                   {selectedApplicant.applicantAddress || "N/A"}
                 </p>
                 <p>
-                  <span className="font-semibold">Date of Birth:</span>{" "}
+                  <span className='font-semibold'>Date of Birth:</span>{" "}
                   {selectedApplicant.applicantDob
                     ? new Date(
-                        selectedApplicant.applicantDob
+                        selectedApplicant.applicantDob,
                       ).toLocaleDateString()
                     : "N/A"}
                 </p>
                 <p>
-                  <span className="font-semibold">Phone:</span>{" "}
+                  <span className='font-semibold'>Phone:</span>{" "}
                   {selectedApplicant.applicantPhoneNumber || "N/A"}
                 </p>
 
                 <div>
-                  <span className="font-semibold">Certificates:</span>
-                  <ul className="list-disc pl-6 text-sm mt-1">
+                  <span className='font-semibold'>Certificates:</span>
+                  <ul className='list-disc pl-6 text-sm mt-1'>
                     {selectedApplicant.applicantCertificates?.length > 0 ? (
                       selectedApplicant.applicantCertificates.map((cert, i) => (
                         <li key={i}>{cert}</li>
@@ -282,27 +272,24 @@ const ApplicantsPage: React.FC = () => {
                   </ul>
                 </div>
 
-          <Link 
-  href={`/dashboard/portfolio/${selectedApplicant?.applicantEmail}`}
-  className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600   text-white rounded-lg "
->
-  {/* Portfolio Icon */}
-  <svg 
-    className="w-4 h-4" 
-    fill="none" 
-    stroke="currentColor" 
-    viewBox="0 0 24 24"
-  >
-    <path 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
-      strokeWidth={2} 
-      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
-    />
-  </svg>
-  
-  See Portfolio
-</Link>
+                <Link
+                  href={`/dashboard/portfolio/${selectedApplicant?.applicantEmail}`}
+                  className='inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600   text-white rounded-lg '>
+                  {/* Portfolio Icon */}
+                  <svg
+                    className='w-4 h-4'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'>
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
+                    />
+                  </svg>
+                  See Portfolio
+                </Link>
               </div>
             </div>
           </div>
