@@ -68,6 +68,7 @@ export default function PriceingEmployee() {
   const handleCheckout = async (priceId: string, plan: string) => {
     if (!userId) {
       alert("You must be logged in to subscribe.");
+      window.location.href = "/register";
       return;
     }
 
