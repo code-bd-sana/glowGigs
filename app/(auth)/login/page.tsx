@@ -8,7 +8,6 @@ import { SerializedError } from "@reduxjs/toolkit";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -33,8 +32,6 @@ const LoginForm = () => {
     changePasswordWithOtp,
     { isLoading: forgetPasswordLoadng, error: forgotPasswordError },
   ] = useChangePasswordWithOtpMutation();
-
-  const router = useRouter();
 
   // Timer effect
   useEffect(() => {
@@ -79,7 +76,7 @@ const LoginForm = () => {
 
       console.log(res, "this is res");
 
-      router.replace("/dashboard");
+      window.location.href = "/dashboard";
     } catch (error) {
       const err = error as FetchBaseQueryError | SerializedError;
 
