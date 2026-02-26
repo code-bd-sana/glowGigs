@@ -2,6 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { IoCloseCircle } from "react-icons/io5";
 import { RiCheckboxCircleFill } from "react-icons/ri";
 
@@ -67,7 +68,8 @@ export default function PriceingEmployee() {
   // Stripe Checkout
   const handleCheckout = async (priceId: string, plan: string) => {
     if (!userId) {
-      alert("You must be logged in to subscribe.");
+      // alert("You must be logged in to subscribe.");
+      toast.error("Please log in before purchasing a plan.");
       window.location.href = "/register";
       return;
     }
