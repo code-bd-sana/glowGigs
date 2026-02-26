@@ -66,6 +66,7 @@ export default function Pricing() {
       const userId = session?.user?.id;
       if (!userId) {
         alert("Please log in before purchasing a plan.");
+        window.location.href = "/register";
         setLoading(null);
         return;
       }
