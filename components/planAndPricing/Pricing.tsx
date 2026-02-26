@@ -2,6 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { IoCloseCircle } from "react-icons/io5";
 import { RiCheckboxCircleFill } from "react-icons/ri";
 import SectionHeader from "../shared/SectionHeader/SectionHeader";
@@ -65,7 +66,8 @@ export default function Pricing() {
       setLoading(priceId);
       const userId = session?.user?.id;
       if (!userId) {
-        alert("Please log in before purchasing a plan.");
+        // alert("Please log in before purchasing a plan.");
+        toast.error("Please log in before purchasing a plan.");
         window.location.href = "/register";
         setLoading(null);
         return;
