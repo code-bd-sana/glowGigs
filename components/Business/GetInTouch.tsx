@@ -57,7 +57,7 @@ const GetInTouch = () => {
 
               {/* Button */}
               <a
-                href='https://mail.google.com/mail/?view=cm&fs=1&to=info@glowgigs.com'
+                href='mailto:info@glowgigs.com'
                 target='_blank'
                 rel='noopener noreferrer'
                 className='inline-block bg-blue-600 text-white px-10 py-3 rounded-full font-semibold hover:bg-blue-700 transition text-center'>
