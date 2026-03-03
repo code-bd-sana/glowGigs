@@ -4,7 +4,7 @@ const GetInTouch = () => {
   return (
     <section className='bg-white py-24 relative'>
       {/* MAIN GRID */}
-      <div className='max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 relative'>
+      <div className='max-w-7xl mx-auto px-6 grid md:grid-cols-2 items-center gap-12 relative'>
         {/* LEFT CONTENT */}
         <div className='flex flex-col justi pt-10'>
           <h2 className='text-5xl font-serif text-gray-900 mb-4'>
@@ -20,41 +20,6 @@ const GetInTouch = () => {
         <div className='relative flex justify-end'>
           <div className='  p-8 w-full md:w-[90%]'>
             <form className='space-y-6'>
-              {/* Business Name */}
-              <div>
-                <label className='block text-sm text-gray-700 mb-2'>
-                  Business Name
-                </label>
-                <input
-                  type='text'
-                  placeholder='Enter your business name'
-                  className='w-full border border-gray-300 rounded-md px-4 py-3 text-gray-800 focus:ring-1 focus:ring-blue-500 focus:outline-none'
-                />
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className='block text-sm text-gray-700 mb-2'>
-                  Contact Email*
-                </label>
-                <input
-                  type='email'
-                  placeholder='Enter your email address'
-                  className='w-full border border-gray-300 rounded-md px-4 py-3 text-gray-800 focus:ring-1 focus:ring-blue-500 focus:outline-none'
-                />
-              </div>
-
-              {/* Message */}
-              <div>
-                <label className='block text-sm text-gray-700 mb-2'>
-                  Message to GlowGigs*
-                </label>
-                <textarea
-                  rows={4}
-                  placeholder='Describe your job openings'
-                  className='w-full border border-gray-300 rounded-md px-4 py-3 text-gray-800 focus:ring-1 focus:ring-blue-500 focus:outline-none resize-none'></textarea>
-              </div>
-
               {/* Button */}
               <a
                 href='mailto:info@glowgigs.com'
