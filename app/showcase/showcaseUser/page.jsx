@@ -1,7 +1,6 @@
 "use client";
 import { useGetShowcaseUserQuery } from "@/features/UserApi";
 import Link from "next/link";
-import React from "react";
 
 export default function Page() {
   const { data, isLoading } = useGetShowcaseUserQuery();
