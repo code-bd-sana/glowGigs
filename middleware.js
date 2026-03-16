@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { NextResponse } from "next/server";
 
 export default async function middleware(req) {
   const { pathname } = req.nextUrl;
@@ -26,7 +26,7 @@ export default async function middleware(req) {
   }
 
   if (pathname === "/dashboard/users") {
-   
+    console.log(token, "I am your personal user");
 
     if (userRole !== "admin") {
       return NextResponse.redirect(new URL("/login", req.url));

@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useMemo } from "react";
-import Image from "next/image";
-import { useSession } from "next-auth/react";
-import { skipToken } from "@reduxjs/toolkit/query";
 import { useGetApplicationsByApplicantQuery } from "@/features/jobAppliedSlice";
+import { skipToken } from "@reduxjs/toolkit/query";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
+import { useMemo } from "react";
 
 const StatsCard = ({
   label,
@@ -19,19 +19,24 @@ const StatsCard = ({
   imgSrc: string;
 }) => {
   return (
-    <div className="flex flex-1 justify-between bg-white p-6 h-[134px] rounded-[8px] shadow-sm">
+    <div
+      className='
+        flex justify-between bg-white p-6 h-[134px] rounded-[8px] shadow-sm
+        w-full
+        md:w-[calc(50%-12px)]
+        lg:flex-1 lg:w-auto
+      '>
       <div>
-        <div className="text-gray-600 text-sm">{label}</div>
-        <div className="text-2xl mt-1 font-semibold text-black">{value}</div>
+        <div className='text-gray-600 text-sm'>{label}</div>
+        <div className='text-2xl mt-1 font-semibold text-black'>{value}</div>
 
         {percentage === null ? (
-          <div className="text-sm mt-1 text-gray-400">No previous data</div>
+          <div className='text-sm mt-1 text-gray-400'>No previous data</div>
         ) : (
           <div
             className={`text-sm mt-1 ${
               percentage >= 0 ? "text-green-500" : "text-red-500"
-            }`}
-          >
+            }`}>
             {percentage >= 0 ? `+${percentage}%` : `${percentage}%`} vs last
             period
           </div>
@@ -49,18 +54,15 @@ const OverviewCard = () => {
   const { data: session } = useSession();
   const applicantId = session?.user?.id;
 
-  const { data: applications = [] } =
-    useGetApplicationsByApplicantQuery(
-      applicantId ? applicantId : skipToken
-    );
+  const { data: applications = [] } = useGetApplicationsByApplicantQuery(
+    applicantId ? applicantId : skipToken,
+  );
 
-  // 🧠 HELPER FUNCTION: calculate percentage change
   function calculatePercentage(current: number, previous: number) {
-    if (previous === 0) return null; // No previous data
+    if (previous === 0) return null;
     return Math.round(((current - previous) / previous) * 100);
   }
 
-  // 🧠 PROCESS REAL DATA (7-day analytics)
   const stats = useMemo(() => {
     const now = new Date();
 
@@ -76,16 +78,14 @@ const OverviewCard = () => {
       return diff > 7 && diff <= 14;
     };
 
-    // Filter sets
     const current7 = applications.filter((app: any) =>
-      isInLast7(app.applicationDate)
+      isInLast7(app.applicationDate),
     );
 
     const previous7 = applications.filter((app: any) =>
-      isInPrevious7(app.applicationDate)
+      isInPrevious7(app.applicationDate),
     );
 
-    // COUNT current & previous period
     const count = (arr: any[], statuses: string[]) =>
       arr.filter((a) => statuses.includes(a.status)).length;
 
@@ -130,10 +130,7 @@ const OverviewCard = () => {
       },
       shortlisted: {
         value: shortlistedCurrent,
-        percentage: calculatePercentage(
-          shortlistedCurrent,
-          shortlistedPrev
-        ),
+        percentage: calculatePercentage(shortlistedCurrent, shortlistedPrev),
       },
       interview: {
         value: interviewCurrent,
@@ -143,29 +140,33 @@ const OverviewCard = () => {
   }, [applications]);
 
   return (
-    <div className="flex space-x-6 justify-evenly mt-8">
+    <div
+      className='
+        mt-8
+        flex flex-col gap-4
+        md:flex-row md:flex-wrap md:gap-6
+        lg:flex-nowrap lg:gap-0 lg:space-x-6 lg:justify-evenly
+      '>
       <StatsCard
-        label="Total Applications"
+        label='Total Applications'
         value={stats.total.value}
         percentage={stats.total.percentage}
-        imgSrc="/jobSeeker/Container.png"
+        imgSrc='/jobSeeker/Container.png'
       />
 
       <StatsCard
-        label="Active Applications"
+        label='Active Applications'
         value={stats.active.value}
         percentage={stats.active.percentage}
-        imgSrc="/jobSeeker/Container2.png"
+        imgSrc='/jobSeeker/Container2.png'
       />
 
       <StatsCard
-        label="Shortlisted Applications"
+        label='Shortlisted Applications'
         value={stats.shortlisted.value}
         percentage={stats.shortlisted.percentage}
-        imgSrc="/jobSeeker/Container3.png"
+        imgSrc='/jobSeeker/Container3.png'
       />
-
-     
     </div>
   );
 };

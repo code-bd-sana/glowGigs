@@ -1,33 +1,10 @@
-import type { Metadata } from "next";
-
-import "../globals.css";
 import DashboardLayout from "@/components/layout/DashboardLayout";
+import "../globals.css";
 
-// Noir font
-
-
-export const metadata: Metadata = {
-  title: "Glow Gigs",
-  description: " ",
-};
-
-export default function RootLayout({
+export default function DashboardRootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <html lang="en" data-theme="light">
-      <body>
-
-        <DashboardLayout>
-
-                  {children}
-
-        </DashboardLayout>
- 
-
-  
-      
-        </body>
-    </html>
-  );
+}: {
+  children: React.ReactNode;
+}) {
+  return <DashboardLayout>{children}</DashboardLayout>;
 }
