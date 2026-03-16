@@ -14,7 +14,7 @@ export default function RegisterPage() {
   );
   const [register, { isLoading, error }] = useRegisterMutation();
   const { data: departments } = useGetCategoriesQuery();
-  console.log(departments, "all departments");
+
 
   const [formData, setFormData] = useState<Partial<IUser>>({
     role: "JOB_SEEKER",
@@ -51,7 +51,7 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+
 
     try {
       const defaultAvatar =
@@ -79,7 +79,7 @@ export default function RegisterPage() {
       };
 
       const resp = await register(finalData as IUser).unwrap();
-      console.log(resp, "Registration response");
+  
       toast.success("Registration successful!");
 
       
@@ -91,7 +91,7 @@ export default function RegisterPage() {
               _id: resp?.data?._id,
             });
       
-            console.log(res, "this is res")
+    
       
            
               window.location.href = "/dashboard";

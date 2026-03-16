@@ -31,10 +31,9 @@ export default function JobList() {
   }
 
   const { data: session } = useSession();
-  console.log(session, "user is here");
+
   const applicantId = session?.user?.id;
 
-  console.log("PLAN:", session?.user?.plan);
 
   const { data: jobsResponse, isLoading } = useGetJobsByPosterQuery("");
   const jobs = jobsResponse?.data || [];
@@ -65,9 +64,6 @@ export default function JobList() {
         <div className='animate-spin h-8 w-8 border-2 border-gray-300 border-t-blue-500 rounded-full' />
       </div>
     );
-  }
-  if (!session) {
-    return router.push("/login");
   }
 
   const filteredJobs = jobs?.filter((job) => {

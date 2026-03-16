@@ -49,15 +49,12 @@ const LoginForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    console.log("Login Form Data:", {
-      email: formData.email,
-      password: formData.password
-    });
+
 
     try {
       const resp = await login(formData).unwrap();
       const loginData = resp?.data;
-      console.log(loginData, "This is login data")
+
 
       toast.success("Login Success")
 
@@ -68,7 +65,7 @@ const LoginForm = () => {
         _id: loginData._id,
       });
 
-      console.log(res, "this is res")
+
 
      
         window.location.href = "/dashboard";
@@ -103,7 +100,7 @@ const LoginForm = () => {
   // FIXED: Removed duplicate function definition
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Sending OTP to:", forgotPasswordEmail);
+
     
     try {
       // Fix: Pass the email as an object, not as string directly
@@ -129,7 +126,7 @@ const LoginForm = () => {
   };
 
   const handleResendOtp = async () => {
-    console.log("Resending OTP to:", forgotPasswordEmail);
+
     
     try {
       await sendOtp(forgotPasswordEmail ).unwrap();
@@ -193,7 +190,7 @@ const LoginForm = () => {
     setNewPassword("");
     setConfirmPassword("");
     setTimer(0);
-    console.log(response)
+
     
       
     } catch (error) {
