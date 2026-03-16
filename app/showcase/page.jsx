@@ -1,12 +1,13 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
-import bg from "../../public/bg.jpg";
+import React from "react";
 import img from "../../public/showcase.jpg";
+import bg from "../../public/bg.jpg";
+import Link from "next/link";
 
 export default function ShowcasePage() {
   return (
-    <div className='w-full bg-white'>
+    <div className='w-full bg-white min-h-screen'>
       {/* ====================== HERO SECTION ====================== */}
       <section className='w-full'>
         <div className='pt-10 pb-6 text-center'>
@@ -61,11 +62,9 @@ export default function ShowcasePage() {
           </p>
 
           <div className='flex justify-center'>
-            <Link href='/register'>
-              <button className='mt-6 px-6 cursor-pointer text-center flex justify-center py-2 bg-black text-white rounded-full text-sm w-fit'>
-                Upgrade Now
-              </button>
-            </Link>
+            <button className='mt-6 px-6 text-center flex justify-center py-2 bg-black text-white rounded-full text-sm w-fit'>
+              Upgrade Now
+            </button>
           </div>
         </div>
 
