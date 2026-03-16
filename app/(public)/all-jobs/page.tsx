@@ -31,10 +31,9 @@ export default function JobList() {
   }
 
   const { data: session } = useSession();
-  console.log(session, "user is here");
+
   const applicantId = session?.user?.id;
 
-  console.log("PLAN:", session?.user?.plan);
 
   const { data: jobsResponse, isLoading } = useGetJobsByPosterQuery("");
   const jobs = jobsResponse?.data || [];

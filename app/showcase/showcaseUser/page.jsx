@@ -10,7 +10,7 @@ export default function Page() {
   if (isLoading)
     return (
       <div className='min-h-[80vh]'>
-        <p className='p-6 text-center'>Loading...</p>
+        <p className='p-6  text-center'>Loading...</p>;
       </div>
     );
 

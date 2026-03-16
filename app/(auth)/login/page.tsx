@@ -54,16 +54,13 @@ const LoginForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
 
-    console.log("Login Form Data:", {
-      email: formData.email,
-      password: formData.password,
-    });
 
     try {
       const resp = await login(formData).unwrap();
       const loginData = resp?.data;
-      console.log(loginData, "This is login data");
+
 
       toast.success("Login Success");
 
@@ -74,7 +71,7 @@ const LoginForm = () => {
         _id: loginData._id,
       });
 
-      console.log(res, "this is res");
+
 
       window.location.href = "/dashboard";
     } catch (error) {
@@ -102,8 +99,8 @@ const LoginForm = () => {
   // FIXED: Removed duplicate function definition
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Sending OTP to:", forgotPasswordEmail);
 
+    
     try {
       // Fix: Pass the email as an object, not as string directly
       await sendOtp(forgotPasswordEmail).unwrap();
@@ -124,8 +121,8 @@ const LoginForm = () => {
   };
 
   const handleResendOtp = async () => {
-    console.log("Resending OTP to:", forgotPasswordEmail);
 
+    
     try {
       await sendOtp(forgotPasswordEmail).unwrap();
       toast.success(`OTP resent to: ${forgotPasswordEmail}`);
@@ -147,35 +144,46 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      // Validate passwords match
-      if (newPassword !== confirmPassword) {
-        toast.error("Passwords do not match!");
-        return;
-      }
 
-      if (newPassword.length < 6) {
-        toast.error("Password must be at least 6 characters long!");
-        return;
-      }
 
-      const initialData = {
-        email: forgotPasswordEmail,
-        otp,
-        newPassword,
-      };
 
-      const response = await changePasswordWithOtp(initialData).unwrap();
-      toast.success("Password reset successfully!");
 
-      // Close modal and reset states
-      setShowForgotPasswordModal(false);
-      setForgotPasswordEmail("");
-      setOtpSent(false);
-      setOtp("");
-      setNewPassword("");
-      setConfirmPassword("");
-      setTimer(0);
-      console.log(response);
+       // Validate passwords match
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match!");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters long!");
+      return;
+    }
+
+
+    
+    const initialData = {
+      email:forgotPasswordEmail,
+      otp,
+      newPassword,
+      
+
+    }
+  
+
+    const response = await changePasswordWithOtp(initialData).unwrap();
+        toast.success("Password reset successfully!");
+    
+    // Close modal and reset states
+    setShowForgotPasswordModal(false);
+    setForgotPasswordEmail("");
+    setOtpSent(false);
+    setOtp("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setTimer(0);
+
+    
+      
     } catch (error) {
       const err = error as FetchBaseQueryError | SerializedError;
 

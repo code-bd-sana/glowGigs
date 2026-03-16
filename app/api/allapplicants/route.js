@@ -62,7 +62,7 @@ export const GET = async (req) => {
       { status: 200 }
     );
   } catch (error) {
-    console.log(error, 'This is error')
+
     return NextResponse.json(
       {
         message: "Something went wrong!",
