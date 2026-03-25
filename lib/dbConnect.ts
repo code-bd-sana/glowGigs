@@ -1,6 +1,6 @@
 import mongoose, { Mongoose } from "mongoose";
 
-const uri = `mongodb://root:VgMRiOe8PE53M3eFt9WbY688Lyu39xeYXVaXT0s2u1eyc2zRTqjPwaw9BE2kCLso@f78tver2sjwtkyievab9g5kj:27017/glowGigs/?directConnection=true`;
+const uri = `mongodb://root:fC9VQuhOQcdvpuigWkT8pEBhOPnJkEiBn5qOo7FZWFSGBJg3157KudWDxSAq5bJe@pbr4a9hziast4e6ifnfdceyt:27017/glowGigs/?directConnection=true`;
 const MONGO_URI = uri as string;
 
 if (!MONGO_URI) {
